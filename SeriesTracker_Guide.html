@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <link rel="icon" type="image/png" sizes="512x512" href="https://img.icons8.com/?size=100&id=yPOgUFWHVx7X&format=png&color=000000" onerror="this.href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><rect width=%22100%22 height=%22100%22 fill=%22%23141414%22/></svg>';">
+    <title>Series & Movie Tracker - Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #141414;
+            color: #ffffff;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            transition: background-color 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        h1 {
+            color: #e50914;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #999;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #e50914;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(229, 9, 20, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #ffffff;
+            font-size: 1.3rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .section p {
+            color: #b3b3b3;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .section ul, .section ol {
+            color: #b3b3b3;
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .section li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card h4 {
+            color: #e50914;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin: 20px 0;
+            background-color: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #0a0a0a;
+            color: #666;
+            border-radius: 8px;
+        }
+
+        .video-placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .video-placeholder-text {
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .highlight {
+            color: #e50914;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="Serien.html" class="back-button">← Back to Tracker</a>
+            <h1>Series & Movie Tracker</h1>
+            <p class="subtitle">Complete Guide & Tutorials</p>
+        </header>
+
+        <div class="section">
+            <h2>What is Series & Movie Tracker?</h2>
+            <p>
+                The <span class="highlight">Series & Movie Tracker</span> is a comprehensive web application designed to help you organize, track, and manage all your favorite series and movies in one place. 
+                Whether you're binge-watching the latest Netflix series or catching up on classic movies, this tracker gives you complete control over your viewing experience.
+            </p>
+            <p>
+                With support for multiple user profiles, detailed statistics, progress tracking, ratings, and much more, this tool transforms how you manage your entertainment library. 
+                Everything is stored locally in your browser, giving you complete privacy and control over your data.
+            </p>
+
+            <h3>Key Features</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📺 Multi-Content Support</h4>
+                    <p>Track both TV series and movies with separate fields and metadata for each type of content.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>👤 Multiple User Profiles</h4>
+                    <p>Create up to 5 different user profiles, perfect for families or personal collections.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📊 Detailed Statistics</h4>
+                    <p>View comprehensive stats including total time watched, completion rates, and genre breakdowns.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⭐ Rating System</h4>
+                    <p>Rate your content with a 5-star system and compare with IMDB ratings.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🏷️ Tags & Notes</h4>
+                    <p>Organize with custom tags and add personal notes or comments to any item.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📥 Export & Import</h4>
+                    <p>Backup your data with easy export/import functionality for data safety and sharing.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎨 Customizable Themes</h4>
+                    <p>Choose from dark, light, or create your own custom color theme.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📋 Watchlist Queue</h4>
+                    <p>Create a prioritized watchlist with drag-and-drop reordering.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⏱️ Progress Tracking</h4>
+                    <p>Track exactly where you left off with season, episode, and time-based progress.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Getting Started</h2>
+            <h3>1. Create Your Profile</h3>
+            <p>
+                When you first open the tracker, you'll need to create a user profile. Click on the hamburger menu (☰) in the top right, 
+                then navigate to <span class="highlight">Profiles</span> and click <span class="highlight">Change User</span>. 
+                From there, you can create a new profile with a custom name and profile picture.
+            </p>
+
+            <h3>2. Add Your First Content</h3>
+            <p>
+                To add a series or movie, click the <span class="highlight">+ Add Content</span> button in the sidebar. 
+                You'll be prompted to choose between adding a Series or Movie. Fill in the required information such as:
+            </p>
+            <ul>
+                <li>Title and cover image URL</li>
+                <li>Genre and content type</li>
+                <li>Current status (Watching, Want to Watch, or Completed)</li>
+                <li>Progress information (seasons, episodes, time)</li>
+                <li>Streaming service (for series)</li>
+            </ul>
+
+            <h3>3. Organize Your Collection</h3>
+            <p>
+                Use the filter buttons at the top to quickly switch between "Currently Watching", "Want to Watch", and "Completed" items. 
+                You can also use the search bar and advanced filters to find specific content quickly.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Video Guides</h2>
+            <p>Watch these tutorial videos to learn how to get the most out of Series & Movie Tracker:</p>
+            <h4 class="feature-card">Watch this here :<strong><a href="https://youtu.be/8Lp2KZZqtA8">Tutorial Video</a></strong></h4>
+        <div class="section">
+            <h2>Tips & Best Practices</h2>
+            <h3>Data Backup</h3>
+            <p>
+                Always remember to export your data regularly! Since everything is stored locally in your browser, 
+                clearing cookies or browser data will delete your tracker. Use the <span class="highlight">Export List</span> 
+                feature in the sidebar to create backups.
+            </p>
+
+            <h3>Recommended Folder Structure</h3>
+            <p>
+                When exporting, we recommend organizing your files in the following structure:
+            </p>
+            <ul>
+                <li><span class="highlight">Movie and Series Tracker/</span></li>
+                <li style="margin-left: 20px;"><span class="highlight">logs/</span> (for export files)</li>
+            </ul>
+
+            <h3>Auto-Export Feature</h3>
+            <p>
+                Enable auto-export in Settings to automatically backup your data at regular intervals. 
+                This ensures you never lose your tracking progress, even if you forget to manually export.
+            </p>
+
+            <h3>Using Tags</h3>
+            <p>
+                Tags are a powerful way to organize your content. Use tags like "favorite", "rewatch", "must-watch", 
+                or genre-based tags to quickly filter and find what you're looking for.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Need Help?</h2>
+            <p>
+                If you have any questions or need assistance, check the <span class="highlight">Changelog</span> in the sidebar 
+                for the latest updates and features. For additional support, you can refer to the documentation or contact the development team.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+

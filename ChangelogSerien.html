@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="512x512" href="https://img.icons8.com/?size=100&id=yPOgUFWHVx7X&format=png&color=000000">
+    <title>Changelog - Series & Movie Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #141414;
+            color: #ffffff;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light-theme {
+            background-color: #f5f5f5;
+            color: #333333;
+        }
+
+        body.light-theme .version-card {
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .section-title {
+            color: #333333;
+        }
+
+        body.light-theme .theme-toggle {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #333333;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .nav-link {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #333333;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme h1 {
+            color: #e50914;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        h1 {
+            color: #e50914;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .theme-toggle {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            background-color: #e50914;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-link:hover {
+            background-color: #f40612;
+        }
+
+        .changelog-content {
+            margin-top: 30px;
+        }
+
+        .version-card {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .version-card:hover {
+            background-color: #222;
+            transform: translateY(-2px);
+        }
+
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e50914;
+            padding-bottom: 15px;
+        }
+
+        .version-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e50914;
+        }
+
+        .version-date {
+            font-size: 1rem;
+            color: #999;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background-color: #e50914;
+            border-radius: 2px;
+        }
+
+        .feature-list, .bug-list, .future-list, .idea-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-list li, .bug-list li, .future-list li, .idea-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+        }
+
+        .bug-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+        }
+
+        .future-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+        }
+
+        .idea-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+        }
+
+        .note-section {
+            background-color: rgba(229, 9, 20, 0.1);
+            border-left: 4px solid #e50914;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        .note-section p {
+            margin: 0;
+            color: #ffffff;
+        }
+
+        body.light-theme .note-section {
+            background-color: rgba(229, 9, 20, 0.05);
+        }
+
+        body.light-theme .note-section p {
+            color: #333333;
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            color: #b3b3b3;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        body.light-theme .intro-text {
+            color: #666666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .version-number {
+                font-size: 1.5rem;
+            }
+
+            .version-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <img src="https://i.imgur.com/zopUQf6.png" style="height: 150px;" alt="Logo">
+                <h1>Changelog</h1>
+            </div>
+            <div class="header-controls">
+                <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+                <a href="Serien.html" class="nav-link">← Back to Tracker</a>
+            </div>
+        </header>
+
+        <div class="intro-text">
+            Track all updates, features, and improvements to the Series & Movie Tracker.
+        </div>
+          <div class="changelog-content">
+            <!-- Fix 1.4 -->
+            <div class="version-card">
+                <div class="version-header">
+                    <span class="version-number">Fix 1.4</span>
+                    <span class="version-date">January 13, 2026</span>
+                </div>
+
+                <h3 class="section-title">New Features</h3>
+                <ul class="feature-list">
+                    <li><strong>Added A Notification Calender:</strong> You can now say when you want to be Notifcied about a new series coming out.</li>
+                    <li><strong>Star Ratings:</strong> You can now select half stars to so you can rate your Content better.</li>
+                    <li><strong>API:</strong> Api function was added into the code, testing is now happening the finished version will come out when everything is working.</li>
+                </ul>
+
+                <h3 class="section-title">Bug Fixes</h3>
+                <ul class="feature-list">
+                    <li>Fixed a bug where the notification calendar wasn't working properly.</li>
+                </ul>
+            </div>
+     <!-- Version 1.3 -->
+            <div class="version-card">
+                <div class="version-header">
+                    <span class="version-number">Version 1.3</span>
+                    <span class="version-date">January 8, 2026</span>
+                </div>
+
+                <h3 class="section-title">New Features</h3>
+                <ul class="feature-list">
+                    <li><strong>Added Guide & Tutorials:</strong> A Option in the Burger Menu which will link you to a page about S&M Tracker</li>
+                    <li><strong>Settings:</strong> Features like Auto Export, Show Intro, Notifications</li>
+                    <li><strong>Intro:</strong> Added a Intro Video which will load when starting the page ( can be turned of in setttings)</li>
+                    <li><strong>Notifications:</strong> When starting the Page a Notification will be shown, more notifications will be added in the future</li>
+                    <li><strong>Settings for Auto Export:</strong> Set a time interval for automatic exports</li>
+                    <li><strong>Import Features:</strong> You can now select between different import options</li>
+                </ul>
+
+                <h3 class="section-title">Bug Fixes</h3>
+                <ul class="feature-list">
+                    <li>Statistics can be closed now.</li>
+                    <li> When customizing Content it will automatically update you can see it through the green tick. (You still need to press Enter to confirm your last changes!)
+                    </li>
+                    <li>Content cant be Duplicated anymore, so no more duplicate series or movies through a import or adding</li>
+                </ul>
+
+                <h3 class="section-title">Known Issues</h3>
+                <ul class="bug-list">
+                    <li>Its hard to read the Auto Export Interval Features</li>
+                    <li>Difficult to Change the Watchlist Order </li>
+                    <li>Sometimes a bug occurs when reloading the page leading to not be able to load Movie and Series Covers</li>
+                </ul>
+
+                <h3 class="section-title">Coming Soon</h3>
+                <ul class="future-list">
+                    <li><strong>API Integration:</strong> Working on IMDB rating API and automatic streaming service detection (may or may not be implemented)</li>
+                    <li><strong>Better Statistics:</strong> Enhanced statistics with more detailed insights and visualizations for example Graphs they will be all in a separate section</li>
+                    <li><strong>Better Color Picker for Themes:</strong> Designe of the color picker will be improved</li>
+
+                <h3 class="section-title">Ideas Under Consideration</h3>
+                <ul class="idea-list">
+                    <li>Custom Filters - create your own filtering rules</li>
+                    <li>Actors / Voice Actors - Add 3 Actors/Voice Actors you liked the most to you content</li>
+                    <li>FSK or PEGI Age Rating - Add age rating filters for content / add Age Ratings to your content</li>
+                    <li>Custom Themes for Watching Status - You can change color for each status</li>
+                    <li>SM Logo changes with the Secondary Color - When the theme is changed, the logo adapts to match</li>
+                    <li>More Content Orders - Instead of the Normal Grid a other Grid for Example 3 x 3 </li>
+                </ul>
+            </div>
+            <div class="changelog-content">
+            <!-- Happy New Year 2026 -->
+            <div class="version-card">
+                <div class="version-header">
+                    <span class="version-number">Happy New Year!</span>
+                    <span class="version-date">January 1, 2026</span>
+                </div>
+
+                <h3 class="section-title">I want to wish you a Happy New Year!</h3>
+                <ul class="feature-list">
+                    <li><strong>More Updates!:</strong> This year im trying to get atleast one Version / Bug fix each month</li>
+                    <li><strong>API?:</strong> I will be looking for  an API for IMDB ratings and automatic streaming service detection and maybe more ( Dont hope too much)</li>
+                </ul>
+            </div>
+
+         <div class="changelog-content">
+            <!-- Fix 1.2.1 -->
+            <div class="version-card">
+                <div class="version-header">
+                    <span class="version-number">Fix 1.2.1</span>
+                    <span class="version-date">December 22, 2025</span>
+                </div>
+
+                <h3 class="section-title">Fixxes / Addons</h3>
+                <ul class="feature-list">
+                    <li><strong>Gifs as PFP:</strong> You can now have Gifs as Profile Pictures</li>
+                    <li><strong>Frenchise Search:</strong> Searchbar is now functional with Frenchises - Content needs to have the Frenchise Name in it</li>
+                </ul>
+            </div>
+
+        <div class="changelog-content">
+            <!-- Version 1.2 -->
+            <div class="version-card">
+                <div class="version-header">
+                    <span class="version-number">Version 1.2</span>
+                    <span class="version-date">December 21, 2025</span>
+                </div>
+
+                <h3 class="section-title">New Features</h3>
+                <ul class="feature-list">
+                    <li><strong>Added Burger Menu:</strong> Options Like Theme, Changelog and Adding Content is now accessible from a single menu</li>
+                    <li><strong>Custom Themes:</strong> Create your own custom themes available color changes are primary and secondary colors</li>
+                    <li><strong>Content Adding Question:</strong> When adding new content it will ask you if its a series or movie</li>
+                    <li><strong>Custom View Size Option:</strong> Now you can adjust the size of the content display from really small to really big</li>
+                    <li><strong>Added Users:</strong> Now you can have multiple users, each user can have their own list</li>
+                    <li><strong>Import/Export Feature:</strong> Your List can now be Exported or lists of others can be imported</li>
+                    <li><strong>Progress Bar for Series and Movies:</strong> A progress bar is now displayed for each series and movie, there you can see how many % you already watched</li>
+                    <li><strong>Faster Adding:</strong> When selecting the Option Complete you only need to fill in the Total Episodes and Series. The Current will be automatically Synced</li>
+                    <li><strong>More Options for Adding:</strong> You can now Rate your Content, Give it Tags like favorite or rewatch, add Notes or Comments and enter the Started Date Completed Date and Last Watched Date</li>
+                    <li><strong>Statistics:</strong> View detailed statistics about your content this is available in the Burger Menu</li>
+                    <li><strong>Multi Select:</strong> Now you can select multiple items at once and change their Status or Delete them at once</li>
+                    <li><strong>Better Device Support:</strong> The Site is now fully responsive and works on all devices</li>
+                </ul>
+
+                <h3 class="section-title">Bug Fixes</h3>
+                <ul class="feature-list">
+                    <li>All Streaming Icons load correctly now</li>
+                    <li> All Items on the Site load in about 1 second now</li>
+                    <li>Filters & Sort Button now Fixed on the positon</li>
+                </ul>
+
+                <h3 class="section-title">Known Issues</h3>
+                <ul class="bug-list">
+                    <li>Statistics are not fully functional yet and wont close</li>
+                    <li>Custom View Size is not fully working as planned</li>
+                    <li>Multi Select Box is not Taking its Given Designe</li>
+                </ul>
+
+                <h3 class="section-title">Coming Soon</h3>
+                <ul class="future-list">
+                    <li><strong>API Integration:</strong> Working on IMDB rating API and automatic streaming service detection (may or may not be implemented)</li>
+                    <li><strong>Better Statistics:</strong> Enhanced statistics with more detailed insights and visualizations for example Graphs they will be all in a separate section</li>
+                    <li><strong>Better Color Picker for Themes:</strong> Designe of the color picker will be improved</li>
+                    <li><strong>Auto Export Option:</strong> Your List will be automatically exported at a set interval / after closing Site ...</li>
+                    <li><strong>Intro:</strong> A Video Intro when opening the site will be added</li>
+                    <li><strong>Settings Menu:</strong> A Settings Menu will be added with options like Auto Export , Intro , Notifications and more!</li>
+
+                <h3 class="section-title">Ideas Under Consideration</h3>
+                <ul class="idea-list">
+                    <li>Custom Filters - create your own filtering rules</li>
+                    <li>FSK or PEGI Age Rating - Add age rating filters for content / add Age Ratings to your content</li>
+                    <li>Custom Themes for Watching Status - You can change color for each status</li>
+                    <li>SM Logo changes with the Secondary Color - When the theme is changed, the logo adapts to match</li>
+                    <li>More Content Orders - Instead of the Normal 0:1:0 Order new Options like 1:1:1 or 1:1:1:1:1:1  ( 1 Stands for a Content and 0 for No Content)</li>
+                </ul>
+            </div>
+        <div class="changelog-content">
+            <!-- Version 1.1 -->
+            <div class="version-card">
+                <div class="version-header">
+                    <span class="version-number">Version 1.1</span>
+                    <span class="version-date">December 12, 2025</span>
+                </div>
+
+                <h3 class="section-title">New Features</h3>
+                <ul class="feature-list">
+                    <li><strong>Added Movies Support:</strong> You can now track both TV series and movies in one place</li>
+                    <li><strong>Theme Switching:</strong> Black and White theme toggle added for better viewing experience</li>
+                    <li><strong>Movie-Specific Display:</strong> Episodes, seasons, and other series-specific details are hidden for movies</li>
+                    <li><strong>Streaming Service Details:</strong> Now you can specify which streaming service you're using to watch content</li>
+                    <li><strong>Data Management:</strong> Finally able to delete cookies and clear data properly - no more empty files! ( only some data is saved)</li>
+                    <li><strong>LocalStorage Implementation:</strong> All data is now securely stored in browser localStorage</li>
+                    <li><strong>Persistent Filters:</strong> Filters and sort options now save when you close the page</li>
+                    <li><strong>Reload Protection:</strong> Reloading the page won't reset your filters to default anymore</li>
+                    <li><strong>Content Type Filters:</strong> New filters to show Movies only or Series only</li>
+                </ul>
+
+                <h3 class="section-title">Bug Fixes</h3>
+                <ul class="feature-list">
+                    <li>Fixed issues with site not loading properly</li>
+                    <li>Resolved data persistence problems</li>
+                    <li>Improved overall stability</li>
+                </ul>
+
+                <h3 class="section-title">Known Issues</h3>
+                <ul class="bug-list">
+                    <li>Some streaming service icons may not load correctly - investigating the root cause</li>
+                    <li>Fixes will be implemented in the next update</li>
+                </ul>
+
+                <h3 class="section-title">Coming Soon</h3>
+                <ul class="future-list">
+                    <li><strong>View Size Options:</strong> Enhanced options for managing large libraries of series and movies</li>
+                    <li><strong>API Integration:</strong> Working on IMDB rating API and automatic streaming service detection (may or may not be implemented)</li>
+                    <li><strong>Export Feature:</strong> Export your Currently Watching, Want to Watch, and Completed lists to share with friends</li>
+                    <li><strong>Import Feature:</strong> Import series and movie lists from files shared by others</li>
+                    <li><strong>Multiple Profiles:</strong> Support for multiple users - track your friends' series separately from yours</li>
+                    <li><strong>Genre Search:</strong> Enhanced searchbar with genre filtering capabilities</li>
+                    <li><strong>Responsive Design:</strong> Improved support for all devices and screen sizes</li>
+                </ul>
+
+                <h3 class="section-title">Ideas Under Consideration</h3>
+                <ul class="idea-list">
+                    <li>Custom Themes - personalize your tracker appearance</li>
+                    <li>Custom Filters - create your own filtering rules</li>
+                    <li>Custom View Sizes - more granular control over display options</li>
+                </ul>
+            </div>
+
+            <!-- Version 1.0 -->
+            <div class="version-card">
+                <div class="version-header">
+                    <span class="version-number">Version 1.0</span>
+                    <span class="version-date">Initial Release</span>
+                </div>
+
+                <div class="note-section">
+                    <p><strong>Hello Fellas!</strong> Today I want to show you my newest project - Serien.html. Here you can create your own list of series you are watching, have watched, or want to watch.</p>
+                </div>
+
+                <h3 class="section-title">Core Features</h3>
+                <ul class="feature-list">
+                    <li><strong>Series Tracker Only:</strong> Track TV series with series-specific fields like seasons, episodes, and progress tracking</li>
+                    <li><strong>Multiple Status Categories:</strong>
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li>Currently Watching (red badge)</li>
+                            <li>Want to Watch (blue badge)</li>
+                            <li>Completed (green badge)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Comprehensive Series Information:</strong> Title, cover image, genre, language, IMDB rating, season/episode progress, total seasons/episodes, and time spent watching</li>
+                    <li><strong>Interactive UI:</strong> Expandable cards with "More" button for extra details, edit and delete options per series</li>
+                    <li><strong>Three View Sizes:</strong> Small, Normal, and Large display options</li>
+                    <li><strong>Priority Watchlist (Drag & Drop):</strong> Add series to a queue, reorder by dragging, separate "Watchlist" section</li>
+                </ul>
+
+                <h3 class="section-title">Search & Filtering</h3>
+                <ul class="feature-list">
+                    <li>Live search across all titles and genres</li>
+                    <li>Filter by status (All, Watching, Want, Completed)</li>
+                    <li>Sort options: Default order, Title (A-Z / Z-A), Most/Least time spent</li>
+                </ul>
+
+                <h3 class="section-title">Data Management</h3>
+                <ul class="feature-list">
+                    <li>Add new series via modal form</li>
+                    <li>Edit existing series</li>
+                    <li>Delete series with confirmation</li>
+                    <li>All data persists in browser Cookies</li>
+                    <li>No login required - works offline</li>
+                </ul>
+
+                <h3 class="section-title">Progress Tracking</h3>
+                <ul class="feature-list">
+                    <li>Visual progress indicators (season/episode)</li>
+                    <li>Time spent displayed in hours/minutes</li>
+                    <li>Progress badges and status labels</li>
+                    <li>Timeline display (S1 E5 format)</li>
+                </ul>
+
+                <h3 class="section-title">Use Cases</h3>
+                <ul class="feature-list">
+                    <li>Track what TV series you're currently watching</li>
+                    <li>Maintain a watchlist of series you want to watch</li>
+                    <li>Record completed series</li>
+                    <li>Organize your viewing queue with drag & drop</li>
+                    <li>Quick access to series details and progress</li>
+                </ul>
+
+                <h3 class="section-title">Interface Design</h3>
+                <ul class="feature-list">
+                    <li>Single dark theme only (no theme switching in v1.0)</li>
+                    <li>Clean, focused design for series tracking</li>
+                    <li>Responsive layout that works on mobile and desktop</li>
+                    <li>No streaming service icons or selection (added in v1.1)</li>
+                </ul>
+
+                <h3 class="section-title">Technical Features</h3>
+                <ul class="feature-list">
+                    <li>Pure HTML/CSS/JavaScript implementation</li>
+                    <li>No external dependencies</li>
+                    <li>Browser-based storage</li>
+                    <li>Drag & drop functionality</li>
+                    <li>Form validation</li>
+                    <li>Responsive design</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTheme = 'dark';
+
+        function loadTheme() {
+            const settings = localStorage.getItem('seriesTrackerSettings');
+            if (settings) {
+                try {
+                    const parsed = JSON.parse(settings);
+                    currentTheme = parsed.theme || 'dark';
+                } catch (e) {
+                    console.error('Error loading theme:', e);
+                }
+            }
+            applyTheme(currentTheme);
+        }
+
+        function applyTheme(theme) {
+            currentTheme = theme;
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+                document.getElementById('themeToggle').textContent = '☀️ Light';
+            } else {
+                document.body.classList.remove('light-theme');
+                document.getElementById('themeToggle').textContent = '🌙 Dark';
+            }
+            saveTheme();
+        }
+
+        function saveTheme() {
+            const settings = localStorage.getItem('seriesTrackerSettings');
+            let parsed = {};
+            if (settings) {
+                try {
+                    parsed = JSON.parse(settings);
+                } catch (e) {
+                    console.error('Error parsing settings:', e);
+                }
+            }
+            parsed.theme = currentTheme;
+            localStorage.setItem('seriesTrackerSettings', JSON.stringify(parsed));
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        });
+
+        loadTheme();
+    </script>
+</body>
+</html>
