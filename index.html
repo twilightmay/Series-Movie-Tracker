@@ -36,7 +36,6 @@
             color: var(--secondary-color, #e50914) !important;
         }
 
-        body.custom-theme .status-badge.status-watching,
         body.custom-theme .btn,
         body.custom-theme .filter-btn.active,
         body.custom-theme .theme-option.active,
@@ -393,15 +392,15 @@
         }
 
         .status-watching {
-            background-color: #e50914;
+            background-color: var(--watching-color, #e50914);
         }
 
         .status-want {
-            background-color: #0062ff;
+            background-color: var(--want-color, #0062ff);
         }
 
         .status-completed {
-            background-color: #00ff3c;
+            background-color: var(--completed-color, #27ae60);
         }
 
         .series-stats {
@@ -546,8 +545,31 @@
         /* Rating Stars */
         .rating-input {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             align-items: center;
+        }
+
+        .star-rating {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+        }
+
+        .star-rating svg {
+            width: 36px;
+            height: 36px;
+            display: block;
+            transition: filter 0.15s ease;
+        }
+
+        .star-rating:hover svg,
+        .star-rating.filled svg,
+        .star-rating.half-filled svg {
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
         }
 
         .star {
@@ -2569,8 +2591,108 @@
             background-color: var(--secondary-color, #e50914);
         }
 
-        .notification-display-ok-btn:hover {
-            background-color: #f40612;
+        /* Actor Cards */
+        .actors-grid {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .actor-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            width: 80px;
+        }
+        .actor-card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: #333;
+        }
+        .actor-card span {
+            font-size: 0.75rem;
+            text-align: center;
+            color: #ccc;
+            word-break: break-word;
+        }
+
+        /* Completed series different color */
+        .series-item.status-completed-item {
+            border-left: 3px solid var(--completed-color, #27ae60);
+        }
+        .series-item.status-watching-item {
+            border-left: 3px solid var(--watching-color, #e50914);
+        }
+        .series-item.status-want-item {
+            border-left: 3px solid var(--want-color, #0062ff);
+        }
+        .status-completed {
+            background-color: var(--completed-color, #27ae60);
+        }
+        body.custom-theme .status-badge.status-completed,
+        body.custom-theme .status-completed {
+            background-color: var(--completed-color, #27ae60) !important;
+        }
+
+        body.custom-theme .status-badge.status-watching,
+        body.custom-theme .status-watching {
+            background-color: var(--watching-color, #e50914) !important;
+        }
+
+        body.custom-theme .status-badge.status-want,
+        body.custom-theme .status-want {
+            background-color: var(--want-color, #0062ff) !important;
+        }
+
+        /* Multi-select streaming */
+        .streaming-multi-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        .streaming-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .streaming-chip img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+        .streaming-chip.selected {
+            background: rgba(229,9,20,0.3);
+            border-color: #e50914;
+            color: #fff;
+        }
+        body.custom-theme .streaming-chip.selected {
+            background: rgba(var(--secondary-rgb, 229,9,20), 0.3);
+            border-color: var(--secondary-color, #e50914);
+        }
+        body.light-theme .streaming-chip {
+            background: rgba(0,0,0,0.05);
+            border-color: #ddd;
+            color: #333;
+        }
+        body.light-theme .streaming-chip.selected {
+            background: rgba(229,9,20,0.15);
+            border-color: #e50914;
         }
     </style>
 </head>
@@ -2618,6 +2740,33 @@
                             <span class="color-picker-value" id="secondaryColorValue">#e50914</span>
                         </div>
                     </div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-circle" id="watchingColorCircle" style="--picker-color: #e50914;">
+                            <input type="color" id="watchingColor" class="color-picker-input" value="#e50914">
+                        </div>
+                        <div class="color-picker-label">
+                            <span class="color-picker-label-text">Currently Watching Badge</span>
+                            <span class="color-picker-value" id="watchingColorValue">#e50914</span>
+                        </div>
+                    </div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-circle" id="wantColorCircle" style="--picker-color: #0062ff;">
+                            <input type="color" id="wantColor" class="color-picker-input" value="#0062ff">
+                        </div>
+                        <div class="color-picker-label">
+                            <span class="color-picker-label-text">Want to Watch Badge</span>
+                            <span class="color-picker-value" id="wantColorValue">#0062ff</span>
+                        </div>
+                    </div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-circle" id="completedColorCircle" style="--picker-color: #27ae60;">
+                            <input type="color" id="completedColor" class="color-picker-input" value="#27ae60">
+                        </div>
+                        <div class="color-picker-label">
+                            <span class="color-picker-label-text">Completed Badge</span>
+                            <span class="color-picker-value" id="completedColorValue">#27ae60</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="sidebar-section">
@@ -2659,7 +2808,7 @@
                     <span>🔔 Set Notifications</span>
                     <input type="checkbox" id="settingShowNotifications" class="cursor: pointer;">
                 </label>
-                <button class="sidebar-menu-item" id="openNotificationCalendarBtn" style="width: 100%; border: none; background: none; color: inherit; cursor: pointer; text-align: left; margin-bottom: 0;">📅 Notification Calendar</button>
+                <button class="sidebar-menu-item" id="openNotificationCalendarBtn">📅 Notification Calendar</button>
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
                     <div style="font-size: 0.85rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;" class="auto-save-label">Auto Export Interval</div>
                     <div style="font-size: 0.75rem; color: #666; margin-bottom: 10px; font-style: italic;" class="auto-save-info">ℹ️ Only works when on site</div>
@@ -3058,20 +3207,20 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="seriesStreamingService">Streaming Service (Series only)</label>
-                    <select id="seriesStreamingService" class="form-control auto-save-field" data-field="streamingService">
-                        <option value="">None</option>
-                        <option value="netflix">Netflix</option>
-                        <option value="disney">Disney+</option>
-                        <option value="hbo">HBO Max</option>
-                        <option value="amazon">Amazon Prime</option>
-                        <option value="hulu">Hulu</option>
-                        <option value="apple">Apple TV+</option>
-                        <option value="paramount">Paramount+</option>
-                        <option value="peacock">Peacock</option>
-                        <option value="crunchyroll">Crunchyroll</option>
-                        <option value="other">Other</option>
-                    </select>
+                    <label>Streaming Service(s)</label>
+                    <div class="streaming-multi-select" id="streamingMultiSelect">
+                        <div class="streaming-chip" data-service="netflix"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/200px-Netflix_2015_logo.svg.png" onerror="this.style.display='none'">Netflix</div>
+                        <div class="streaming-chip" data-service="disney"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/200px-Disney%2B_logo.svg.png" onerror="this.style.display='none'">Disney+</div>
+                        <div class="streaming-chip" data-service="hbo"><img src="https://upload.wikimedia.org/wikipedia/commons/8/81/HBO_Max_Logo_%28October_2019%29.svg" onerror="this.style.display='none'">HBO Max</div>
+                        <div class="streaming-chip" data-service="amazon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/200px-Amazon_Prime_Video_logo.svg.png" onerror="this.style.display='none'">Amazon</div>
+                        <div class="streaming-chip" data-service="hulu"><img src="https://upload.wikimedia.org/wikipedia/de/thumb/0/0e/Hulu-Logo.svg/500px-Hulu-Logo.svg.png?_=20090719001746" onerror="this.style.display='none'">Hulu</div>
+                        <div class="streaming-chip" data-service="apple"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/AppleTVLogo.svg/2048px-AppleTVLogo.svg.png" onerror="this.style.display='none'">Apple TV+</div>
+                        <div class="streaming-chip" data-service="paramount"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Paramount_Plus.svg/200px-Paramount_Plus.svg.png" onerror="this.style.display='none'">Paramount+</div>
+                        <div class="streaming-chip" data-service="peacock"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/NBC_Peacock_%282022%29.svg/960px-NBC_Peacock_%282022%29.svg.png" onerror="this.style.display='none'">Peacock</div>
+                        <div class="streaming-chip" data-service="crunchyroll"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Crunchyroll_Logo.svg/500px-Crunchyroll_Logo.svg.png" onerror="this.style.display='none'">Crunchyroll</div>
+                        <div class="streaming-chip" data-service="other">Other</div>
+                    </div>
+                    <input type="hidden" id="seriesStreamingService" data-field="streamingService" value="">
                 </div>
                 <div class="series-episode-fields" id="seriesEpisodeFields">
                     <div class="form-group" id="currentSeasonGroup">
@@ -3106,15 +3255,71 @@
                 <div class="form-group">
                     <label for="seriesUserRating">Your Rating (1-5 stars)</label>
                     <div class="rating-input" id="seriesUserRating">
-                        <span class="star" data-rating="1">☆</span>
-                        <span class="star-half" data-rating="1.5">⯪</span>
-                        <span class="star" data-rating="2">☆</span>
-                        <span class="star-half" data-rating="2.5">⯪</span>
-                        <span class="star" data-rating="3">☆</span>
-                        <span class="star-half" data-rating="3.5">⯪</span>
-                        <span class="star" data-rating="4">☆</span>
-                        <span class="star-half" data-rating="4.5">⯪</span>
-                        <span class="star" data-rating="5">☆</span>
+                        <span class="star-rating" data-rating="1" data-half-rating="0.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg1" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg1)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <span class="star-rating" data-rating="2" data-half-rating="1.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg2" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg2)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <span class="star-rating" data-rating="3" data-half-rating="2.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg3" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg3)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <span class="star-rating" data-rating="4" data-half-rating="3.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg4" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg4)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <span class="star-rating" data-rating="5" data-half-rating="4.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg5" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg5)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
                         <input type="hidden" id="seriesUserRatingValue" value="0" class="auto-save-field" data-field="userRating">
                     </div>
                 </div>
@@ -3137,6 +3342,23 @@
                 <div class="form-group">
                     <label for="seriesLastWatchedDate">Last Watched Date</label>
                     <input type="date" id="seriesLastWatchedDate" class="form-control auto-save-field" data-field="lastWatchedDate">
+                </div>
+                <div class="form-group">
+                    <label>Favourite Actors (up to 3)</label>
+                    <div id="actorsContainer" style="display:flex; flex-direction:column; gap:10px;">
+                        <div class="actor-entry" style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" class="form-control actor-name" placeholder="Actor name" style="flex:1;">
+                            <input type="text" class="form-control actor-img" placeholder="Image URL" style="flex:2;">
+                        </div>
+                        <div class="actor-entry" style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" class="form-control actor-name" placeholder="Actor name" style="flex:1;">
+                            <input type="text" class="form-control actor-img" placeholder="Image URL" style="flex:2;">
+                        </div>
+                        <div class="actor-entry" style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" class="form-control actor-name" placeholder="Actor name" style="flex:1;">
+                            <input type="text" class="form-control actor-img" placeholder="Image URL" style="flex:2;">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>
@@ -3164,9 +3386,28 @@
             'apple': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/AppleTVLogo.svg/2048px-AppleTVLogo.svg.png',
             'paramount': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Paramount_Plus.svg/200px-Paramount_Plus.svg.png',
             'peacock': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/NBC_Peacock_%282022%29.svg/960px-NBC_Peacock_%282022%29.svg.png',
-            'crunchyroll': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Crunchyroll_Logo.svg/1842px-Crunchyroll_Logo.svg.png',
+            'crunchyroll': 'https://www.crunchyroll.com/build/assets/img/favicons/favicon-192x192.png',
             'other': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Symbol_Resin_Code_7_OTHER.svg/1698px-Symbol_Resin_Code_7_OTHER.svg.png'
         };
+
+        // Streaming service search/watch URLs
+        const streamingSearchUrls = {
+            'netflix': (t) => `https://www.netflix.com/search?q=${encodeURIComponent(t)}`,
+            'disney': (t) => `https://www.disneyplus.com/search/${encodeURIComponent(t)}`,
+            'hbo': (t) => `https://www.max.com/search?q=${encodeURIComponent(t)}`,
+            'amazon': (t) => `https://www.amazon.com/s?k=${encodeURIComponent(t)}&i=instant-video`,
+            'hulu': (t) => `https://www.hulu.com/search?q=${encodeURIComponent(t)}`,
+            'apple': (t) => `https://tv.apple.com/search?term=${encodeURIComponent(t)}`,
+            'paramount': (t) => `https://www.paramountplus.com/search/${encodeURIComponent(t)}/`,
+            'peacock': (t) => `https://www.peacocktv.com/search?q=${encodeURIComponent(t)}`,
+            'crunchyroll': (t) => `https://www.crunchyroll.com/search?q=${encodeURIComponent(t)}`,
+            'other': (t) => `https://www.google.com/search?q=${encodeURIComponent(t)}+watch+online`
+        };
+        function openStreamingService(service, title) {
+            const fn = streamingSearchUrls[service];
+            if (fn) window.open(fn(title), '_blank');
+        }
+        window.openStreamingService = openStreamingService;
 
         let series = [];
         let currentFilter = 'watching';
@@ -3263,12 +3504,36 @@
 
         function dismissNotification(notificationId) {
             closeNotification(notificationId);
+            // Immediately delete the notification when user presses Okay
+            deleteNotification(notificationId);
+        }
+        
+        function cleanupOldDismissedNotifications() {
             const dismissedKey = currentUserId ? `seriesTrackerDismissedNotifications_${currentUserId}` : 'seriesTrackerDismissedNotifications';
-            const dismissed = JSON.parse(localStorage.getItem(dismissedKey) || '[]');
-            if (!dismissed.includes(notificationId)) {
-                dismissed.push(notificationId);
-                localStorage.setItem(dismissedKey, JSON.stringify(dismissed));
+            const dismissedNotifications = JSON.parse(localStorage.getItem(dismissedKey) || '{}');
+            const oneDayAgo = new Date();
+            oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+            const oneDayAgoStr = getLocalDateStringFromDate(oneDayAgo);
+            
+            let updated = false;
+            for (const [notificationId, dismissedDate] of Object.entries(dismissedNotifications)) {
+                if (dismissedDate <= oneDayAgoStr) {
+                    deleteNotification(notificationId);
+                    delete dismissedNotifications[notificationId];
+                    updated = true;
+                }
             }
+            
+            if (updated) {
+                localStorage.setItem(dismissedKey, JSON.stringify(dismissedNotifications));
+            }
+        }
+        
+        function getLocalDateStringFromDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
         function renderNotificationsList() {
@@ -3298,7 +3563,7 @@
                             <div class="notification-message">${message}</div>
                         </div>
                         <div class="notification-actions">
-                            <button class="notification-delete-btn" onclick="deleteNotification('${notification.id}')">Delete</button>
+                            <button class="notification-delete-btn" onclick="deleteNotificationWithConfirm('${notification.id}')">Delete</button>
                         </div>
                     </div>
                 `;
@@ -3306,10 +3571,21 @@
         }
 
         function deleteNotification(notificationId) {
+            // Remove from notifications array without confirmation if called from cleanup
+            notifications = notifications.filter(n => n.id !== notificationId);
+            saveNotifications();
+            renderNotificationsList();
+            
+            // Also remove from dismissed notifications
+            const dismissedKey = currentUserId ? `seriesTrackerDismissedNotifications_${currentUserId}` : 'seriesTrackerDismissedNotifications';
+            const dismissedNotifications = JSON.parse(localStorage.getItem(dismissedKey) || '{}');
+            delete dismissedNotifications[notificationId];
+            localStorage.setItem(dismissedKey, JSON.stringify(dismissedNotifications));
+        }
+        
+        function deleteNotificationWithConfirm(notificationId) {
             if (confirm('Are you sure you want to delete this notification?')) {
-                notifications = notifications.filter(n => n.id !== notificationId);
-                saveNotifications();
-                renderNotificationsList();
+                deleteNotification(notificationId);
             }
         }
 
@@ -3317,6 +3593,7 @@
         window.closeNotification = closeNotification;
         window.dismissNotification = dismissNotification;
         window.deleteNotification = deleteNotification;
+        window.deleteNotificationWithConfirm = deleteNotificationWithConfirm;
 
         // API Integration Functions
         // Note: These APIs require API keys. Users need to add their own keys.
@@ -3625,7 +3902,7 @@
                     const importData = JSON.parse(e.target.result);
                     
                     // Validate import data structure
-                    if (!importData.profileName || importData.itemCount === undefined || !importData.version) {
+                    if (!importData.profileName || importData.itemCount === undefined) {
                         alert('Invalid file format. Please ensure this is a valid export file.');
                         return;
                     }
@@ -3667,7 +3944,7 @@
                             // Generate new ID if ID already exists
                             let newId = item.id;
                             if (existingIds.has(newId)) {
-                                newId = Math.max(...series.map(s => s.id), 0) + 1 + importedCount;
+                                newId = (series.length > 0 ? Math.max(...series.map(s => s.id)) : 0) + 1 + importedCount;
                             }
                             existingIds.add(newId);
                             existingTitles.add(itemKey);
@@ -3691,7 +3968,7 @@
                             
                             let newId = item.id;
                             if (existingIds.has(newId)) {
-                                newId = Math.max(...series.map(s => s.id), 0) + 1 + importedCount;
+                                newId = (series.length > 0 ? Math.max(...series.map(s => s.id)) : 0) + 1 + importedCount;
                             }
                             existingIds.add(newId);
                             existingTitles.add(itemKey);
@@ -3715,7 +3992,7 @@
                             
                             let newId = item.id;
                             if (existingIds.has(newId)) {
-                                newId = Math.max(...series.map(s => s.id), 0) + 1 + importedCount;
+                                newId = (series.length > 0 ? Math.max(...series.map(s => s.id)) : 0) + 1 + importedCount;
                             }
                             existingIds.add(newId);
                             existingTitles.add(itemKey);
@@ -3730,6 +4007,9 @@
 
                     // Save imported data
                     saveData();
+                    
+                    // Ensure filter state is consistent
+                    currentCategory = currentFilter;
                     
                     // Refresh display
                     renderSeries();
@@ -3826,6 +4106,10 @@
                     customPrimaryColor = parsed.customPrimaryColor || '#141414';
                     customSecondaryColor = parsed.customSecondaryColor || '#e50914';
                     statisticsCollapsed = parsed.statisticsCollapsed !== undefined ? parsed.statisticsCollapsed : false;
+                    // Restore status badge colors to pickers
+                    if (parsed.customWatchingColor) { const el = document.getElementById('watchingColor'); if (el) el.value = parsed.customWatchingColor; }
+                    if (parsed.customWantColor) { const el = document.getElementById('wantColor'); if (el) el.value = parsed.customWantColor; }
+                    if (parsed.customCompletedColor) { const el = document.getElementById('completedColor'); if (el) el.value = parsed.customCompletedColor; }
                 } catch (e) {
                     console.error('Error loading settings:', e);
                 }
@@ -3845,7 +4129,10 @@
                 globalContentType: globalContentType,
                 customPrimaryColor: customPrimaryColor,
                 customSecondaryColor: customSecondaryColor,
-                statisticsCollapsed: statisticsCollapsed
+                statisticsCollapsed: statisticsCollapsed,
+                customWatchingColor: (document.getElementById('watchingColor') && document.getElementById('watchingColor').value) || '#e50914',
+                customWantColor: (document.getElementById('wantColor') && document.getElementById('wantColor').value) || '#0062ff',
+                customCompletedColor: (document.getElementById('completedColor') && document.getElementById('completedColor').value) || '#27ae60'
             };
             localStorage.setItem(key, JSON.stringify(settingsData));
         }
@@ -3982,16 +4269,29 @@
                 document.body.classList.remove('custom-theme');
                 document.body.style.setProperty('--primary-color', '');
                 document.body.style.setProperty('--secondary-color', '');
+                document.documentElement.style.removeProperty('--watching-color');
+                document.documentElement.style.removeProperty('--want-color');
+                document.documentElement.style.removeProperty('--completed-color');
             } else if (theme === 'custom') {
                 document.body.classList.remove('light-theme');
                 document.body.classList.add('custom-theme');
                 document.body.style.setProperty('--primary-color', customPrimaryColor);
                 document.body.style.setProperty('--secondary-color', customSecondaryColor);
+                // Apply saved status badge colors
+                const wc = (document.getElementById('watchingColor') && document.getElementById('watchingColor').value) || '#e50914';
+                const wt = (document.getElementById('wantColor') && document.getElementById('wantColor').value) || '#0062ff';
+                const cc = (document.getElementById('completedColor') && document.getElementById('completedColor').value) || '#27ae60';
+                document.documentElement.style.setProperty('--watching-color', wc);
+                document.documentElement.style.setProperty('--want-color', wt);
+                document.documentElement.style.setProperty('--completed-color', cc);
             } else {
                 document.body.classList.remove('light-theme');
                 document.body.classList.remove('custom-theme');
                 document.body.style.setProperty('--primary-color', '');
                 document.body.style.setProperty('--secondary-color', '');
+                document.documentElement.style.removeProperty('--watching-color');
+                document.documentElement.style.removeProperty('--want-color');
+                document.documentElement.style.removeProperty('--completed-color');
             }
             saveSettings();
         }
@@ -4117,6 +4417,14 @@
         const filterBtns = document.querySelectorAll('.filter-btn');
         const searchInput = document.getElementById('searchInput');
 
+        function getLocalDateString() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         function formatTime(minutes) {
             if (minutes === 0) return '0m';
             const hours = Math.floor(minutes / 60);
@@ -4132,7 +4440,6 @@
             seriesList.innerHTML = '';
             
             let filteredSeries = series.filter(serie => {
-                const matchesCategory = currentCategory === 'all' || serie.status === currentCategory;
                 const matchesFilter = currentFilter === 'all' || serie.status === currentFilter;
                 const matchesContentFilter = currentContentFilter === 'all' || 
                     (serie.contentType || 'series') === currentContentFilter;
@@ -4140,7 +4447,7 @@
                     serie.title.toLowerCase().includes(term) ||
                     (serie.genre && serie.genre.toLowerCase().includes(term));
                 
-                return matchesCategory && matchesFilter && matchesContentFilter && matchesSearch;
+                return matchesFilter && matchesContentFilter && matchesSearch;
             });
             
             switch(currentSort) {
@@ -4188,12 +4495,13 @@
                 const isSeries = contentType === 'series';
                 const seasonProgress = serie.totalSeasons ? `${serie.season}/${serie.totalSeasons}` : `S${serie.season}`;
                 const episodeProgress = serie.totalEpisodes ? `${serie.episode}/${serie.totalEpisodes}` : `E${serie.episode}`;
-                const streamingIcon = isSeries && serie.streamingService && streamingIcons[serie.streamingService] 
-                    ? `<img src="${streamingIcons[serie.streamingService]}" alt="${serie.streamingService}" class="streaming-service-icon" title="${serie.streamingService.charAt(0).toUpperCase() + serie.streamingService.slice(1)}" loading="lazy" decoding="async" onerror="this.style.display='none';">` 
+                const primaryService = serie.streamingService ? serie.streamingService.split(',')[0].trim() : '';
+                const streamingIcon = isSeries && primaryService && streamingIcons[primaryService] 
+                    ? `<img src="${streamingIcons[primaryService]}" alt="${primaryService}" class="streaming-service-icon" title="Watch on ${primaryService.charAt(0).toUpperCase() + primaryService.slice(1)}" loading="lazy" decoding="async" onerror="this.style.display='none';" onclick="event.stopPropagation(); openStreamingService('${primaryService}', '${serie.title.replace(/'/g,"\\'")}');" style="cursor:pointer;">` 
                     : '';
                 
                 const item = document.createElement('div');
-                item.className = `series-item ${currentViewSize === 'custom' ? '' : currentViewSize}`;
+                item.className = `series-item ${currentViewSize === 'custom' ? '' : currentViewSize} ${serie.status === 'completed' ? 'status-completed-item' : serie.status === 'watching' ? 'status-watching-item' : serie.status === 'want' ? 'status-want-item' : ''}`;
                 
                 // Apply custom sizes if custom view size is selected
                 let thumbnailStyle = '';
@@ -4218,10 +4526,18 @@
                 const userRating = serie.userRating || 0;
                 let ratingDisplay = '';
                 if (userRating > 0) {
-                    ratingDisplay = '<div class="user-rating-display" style="display: flex; gap: 3px; margin-top: 5px;">';
+                    ratingDisplay = '<div class="user-rating-display" style="display: flex; gap: 2px; margin-top: 5px; align-items: center;">';
                     for (let i = 1; i <= 5; i++) {
-                        ratingDisplay += `<span style="color: ${i <= userRating ? '#ffd700' : '#666'}; font-size: 0.9rem;">★</span>`;
+                        const gid = `hg_${serie.id}_${i}`;
+                        if (userRating >= i) {
+                            ratingDisplay += `<svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1"/></svg>`;
+                        } else if (userRating >= i - 0.5) {
+                            ratingDisplay += `<svg width="16" height="16" viewBox="0 0 24 24"><defs><linearGradient id="${gid}" x1="0" x2="1" y1="0" y2="0"><stop offset="50%" stop-color="#ffd700"/><stop offset="50%" stop-color="#444"/></linearGradient></defs><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#${gid})" stroke="#ffd700" stroke-width="1"/></svg>`;
+                        } else {
+                            ratingDisplay += `<svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#444" stroke="#666" stroke-width="1"/></svg>`;
+                        }
                     }
+                    ratingDisplay += `<span style="color:#999; font-size:0.8rem; margin-left:3px;">${userRating}/5</span>`;
                     ratingDisplay += '</div>';
                 }
 
@@ -4313,7 +4629,14 @@
                                     ${userRating > 0 ? `
                                     <div class="more-info-item">
                                         <h4>Your Rating</h4>
-                                        <p>${'★'.repeat(userRating)}${'☆'.repeat(5 - userRating)} (${userRating}/5)</p>
+                                        <div style="display:flex;gap:2px;align-items:center;margin-top:4px;">
+                                            ${[1,2,3,4,5].map(i => {
+                                                if (userRating >= i) return `<svg width="18" height="18" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1"/></svg>`;
+                                                if (userRating >= i - 0.5) return `<svg width="18" height="18" viewBox="0 0 24 24"><defs><linearGradient id="mhg${i}" x1="0" x2="1" y1="0" y2="0"><stop offset="50%" stop-color="#ffd700"/><stop offset="50%" stop-color="#333"/></linearGradient></defs><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#mhg${i})" stroke="#ffd700" stroke-width="1"/></svg>`;
+                                                return `<svg width="18" height="18" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/></svg>`;
+                                            }).join('')}
+                                            <span style="color:#999;font-size:0.85rem;margin-left:4px;">${userRating}/5</span>
+                                        </div>
                                     </div>
                                     ` : ''}
                                     <div class="more-info-item">
@@ -4333,9 +4656,13 @@
                                     ${isSeries && serie.streamingService ? `
                                     <div class="more-info-item">
                                         <h4>Streaming Service</h4>
-                                        <div class="streaming-service-container">
-                                            <img src="${streamingIcons[serie.streamingService]}" alt="${serie.streamingService}" class="streaming-service-icon" style="width: 40px; height: 40px;" loading="lazy" decoding="async" onerror="this.style.display='none';">
-                                            <p style="margin: 0;">${serie.streamingService.charAt(0).toUpperCase() + serie.streamingService.slice(1)}</p>
+                                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                        ${serie.streamingService.split(',').map(s => s.trim()).filter(Boolean).map(svc => `
+                                            <div class="streaming-service-container" onclick="openStreamingService('${svc}', '${serie.title.replace(/'/g,"\\'")}');" style="cursor:pointer;" title="Watch on ${svc.charAt(0).toUpperCase() + svc.slice(1)}">
+                                                <img src="${streamingIcons[svc] || ''}" alt="${svc}" class="streaming-service-icon" style="width: 40px; height: 40px;" loading="lazy" decoding="async" onerror="this.style.display='none';">
+                                                <p style="margin: 0; text-decoration: underline;">${svc.charAt(0).toUpperCase() + svc.slice(1)} ↗</p>
+                                            </div>
+                                        `).join('')}
                                         </div>
                                     </div>
                                     ` : ''}
@@ -4343,6 +4670,19 @@
                                     <div class="more-info-item" style="grid-column: 1 / -1;">
                                         <h4>Dates</h4>
                                         ${datesDisplay}
+                                    </div>
+                                    ` : ''}
+                                    ${(serie.actors && serie.actors.length > 0) ? `
+                                    <div class="more-info-item" style="grid-column: 1 / -1;">
+                                        <h4>Favourite Actors</h4>
+                                        <div class="actors-grid">
+                                            ${serie.actors.filter(a => a.name).map(a => `
+                                                <div class="actor-card">
+                                                    <img src="${a.img || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'}" alt="${a.name}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'">
+                                                    <span>${a.name}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
                                     </div>
                                     ` : ''}
                                 </div>
@@ -4530,13 +4870,13 @@
                     s.status = newStatus;
                     // Auto-update dates
                     if (newStatus === 'watching' && !s.startedDate) {
-                        s.startedDate = new Date().toISOString().split('T')[0];
+                        s.startedDate = getLocalDateString();
                     }
                     if (newStatus === 'watching') {
-                        s.lastWatchedDate = new Date().toISOString().split('T')[0];
+                        s.lastWatchedDate = getLocalDateString();
                     }
                     if (newStatus === 'completed' && !s.completedDate) {
-                        s.completedDate = new Date().toISOString().split('T')[0];
+                        s.completedDate = getLocalDateString();
                     }
                 }
             });
@@ -4861,6 +5201,80 @@
                 secondaryColorInput.addEventListener('input', updateSecondaryColor);
                 secondaryColorInput.addEventListener('change', updateSecondaryColor);
             }
+
+            // Status badge color pickers
+            const watchingColorInput = document.getElementById('watchingColor');
+            const wantColorInput = document.getElementById('wantColor');
+            const completedColorInput = document.getElementById('completedColor');
+
+            function updateStatusColors() {
+                if (currentTheme === 'custom') {
+                    const wc = watchingColorInput ? watchingColorInput.value : '#e50914';
+                    const wt = wantColorInput ? wantColorInput.value : '#0062ff';
+                    const cc = completedColorInput ? completedColorInput.value : '#27ae60';
+                    document.documentElement.style.setProperty('--watching-color', wc);
+                    document.documentElement.style.setProperty('--want-color', wt);
+                    document.documentElement.style.setProperty('--completed-color', cc);
+                    // Update circle displays
+                    const wcc = document.getElementById('watchingColorCircle');
+                    const wtc = document.getElementById('wantColorCircle');
+                    const ccc = document.getElementById('completedColorCircle');
+                    if (wcc) { wcc.style.backgroundColor = wc; wcc.style.setProperty('--picker-color', wc); document.getElementById('watchingColorValue').textContent = wc.toUpperCase(); }
+                    if (wtc) { wtc.style.backgroundColor = wt; wtc.style.setProperty('--picker-color', wt); document.getElementById('wantColorValue').textContent = wt.toUpperCase(); }
+                    if (ccc) { ccc.style.backgroundColor = cc; ccc.style.setProperty('--picker-color', cc); document.getElementById('completedColorValue').textContent = cc.toUpperCase(); }
+                    saveSettings();
+                }
+            }
+            if (watchingColorInput) { watchingColorInput.addEventListener('input', updateStatusColors); watchingColorInput.addEventListener('change', updateStatusColors); }
+            if (wantColorInput) { wantColorInput.addEventListener('input', updateStatusColors); wantColorInput.addEventListener('change', updateStatusColors); }
+            if (completedColorInput) { completedColorInput.addEventListener('input', updateStatusColors); completedColorInput.addEventListener('change', updateStatusColors); }
+
+            // Apply status badge colors from CSS variables
+            const styleEl = document.createElement('style');
+            styleEl.id = 'statusColorStyle';
+            document.head.appendChild(styleEl);
+            function applyStatusColorStyle() {
+                if (currentTheme === 'custom') {
+                    const wc = (watchingColorInput && watchingColorInput.value) || '#e50914';
+                    const wt = (wantColorInput && wantColorInput.value) || '#0062ff';
+                    const cc = (completedColorInput && completedColorInput.value) || '#27ae60';
+                    styleEl.textContent = `
+                        body.custom-theme .status-watching { background-color: ${wc} !important; }
+                        body.custom-theme .status-want { background-color: ${wt} !important; }
+                        body.custom-theme .status-completed { background-color: ${cc} !important; }
+                        body.custom-theme .status-completed-item { border-left-color: ${cc} !important; }
+                        body.custom-theme .status-watching-item { border-left-color: ${wc} !important; }
+                        body.custom-theme .status-want-item { border-left-color: ${wt} !important; }
+                    `;
+                } else {
+                    styleEl.textContent = '';
+                }
+            }
+            // Patch applyTheme to also apply status colors
+            const _origApplyTheme = applyTheme;
+            applyTheme = function(theme) { _origApplyTheme(theme); applyStatusColorStyle(); };
+
+            // Streaming multi-select chip logic
+            document.querySelectorAll('#streamingMultiSelect .streaming-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('selected');
+                    const selected = Array.from(document.querySelectorAll('#streamingMultiSelect .streaming-chip.selected'))
+                        .map(c => c.getAttribute('data-service'));
+                    document.getElementById('seriesStreamingService').value = selected.join(',');
+                });
+            });
+
+            // Clear actors and streaming when form resets
+            const origReset = seriesForm.reset.bind(seriesForm);
+            seriesForm.reset = function() {
+                origReset();
+                document.querySelectorAll('#actorsContainer .actor-entry').forEach(e => {
+                    e.querySelector('.actor-name').value = '';
+                    e.querySelector('.actor-img').value = '';
+                });
+                document.querySelectorAll('#streamingMultiSelect .streaming-chip').forEach(c => c.classList.remove('selected'));
+                document.getElementById('seriesStreamingService').value = '';
+            };
 
 
             // Sidebar add content button
@@ -5471,7 +5885,7 @@
                     if (fieldName === 'tags') {
                         value = value ? value.split(',').map(t => t.trim()).filter(t => t) : [];
                     } else if (fieldName === 'userRating') {
-                        value = parseInt(document.getElementById('seriesUserRatingValue').value) || 0;
+                        value = parseFloat(document.getElementById('seriesUserRatingValue').value) || 0;
                     }
                     
                     // Update serie object
@@ -5500,13 +5914,25 @@
                         const newSeason = fieldName === 'season' ? value : serie.season;
                         
                         if (oldEpisode !== newEpisode || oldSeason !== newSeason) {
-                            serie.lastWatchedDate = new Date().toISOString().split('T')[0];
+                            serie.lastWatchedDate = getLocalDateString();
                             // Update the form field if it exists
                             const lastWatchedInput = document.getElementById('seriesLastWatchedDate');
                             if (lastWatchedInput) {
                                 lastWatchedInput.value = serie.lastWatchedDate;
                             }
                         }
+                    }
+
+                    // Auto-expand totals if current exceeds them
+                    if (fieldName === 'season' && serie.totalSeasons && value > serie.totalSeasons) {
+                        serie.totalSeasons = value;
+                        const totalSeasonsInput = document.getElementById('seriesTotalSeasons');
+                        if (totalSeasonsInput) totalSeasonsInput.value = value;
+                    }
+                    if (fieldName === 'episode' && serie.totalEpisodes && value > serie.totalEpisodes) {
+                        serie.totalEpisodes = value;
+                        const totalEpisodesInput = document.getElementById('seriesTotalEpisodes');
+                        if (totalEpisodesInput) totalEpisodesInput.value = value;
                     }
                     
                     saveData();
@@ -5527,7 +5953,7 @@
                     }
                     
                     // Refresh display if needed
-                    if (fieldName === 'status' || fieldName === 'contentType') {
+                    if (fieldName === 'status' || fieldName === 'contentType' || fieldName === 'time') {
                         renderSeries();
                         renderPriorityList();
                         renderStatistics();
@@ -5597,6 +6023,23 @@
             }
             
             // Special handling for rating stars (including half-stars)
+            document.querySelectorAll('.rating-input .star-rating').forEach(starRating => {
+                starRating.addEventListener('click', function(e) {
+                    const rect = starRating.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const halfRating = parseFloat(starRating.getAttribute('data-half-rating'));
+                    const fullRating = parseFloat(starRating.getAttribute('data-rating'));
+                    const rating = clickX < rect.width / 2 ? halfRating : fullRating;
+                    document.getElementById('seriesUserRatingValue').value = rating;
+                    updateRatingDisplay(rating);
+                    const ratingField = document.getElementById('seriesUserRatingValue');
+                    if (ratingField) {
+                        autoSaveField(ratingField, 'userRating');
+                    }
+                });
+            });
+            
+            // Also handle old star and star-half elements for backward compatibility
             document.querySelectorAll('.rating-input .star, .rating-input .star-half').forEach(star => {
                 star.addEventListener('click', function() {
                     const rating = parseFloat(this.getAttribute('data-rating'));
@@ -5657,6 +6100,43 @@
             });
 
             // Rating stars functionality (including half-stars)
+            const starRatings = document.querySelectorAll('.rating-input .star-rating');
+            starRatings.forEach(starRating => {
+                starRating.addEventListener('click', (e) => {
+                    const rect = starRating.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const halfRating = parseFloat(starRating.getAttribute('data-half-rating'));
+                    const fullRating = parseFloat(starRating.getAttribute('data-rating'));
+                    const rating = clickX < rect.width / 2 ? halfRating : fullRating;
+                    document.getElementById('seriesUserRatingValue').value = rating;
+                    updateRatingDisplay(rating);
+                });
+                starRating.addEventListener('mousemove', (e) => {
+                    const rect = starRating.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const halfRating = parseFloat(starRating.getAttribute('data-half-rating'));
+                    const fullRating = parseFloat(starRating.getAttribute('data-rating'));
+                    const hoverRating = mouseX < rect.width / 2 ? halfRating : fullRating;
+                    // Get all previous stars' full ratings
+                    const allStarRatings = Array.from(document.querySelectorAll('.rating-input .star-rating'));
+                    const currentIndex = allStarRatings.indexOf(starRating);
+                    let previewRating = hoverRating;
+                    for (let i = 0; i < currentIndex; i++) {
+                        previewRating = Math.max(previewRating, parseFloat(allStarRatings[i].getAttribute('data-rating')));
+                    }
+                    updateRatingDisplay(previewRating);
+                });
+            });
+            
+            const ratingInput = document.getElementById('seriesUserRating');
+            if (ratingInput) {
+                ratingInput.addEventListener('mouseleave', () => {
+                    const currentRating = parseFloat(document.getElementById('seriesUserRatingValue').value) || 0;
+                    updateRatingDisplay(currentRating);
+                });
+            }
+            
+            // Also handle old star and star-half elements for backward compatibility
             const stars = document.querySelectorAll('.rating-input .star, .rating-input .star-half');
             stars.forEach(star => {
                 star.addEventListener('click', (e) => {
@@ -5669,14 +6149,6 @@
                     updateRatingDisplay(rating);
                 });
             });
-
-            const ratingInput = document.getElementById('seriesUserRating');
-            if (ratingInput) {
-                ratingInput.addEventListener('mouseleave', () => {
-                    const currentRating = parseFloat(document.getElementById('seriesUserRatingValue').value) || 0;
-                    updateRatingDisplay(currentRating);
-                });
-            }
 
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -5855,7 +6327,6 @@
             const genre = document.getElementById('seriesGenre').value.trim();
             const status = document.getElementById('seriesStatus').value;
             const contentType = document.getElementById('seriesContentType').value;
-            const streamingService = document.getElementById('seriesStreamingService').value;
             const season = parseInt(document.getElementById('seriesSeason').value) || 1;
             const episode = parseInt(document.getElementById('seriesEpisode').value) || 1;
             const time = parseInt(document.getElementById('seriesTime').value) || 0;
@@ -5864,13 +6335,24 @@
             const imdbRating = document.getElementById('seriesImdb').value.trim();
             const language = document.getElementById('seriesLanguage').value.trim();
             const inQueue = document.getElementById('seriesInQueue').checked;
-            const userRating = parseInt(document.getElementById('seriesUserRatingValue').value) || 0;
+            const userRating = parseFloat(document.getElementById('seriesUserRatingValue').value) || 0;
             const tagsInput = document.getElementById('seriesTags').value.trim();
             const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
             const notes = document.getElementById('seriesNotes').value.trim();
             const startedDate = document.getElementById('seriesStartedDate').value || null;
             const completedDate = document.getElementById('seriesCompletedDate').value || null;
             const lastWatchedDate = document.getElementById('seriesLastWatchedDate').value || null;
+
+            // Read actors
+            const actors = [];
+            document.querySelectorAll('#actorsContainer .actor-entry').forEach(entry => {
+                const name = entry.querySelector('.actor-name').value.trim();
+                const img = entry.querySelector('.actor-img').value.trim();
+                if (name) actors.push({ name, img });
+            });
+
+            // Read streaming services (multi-select)
+            const streamingService = document.getElementById('seriesStreamingService').value || '';
             
             const editingId = seriesForm.getAttribute('data-editing');
             
@@ -5896,13 +6378,13 @@
                     // Update last watched date if status changed to watching or episode/time changed
                     let updatedLastWatched = lastWatchedDate;
                     if (status === 'watching' && (oldStatus !== 'watching' || episode !== series[index].episode || time !== series[index].time)) {
-                        updatedLastWatched = new Date().toISOString().split('T')[0];
+                        updatedLastWatched = getLocalDateString();
                     }
                     
                     // Update completed date if status changed to completed
                     let updatedCompletedDate = completedDate;
                     if (status === 'completed' && oldStatus !== 'completed') {
-                        updatedCompletedDate = updatedCompletedDate || new Date().toISOString().split('T')[0];
+                        updatedCompletedDate = updatedCompletedDate || getLocalDateString();
                     }
                     
                     series[index] = {
@@ -5926,7 +6408,8 @@
                         notes,
                         startedDate: startedDate || series[index].startedDate || null,
                         completedDate: updatedCompletedDate || series[index].completedDate || null,
-                        lastWatchedDate: updatedLastWatched || series[index].lastWatchedDate || null
+                        lastWatchedDate: updatedLastWatched || series[index].lastWatchedDate || null,
+                        actors: actors
                     };
                     
                     if (inQueue && !oldInQueue) {
@@ -5944,9 +6427,9 @@
                     -1;
                 
                 // Set started date if status is watching
-                const autoStartedDate = (status === 'watching' && !startedDate) ? new Date().toISOString().split('T')[0] : startedDate;
-                const autoCompletedDate = (status === 'completed' && !completedDate) ? new Date().toISOString().split('T')[0] : completedDate;
-                const autoLastWatched = (status === 'watching' && !lastWatchedDate) ? new Date().toISOString().split('T')[0] : lastWatchedDate;
+                const autoStartedDate = (status === 'watching' && !startedDate) ? getLocalDateString() : startedDate;
+                const autoCompletedDate = (status === 'completed' && !completedDate) ? getLocalDateString() : completedDate;
+                const autoLastWatched = (status === 'watching' && !lastWatchedDate) ? getLocalDateString() : lastWatchedDate;
                 
                 series.push({
                     id: newId,
@@ -5970,7 +6453,8 @@
                     notes,
                     startedDate: autoStartedDate,
                     completedDate: autoCompletedDate,
-                    lastWatchedDate: autoLastWatched
+                    lastWatchedDate: autoLastWatched,
+                    actors: actors
                 });
             }
             
@@ -6022,6 +6506,22 @@
             document.getElementById('seriesStartedDate').value = serie.startedDate || '';
             document.getElementById('seriesCompletedDate').value = serie.completedDate || '';
             document.getElementById('seriesLastWatchedDate').value = serie.lastWatchedDate || '';
+
+            // Populate actors
+            const actorEntries = document.querySelectorAll('#actorsContainer .actor-entry');
+            const actors = serie.actors || [];
+            actorEntries.forEach((entry, i) => {
+                entry.querySelector('.actor-name').value = (actors[i] && actors[i].name) ? actors[i].name : '';
+                entry.querySelector('.actor-img').value = (actors[i] && actors[i].img) ? actors[i].img : '';
+            });
+
+            // Populate streaming multi-select
+            const chips = document.querySelectorAll('#streamingMultiSelect .streaming-chip');
+            const services = (serie.streamingService || '').split(',').map(s => s.trim()).filter(Boolean);
+            chips.forEach(chip => {
+                chip.classList.toggle('selected', services.includes(chip.getAttribute('data-service')));
+            });
+            document.getElementById('seriesStreamingService').value = serie.streamingService || '';
             
             toggleEpisodeFields(contentType);
             handleStatusChange(serie.status);
@@ -6032,23 +6532,30 @@
         }
 
         function updateRatingDisplay(rating) {
-            const allStars = document.querySelectorAll('.rating-input .star, .rating-input .star-half');
-            allStars.forEach((star) => {
-                const starRating = parseFloat(star.getAttribute('data-rating'));
-                if (starRating <= rating) {
-                    star.classList.add('filled', 'active');
-                    if (star.classList.contains('star-half')) {
-                        star.textContent = '⯪';
-                    } else {
-                        star.textContent = '★';
-                    }
+            const allStarRatings = document.querySelectorAll('.rating-input .star-rating');
+            allStarRatings.forEach((starRating) => {
+                const fullRating = parseFloat(starRating.getAttribute('data-rating'));
+                const halfRating = parseFloat(starRating.getAttribute('data-half-rating'));
+                const starFill = starRating.querySelector('.star-fill');
+                const starHalf = starRating.querySelector('.star-half-fill');
+                const starBg = starRating.querySelector('.star-bg');
+
+                starRating.classList.remove('filled', 'half-filled');
+
+                if (starFill) starFill.style.display = 'none';
+                if (starHalf) starHalf.style.display = 'none';
+                if (starBg) { starBg.setAttribute('fill', '#333'); starBg.setAttribute('stroke', '#555'); }
+
+                if (rating >= fullRating) {
+                    starRating.classList.add('filled');
+                    if (starFill) starFill.style.display = 'block';
+                    if (starBg) starBg.style.display = 'none';
+                } else if (rating >= halfRating) {
+                    starRating.classList.add('half-filled');
+                    if (starHalf) starHalf.style.display = 'block';
+                    if (starBg) { starBg.style.display = 'block'; starBg.setAttribute('fill', '#333'); starBg.setAttribute('stroke', '#555'); }
                 } else {
-                    star.classList.remove('filled', 'active');
-                    if (star.classList.contains('star-half')) {
-                        star.textContent = '⯪';
-                    } else {
-                        star.textContent = '☆';
-                    }
+                    if (starBg) starBg.style.display = 'block';
                 }
             });
         }
@@ -6151,6 +6658,7 @@
             loadSettings();
             loadAppSettings();
             loadNotifications(); // Load notifications for current user
+            cleanupOldDismissedNotifications(); // Clean up old dismissed notifications
             applyTheme(currentTheme);
             // Setup event listeners first
             setupEventListeners();
