@@ -3,6 +3,7 @@
 ![Status](https://img.shields.io/badge/status-active-success)
 ![Version](https://img.shields.io/badge/version-1.4.0-blue)
 ![Made with](https://img.shields.io/badge/made%20with-HTML%20%7C%20CSS%20%7C%20JavaScript-orange)
+![Creative Commons](https://img.shields.io/badge/license-CC_BY_4.0-red)
 
 ---
 
