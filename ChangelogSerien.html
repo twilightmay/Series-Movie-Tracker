@@ -296,7 +296,7 @@
             </div>
             <div class="header-controls">
                 <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
-                <a href="index.html" class="nav-link">← Back to Tracker</a>
+                <a href="Serien.html" class="nav-link">← Back to Tracker</a>
             </div>
         </header>
 
@@ -304,6 +304,58 @@
             Track all updates, features, and improvements to the Series & Movie Tracker.
         </div>
           <div class="changelog-content">
+            <!-- Version 1.5 -->
+            <div class="version-card">
+                <div class="version-header">
+                    <span class="version-number">Version 1.5</span>
+                    <span class="version-date">March 2026</span>
+                </div>
+
+                <h3 class="section-title">New Features</h3>
+                <ul class="feature-list">
+                    <li><strong>Favourite Actors:</strong> You can now add up to 3 favourite actors/voice actors per entry, including their name and a profile image URL — a feature that was long planned and is finally here!</li>
+                    <li><strong>Custom Status Badge Colors:</strong> In the Custom Theme you can now individually change the color of each status badge — Currently Watching, Want to Watch, and Completed — fully personalizing your tracker</li>
+                    <li><strong>Streaming Service Quick-Links:</strong> Clicking the streaming service icon on an entry now opens a search directly on that platform so you can jump straight into watching</li>
+                    <li><strong>Ratings:</strong> You can now rate series and movies on a scale of 1 to 10 (Full stars and half stars), with the average rating displayed prominently</li>
+                    <li><strong>Cookie Warning Banner:</strong> A cookie/storage usage notice is now shown on first visit and can be dismissed permanently</li>
+                    <li><strong>Auto-Save While Editing:</strong> Form fields now auto-save changes after 1 second of no typing when editing existing entries — a green ✓ confirms the save, and you no longer need to press Save for every small change</li>
+                    <li><strong>Auto-Update Last Watched Date:</strong> When you update the current season or episode of a series you are watching, the Last Watched Date is automatically set to today</li>
+                    <li><strong>Auto-Expand Totals:</strong> If you set the current season/episode higher than the stored total, the total is automatically updated to match</li>
+                </ul>
+
+                <h3 class="section-title">Improvements</h3>
+                <ul class="feature-list">
+                    <li><strong>Full Mobile Responsiveness Overhaul:</strong> The tracker now has thorough responsive breakpoints for large tablets (1400px), tablets (1023px), mobile (767px), small mobile (480px), and landscape orientation — everything from the header to modals and the sidebar adapts cleanly</li>
+                    <li><strong>Touch Device Optimizations:</strong> Hover effects are disabled on touch screens to avoid sticky hover states, and all buttons now have a minimum touch target size of 44px</li>
+                    <li><strong>Page Load Optimization:</strong> The logo now loads eagerly for faster perceived load times, and images across the app use lazy loading with async decoding to prevent blocking the page</li>
+                    <li><strong>Sidebar on Mobile:</strong> The sidebar now takes the full width on small screens instead of a fixed 350px, making it much easier to use on phones</li>
+                    <li><strong>Font Smoothing:</strong> Added webkit and moz font smoothing for crisper text rendering on all devices</li>
+                    <li><strong>Horizontal Scroll Prevention:</strong> The body no longer produces a horizontal scrollbar on narrow screens</li>
+                </ul>
+
+                <h3 class="section-title">Bug Fixes</h3>
+                <ul class="feature-list">
+                    <li>Profile pictures now fall back to a placeholder image if the URL fails to load instead of showing a broken image icon</li>
+                    <li>Closing the series modal by clicking outside now properly resets the rating display back to 0</li>
+                    <li>Import options modal no longer accidentally triggers the content-type selection dialog</li>
+                </ul>
+
+                <h3 class="section-title">Coming Soon</h3>
+                <ul class="future-list">
+                    <li><strong>Better Statistics:</strong> Enhanced statistics with graphs and more detailed per-genre and per-streaming-service breakdowns</li>
+                    <li><strong>API Integration (Full):</strong> Completing OMDB and Watchmode API support for fully automatic cover, rating and streaming service detection</li>
+                    <li><strong>Better Color Picker for Themes:</strong> Improved design of the custom color picker UI</li>
+                </ul>
+
+                <h3 class="section-title">Ideas Under Consideration</h3>
+                <ul class="idea-list">
+                    <li>Custom Filters - create your own filtering rules</li>
+                    <li>FSK or PEGI Age Rating - Add age rating filters for content</li>
+                    <li>SM Logo changes with the Secondary Color - When the theme is changed, the logo adapts to match</li>
+                    <li>More Content Orders / Grid Layouts - Different grid arrangements beyond the current list view</li>
+                </ul>
+            </div>
+
             <!-- Fix 1.4 -->
             <div class="version-card">
                 <div class="version-header">
@@ -471,7 +523,7 @@
                     <li><strong>Theme Switching:</strong> Black and White theme toggle added for better viewing experience</li>
                     <li><strong>Movie-Specific Display:</strong> Episodes, seasons, and other series-specific details are hidden for movies</li>
                     <li><strong>Streaming Service Details:</strong> Now you can specify which streaming service you're using to watch content</li>
-                    <li><strong>Data Management:</strong> Finally able to delete cookies and clear data properly - no more empty files! ( only some data is saved)</li>
+                    <li><strong>Data Management:</strong> Finally able to delete cookies and clear data properly - no more empty files!</li>
                     <li><strong>LocalStorage Implementation:</strong> All data is now securely stored in browser localStorage</li>
                     <li><strong>Persistent Filters:</strong> Filters and sort options now save when you close the page</li>
                     <li><strong>Reload Protection:</strong> Reloading the page won't reset your filters to default anymore</li>
