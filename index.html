@@ -7252,8 +7252,8 @@
                 }
             });
 
-            // Only attach event listener to content-type-option elements within contentTypeDialog, not import options modal
-            contentTypeDialog.querySelectorAll('.content-type-option').forEach(option => {
+            // Only attach event listener to ct-option elements within contentTypeDialog, not import options modal
+            contentTypeDialog.querySelectorAll('.ct-option').forEach(option => {
                 option.addEventListener('click', (e) => {
                     const selectedType = e.currentTarget.getAttribute('data-type');
                     contentTypeDialog.style.display = 'none';
