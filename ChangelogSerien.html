@@ -303,8 +303,46 @@
         <div class="intro-text">
             Track all updates, features, and improvements to the Series & Movie Tracker.
         </div>
+        
           <div class="changelog-content">
-            <!-- Version 1.5 -->
+            <!-- Version 1.6 -->
+<div class="version-card">
+    <div class="version-header">
+        <span class="version-number">Version 1.6</span>
+        <span class="version-date">April 2026</span>
+    </div>
+
+    <h3 class="section-title">New Features</h3>
+    <ul class="feature-list">
+        <li><strong>Watch Timeline Range Selector:</strong> You can now switch the statistics timeline between Lifetime, 1 Year, or 1 Month — making it easier to see your recent watching habits.</li>
+        <li><strong>“Max Time to Finish” & Timer:</strong> Set an estimated time (in minutes) for a movie or episode. Long‑press (650ms) on a series card to start a timer. When the time runs out, the tracker automatically advances to the next episode/season or marks the series as completed.</li>
+        <li><strong>Smarter Watch History:</strong> Editing the current season, episode, or time while a series is marked as “Watching” now automatically updates the “Last Watched Date” and logs the change in the watch history.</li>
+        <li><strong>Enhanced Timeline Visuals:</strong> The watch timeline now features a smooth animated line, gradient area fill, glowing hover effects, and a tooltip that shows detailed per‑day session information. Click any dot to pin the details.</li>
+        <li><strong>Improved Streaming Icon Fallback:</strong> If a streaming service icon fails to load, the app falls back to a generic favicon lookup (e.g., <code>google.com/s2/favicons</code>) so you never see broken images.</li>
+    </ul>
+
+    <h3 class="section-title">Improvements</h3>
+    <ul class="feature-list">
+        <li>Sidebar now uses full width on mobile devices, making it much easier to use on small screens.</li>
+        <li>Touch device optimisations: hover effects are disabled, and all interactive elements have a minimum touch target size of 44px.</li>
+        <li>Images now load with lazy loading and async decoding to prevent blocking the page during initial render.</li>
+        <li>Logo loads eagerly for faster perceived performance.</li>
+    </ul>
+
+    <h3 class="section-title">Bug Fixes</h3>
+    <ul class="feature-list">
+        <li>Fixed an issue where the timeline would not update correctly when switching between different timeline ranges.</li>
+        <li>Corrected a bug that prevented the “Last Watched Date” from being recorded when editing an existing series.</li>
+    </ul>
+
+    <h3 class="section-title">Coming Soon</h3>
+    <ul class="future-list">
+        <li><strong>Full API Integration:</strong> Automatic cover, rating, and streaming service detection via OMDB and Watchmode (work in progress).</li>
+        <li><strong>Better Statistics Graphs:</strong> More detailed per‑genre and per‑service breakdowns.</li>
+        <li><strong>Custom Filters:</strong> Create your own filter rules for advanced organisation.</li>
+    </ul>
+</div>
+              <!-- Version 1.5 -->
             <div class="version-card">
                 <div class="version-header">
                     <span class="version-number">Version 1.5</span>
