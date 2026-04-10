@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+   <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+    <title>Series & Movie Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <!-- JS Compatibility Shims: hidden elements that old JS code references -->
+    <select id="userSelectDropdown" style="display:none">
+        <option value="">-- Select a user --</option>
+    </select>
+    <div id="userSelectContainer" style="display:none"></div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">Menu</h2>
+            <button class="close-sidebar" id="closeSidebar" aria-label="Close menu">✕</button>
+        </div>
+        <div class="sidebar-content">
+            <!-- CONTENT -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12l5-3v6l-5-3zm0 0h20M7 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/></svg>Content</div>
+                <button class="sidebar-add-content-btn" id="sidebarAddContentBtn"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Content</button>
+            </div>
+            <!-- PROFILES -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+                <div class="user-profile-display" id="currentUserDisplay">
+                    <img src="" alt="Profile" class="user-profile-picture" id="currentUserPicture" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png';">
+                    <div class="user-profile-info">
+                        <div class="user-profile-name" id="currentUserName">Loading...</div>
+                        <div class="user-profile-stats" id="currentUserStats">0 items</div>
+                    </div>
+                </div>
+                <button class="change-user-btn" id="changeUserBtn"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Change User</button>
+            </div>
+            <!-- THEME -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8a4 4 0 1 0 0 8"/></svg>Themes</div>
+                <div class="theme-option active" data-theme="dark">
+                    <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 1 1 8.5 4 7 7 0 0 0 20 15.5z"/></svg> Dark</span>
+                    <span class="filter-option-check">✓</span>
+                </div>
+                <div class="theme-option" data-theme="light">
+                    <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Light</span>
+                    <span class="filter-option-check">✓</span>
+                </div>
+                <div class="theme-option" data-theme="custom">
+                    <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M3 12h18"/><path d="M5.5 5.5l13 13"/><path d="M18.5 5.5l-13 13"/></svg> Custom</span>
+                    <span class="filter-option-check">✓</span>
+                </div>
+                <div class="custom-theme-controls" id="customThemeControls">
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-circle" id="primaryColorCircle" style="--picker-color: #141414;">
+                            <input type="color" id="primaryColor" class="color-picker-input" value="#141414">
+                        </div>
+                        <div class="color-picker-label">
+                            <span class="color-picker-label-text">Primary Color (Background)</span>
+                            <span class="color-picker-value" id="primaryColorValue">#141414</span>
+                        </div>
+                    </div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-circle" id="secondaryColorCircle" style="--picker-color: #e50914;">
+                            <input type="color" id="secondaryColor" class="color-picker-input" value="#e50914">
+                        </div>
+                        <div class="color-picker-label">
+                            <span class="color-picker-label-text">Secondary Color (Accent)</span>
+                            <span class="color-picker-value" id="secondaryColorValue">#e50914</span>
+                        </div>
+                    </div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-circle" id="watchingColorCircle" style="--picker-color: #e50914;">
+                            <input type="color" id="watchingColor" class="color-picker-input" value="#e50914">
+                        </div>
+                        <div class="color-picker-label">
+                            <span class="color-picker-label-text">Currently Watching Badge</span>
+                            <span class="color-picker-value" id="watchingColorValue">#e50914</span>
+                        </div>
+                    </div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-circle" id="wantColorCircle" style="--picker-color: #0062ff;">
+                            <input type="color" id="wantColor" class="color-picker-input" value="#0062ff">
+                        </div>
+                        <div class="color-picker-label">
+                            <span class="color-picker-label-text">Want to Watch Badge</span>
+                            <span class="color-picker-value" id="wantColorValue">#0062ff</span>
+                        </div>
+                    </div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-circle" id="completedColorCircle" style="--picker-color: #27ae60;">
+                            <input type="color" id="completedColor" class="color-picker-input" value="#27ae60">
+                        </div>
+                        <div class="color-picker-label">
+                            <span class="color-picker-label-text">Completed Badge</span>
+                            <span class="color-picker-value" id="completedColorValue">#27ae60</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- SETTINGS -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</div>
+                <label class="sidebar-menu-item" style="justify-content: space-between;">
+                    <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Auto Export</span>
+                    <input type="checkbox" id="settingAutoExport" style="cursor: pointer; flex-shrink:0; width:18px; height:18px; accent-color: var(--secondary-color, #e50914);">
+                </label>
+                <label class="sidebar-menu-item" style="justify-content: space-between;">
+                    <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg> Show Intro</span>
+                    <input type="checkbox" id="settingShowIntro" style="cursor: pointer; flex-shrink:0; width:18px; height:18px; accent-color: var(--secondary-color, #e50914);">
+                </label>
+                <label class="sidebar-menu-item" style="justify-content: space-between;">
+                    <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications</span>
+                    <input type="checkbox" id="settingShowNotifications" style="cursor: pointer; flex-shrink:0; width:18px; height:18px; accent-color: var(--secondary-color, #e50914);">
+                </label>
+                <button class="sidebar-menu-item" id="openNotificationCalendarBtn" style="border:none; background:rgba(255,255,255,0.05); color:inherit; width:100%;"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Notification Calendar</button>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                    <div style="font-size: 0.82rem; color: #aaa; margin-bottom: 6px; font-weight: 600;" class="auto-save-label">Auto Export Interval</div>
+                    <div style="font-size: 0.75rem; color: #666; margin-bottom: 8px; font-style: italic;" class="auto-save-info">Only works when on site</div>
+                    <select id="settingAutoSaveInterval" class="sidebar-menu-item" style="padding: 0 12px; height: 44px; background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; color: inherit; cursor: pointer; margin-top: 0; font-size: 0.9rem; appearance: auto;">
+                        <option value="off">Off</option>
+                        <option value="1min">Every 1 minute</option>
+                        <option value="10min">Every 10 minutes</option>
+                        <option value="1h">Every 1 hour</option>
+                        <option value="10h">Every 10 hours</option>
+                        <option value="1week">Every 1 week</option>
+                    </select>
+                </div>
+            </div>
+            <!-- EXPORT & IMPORT -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import / Export</div>
+                <button class="sidebar-menu-item" id="exportBtn"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Export List</button>
+                <button class="sidebar-menu-item" id="importBtn"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Import List</button>
+                <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            </div>
+            <!-- GUIDE & INFO -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Help</div>
+                <a href="SeriesTracker_Guide.html" class="sidebar-menu-item"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Guide &amp; Tutorials</a>
+                <a href="ChangelogSerien.html" class="sidebar-menu-item"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Changelog</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <img src="https://i.imgur.com/zopUQf6.png" style="height: 150px;" alt="Logo" loading="eager" decoding="async" onerror="this.style.display='none';">
+            <h1>Series & Movie Tracker</h1>
+            <div class="header-controls">
+                <div class="hamburger-menu" id="hamburgerMenu" role="button" tabindex="0" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+                    <div class="hamburger-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="search-filter-bar">
+            <div class="search-bar">
+                <span class="search-icon"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search across all series and movies...">
+            </div>
+            <div class="filter-dropdown">
+                <button class="filter-menu-btn" id="filterMenuBtn">
+                    <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg></span>
+                    <span>Filters &amp; Sort</span>
+                </button>
+                <div class="filter-dropdown-content" id="filterDropdown">
+                    <div class="filter-section">
+                        <div class="filter-section-title"><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>Sort By</div>
+                        <div class="filter-option active" data-sort="default">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Default Order</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-sort="title-asc">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16M8 4h8M10 4v16"/></svg>Title (A-Z)</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-sort="title-desc">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16M8 20h8M10 4v16"/></svg>Title (Z-A)</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-sort="time-desc">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>Most Time Spent</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-sort="time-asc">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l-3 3"/><circle cx="12" cy="12" r="9"/></svg>Least Time Spent</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <div class="filter-section-title"><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>View Size</div>
+                        <div class="view-size-options">
+                            <div class="view-size-option" data-size="compact">Small</div>
+                            <div class="view-size-option active" data-size="normal">Normal</div>
+                            <div class="view-size-option" data-size="large">Large</div>
+                            <div class="view-size-option" data-size="custom">Custom</div>
+                        </div>
+                        <div class="custom-size-controls" id="customSizeControls" style="display: none;">
+                            <div class="custom-size-label">
+                                <span>Size: <span id="customSizeValue">50</span>%</span>
+                                <span class="size-range-labels">
+                                    <span>Mini</span>
+                                    <span>Giant</span>
+                                </span>
+                            </div>
+                            <input type="range" id="customSizeSlider" min="0" max="100" value="50" class="custom-size-slider">
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <div class="filter-section-title"><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>Content Type Filter</div>
+                        <div class="filter-option active" data-content-filter="all">
+                            <span>All Types</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-content-filter="series">
+                            <span>Series Only</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-content-filter="movie">
+                            <span>Movies Only</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <div class="filter-section-title"><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Filter by Category</div>
+                        <div class="filter-option active" data-category="all">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>All Categories</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-category="watching">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Currently Watching</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-category="want">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Want to Watch</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                        <div class="filter-option" data-category="completed">
+                            <span><svg style="width:13px;height:13px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Completed</span>
+                            <span class="filter-option-check">✓</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-controls">
+            <button class="filter-btn" data-filter="all"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>All</button>
+            <button class="filter-btn active" data-filter="watching"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Currently Watching</button>
+            <button class="filter-btn" data-filter="want"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Want to Watch</button>
+            <button class="filter-btn" data-filter="completed"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Completed</button>
+        </div>
+
+        <!-- Statistics Dashboard -->
+        <div class="statistics-dashboard" id="statisticsDashboard">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; cursor: pointer;" id="statsHeader">
+                <h2 style="margin: 0;"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Statistics</h2>
+                <span class="expand-icon" id="statsExpandIcon">▼</span>
+            </div>
+            <div id="statsContent" style="max-height: 2000px; opacity: 1; transition: max-height 0.3s ease-out, opacity 0.3s ease-out; overflow: hidden;">
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be populated by JavaScript -->
+                </div>
+                <div class="genre-breakdown" id="genreBreakdown">
+                    <h3>Genre Breakdown</h3>
+                    <div id="genreList"></div>
+                </div>
+                <div class="watch-timeline" id="watchTimeline">
+                    <div class="watch-timeline-header">
+                        <span class="watch-timeline-title">Watch Timeline</span>
+                        <div class="watch-timeline-head-right">
+                            <select id="timelineRangeSelect" class="timeline-range-select" title="Timeline range">
+                                <option value="lifetime">Lifetime</option>
+                                <option value="1y">1 Year</option>
+                                <option value="1m">1 Month</option>
+                            </select>
+                            <span class="watch-timeline-count" id="watchTimelineCount"></span>
+                        </div>
+                    </div>
+                    <div style="position:relative;">
+                        <svg class="watch-timeline-svg" id="watchTimelineGraph" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMid meet"></svg>
+                        <div class="wt-tooltip" id="wtTooltip">
+                            <div class="wt-tooltip-title" id="wtTooltipTitle"></div>
+                            <div class="wt-tooltip-sub" id="wtTooltipSub"></div>
+                        </div>
+                    </div>
+                    <div class="watch-timeline-details" id="watchTimelineDetails">Hover a point to inspect — click to pin.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Operations Bar -->
+        <div class="bulk-operations" id="bulkOperations">
+            <div class="bulk-operations-header">
+                <span class="bulk-operations-count" id="bulkOperationsCount">0 items selected</span>
+                <button class="bulk-btn" id="bulkDeselectAll">Deselect All</button>
+            </div>
+            <div class="bulk-operations-actions">
+                <button class="bulk-btn" id="bulkDelete">Delete Selected</button>
+                <button class="bulk-btn" id="bulkMoveWatching">Move to Watching</button>
+                <button class="bulk-btn" id="bulkMoveWant">Move to Want to Watch</button>
+                <button class="bulk-btn" id="bulkMoveCompleted">Move to Completed</button>
+                <button class="bulk-btn" id="bulkAddQueue">Add to Queue</button>
+                <button class="bulk-btn" id="bulkRemoveQueue">Remove from Queue</button>
+            </div>
+        </div>
+
+        <div class="series-list" id="seriesList"></div>
+
+        <div class="priority-section">
+            <h2>Watchlist</h2>
+            <div id="priorityList"></div>
+        </div>
+    </div>
+
+    <!-- User Selection Modal -->
+    <div class="overlay" id="userSelectModal">
+        <div class="um-card">
+            <button class="um-close" id="cancelUserSelectBtn" title="Close">✕</button>
+            <div class="um-title"><svg style="width:18px;height:18px;vertical-align:-3px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg> User Profiles</div>
+
+            <!-- Avatar picker row -->
+            <div class="um-section-label">Select Profile</div>
+            <div class="um-avatar-row" id="umAvatarRow">
+                <!-- populated by JS via renderUserAvatars() -->
+            </div>
+
+            <div class="um-warning" id="maxUsersWarning"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Maximum of 5 users reached</div>
+            <div class="um-divider"></div>
+
+            <!-- Confirm / New User buttons -->
+            <div id="umMainActions" class="um-strip">
+                <button class="um-btn" id="createUserLink"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New User</button>
+                <button class="um-btn um-primary" id="confirmUserSelectBtn">✓ Select</button>
+            </div>
+
+            <!-- Create User inline form -->
+            <div class="um-inline-form" id="createUserForm" style="display:none;">
+                <div class="um-section-label" style="margin-top:16px;">Create New User</div>
+                <label class="um-input-label" for="newUserName">Name</label>
+                <input type="text" id="newUserName" class="um-input" placeholder="Enter name…">
+                <label class="um-input-label" for="newUserPicture">Profile Picture URL</label>
+                <input type="text" id="newUserPicture" class="um-input" placeholder="https://…">
+                <div class="um-strip">
+                    <button class="um-btn" id="cancelCreateUserBtn">Cancel</button>
+                    <button class="um-btn um-primary" id="createUserBtn">Create</button>
+                </div>
+            </div>
+
+            <!-- Edit User inline form -->
+            <div class="um-inline-form" id="editUserForm" style="display:none;">
+                <div class="um-section-label" style="margin-top:16px;">Edit User</div>
+                <label class="um-input-label" for="editUserName">Name</label>
+                <input type="text" id="editUserName" class="um-input" placeholder="Enter name…">
+                <label class="um-input-label" for="editUserPicture">Profile Picture URL</label>
+                <input type="text" id="editUserPicture" class="um-input" placeholder="https://…">
+                <div class="um-strip">
+                    <button class="um-btn um-danger" id="deleteUserInFormBtn"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete</button>
+                    <button class="um-btn" id="cancelEditUserBtn">Cancel</button>
+                    <button class="um-btn um-primary" id="saveEditUserBtn">Save</button>
+                </div>
+            </div>
+
+            <!-- Edit / Delete shortcuts (shown when a user is selected) -->
+            <div id="umEditStrip" class="um-strip" style="margin-top:10px; display:none;">
+                <button class="um-btn" id="editUserLink"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+                <button class="um-btn um-danger" id="deleteUserLink"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete</button>
+            </div>
+
+            <!-- Hidden actions div kept for JS compatibility -->
+            <div id="userSelectActions" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Import Options Modal -->
+    <div class="overlay" id="importOptionsModal">
+        <div class="modal">
+            <div class="content-type-dialog">
+                <h3>Import Options</h3>
+                <div class="content-type-options">
+                    <div class="content-type-option" onclick="handleImportOption('list-only')">
+                        <div class="content-type-option-icon"><svg style="width:36px;height:36px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg></div>
+                        <div class="content-type-option-text">Only List</div>
+                        <div style="font-size: 0.85rem; color: #999; margin-top: 5px;">Items which are already added won't be added again</div>
+                    </div>
+                    <div class="content-type-option" onclick="handleImportOption('list-and-profile')">
+                        <div class="content-type-option-icon"><svg style="width:36px;height:36px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                        <div class="content-type-option-text">List + Name + PFP</div>
+                        <div style="font-size: 0.85rem; color: #999; margin-top: 5px;">Items which are already added won't be added again</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 15px; padding: 10px; background-color: rgba(229, 9, 20, 0.1); border-radius: 4px; font-size: 0.9rem; color: #e50914;">
+                    <svg style="width:13px;height:13px;vertical-align:-2px;margin-right:4px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Reminder: Option 2 will replace your existing Name and PFP!
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeImportOptionsModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Warning Notification -->
+    <div class="overlay" id="cookieWarningModal" style="z-index: 2001;">
+        <div class="modal" style="max-width: 500px;">
+            <h2 style="color: var(--secondary-color,#e50914); margin-bottom: 20px; display:flex; align-items:center; gap:8px;"><svg style="width:22px;height:22px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Important Reminder</h2>
+            <p style="margin-bottom: 20px; line-height: 1.6;">
+                Hey! This side is collecting cookies , your list and other items are stored in your local storage. Deleting cookies can lead in this side being empty
+                please use the export list feautre to make sure your data is always safe
+            </p>
+            <div class="modal-actions">
+                <button type="button" class="btn" id="dismissCookieWarningBtn">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Intro Modal -->
+    <div class="overlay" id="videoIntroModal" style="z-index: 2002;">
+        <div class="modal" style="max-width: 1100px; padding: 0; background: #000;">
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <video id="introVideo" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" controls>
+                  
+                    <source src ="https://files.catbox.moe/e6ylsd.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+                <button type="button" class="btn" id="skipIntroBtn">Skip Intro</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Type Selection Dialog -->
+    <div class="overlay" id="contentTypeDialog">
+        <div class="ct-card">
+            <div class="ct-header">
+                <div class="ct-eyebrow">Add to your tracker</div>
+                <div class="ct-title">What are you adding?</div>
+                <div class="ct-subtitle">Select the format — movies and long-form series only</div>
+            </div>
+            <div class="ct-options">
+                <!-- Series option -->
+                <div class="ct-option" data-type="series">
+                    <div class="ct-option-stripe"></div>
+                    <div class="ct-option-body">
+                        <div class="ct-icon-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                <path d="M8 21h8M12 17v4"/>
+                                <path d="M7 8l3 2-3 2V8z"/>
+                                <line x1="14" y1="9" x2="17" y2="9"/>
+                                <line x1="14" y1="12" x2="16" y2="12"/>
+                            </svg>
+                        </div>
+                        <div class="ct-label">Series</div>
+                        <div class="ct-badges">
+                            <span class="ct-badge">TV Shows</span>
+                            <span class="ct-badge">Anime</span>
+                            <span class="ct-badge">Mini-Series</span>
+                            <span class="ct-badge">Documentaries</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Movie option -->
+                <div class="ct-option" data-type="movie">
+                    <div class="ct-option-stripe"></div>
+                    <div class="ct-option-body">
+                        <div class="ct-icon-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="2" y="2" width="20" height="20" rx="2.5"/>
+                                <path d="M7 2v20M17 2v20M2 12h20M2 7h5M17 7h5M2 17h5M17 17h5"/>
+                            </svg>
+                        </div>
+                        <div class="ct-label">Movie</div>
+                        <div class="ct-badges">
+                            <span class="ct-badge">Feature Films</span>
+                            <span class="ct-badge">Cinema</span>
+                            <span class="ct-badge">Animated Films</span>
+                            <span class="ct-badge">Specials</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="ct-cancel" id="cancelContentTypeBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Notification Calendar Modal -->
+    <div class="overlay" id="notificationCalendarModal">
+        <div class="modal" style="max-width: 800px;">
+            <h2><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Notification Calendar</h2>
+            <div style="margin-bottom: 20px;">
+                <button class="btn" id="addNotificationBtn" style="margin-bottom: 20px;">+ Add Notification</button>
+                <div id="notificationsList" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Notifications will be listed here -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="closeNotificationCalendarBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Notification Modal -->
+    <div class="overlay" id="addNotificationModal">
+        <div class="modal" style="max-width: 600px;">
+            <h2>Add Notification</h2>
+            <form id="notificationForm">
+                <div class="form-group">
+                    <label for="notificationDate">Date</label>
+                    <input type="date" id="notificationDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="notificationType">Notification Type</label>
+                    <select id="notificationType" class="form-control" required>
+                        <option value="">Select Type</option>
+                        <option value="season">New Season</option>
+                        <option value="episode">New Episode</option>
+                    </select>
+                </div>
+                <div class="form-group" id="notificationSeriesGroup">
+                    <label for="notificationSeries">Series Name</label>
+                    <input type="text" id="notificationSeries" class="form-control" placeholder="Enter series name" required>
+                </div>
+                <div class="form-group">
+                    <label for="notificationLanguage">Language for Release Date</label>
+                    <input type="text" id="notificationLanguage" class="form-control" placeholder="e.g., en-US, de-DE, ja-JP">
+                </div>
+                <div class="form-group">
+                    <label for="notificationApiSource">Future API Source</label>
+                    <select id="notificationApiSource" class="form-control">
+                        <option value="manual">Manual Entry</option>
+                        <option value="watchmode">Watchmode</option>
+                        <option value="tmdb">TMDB</option>
+                        <option value="trakt">Trakt</option>
+                    </select>
+                </div>
+                <div class="form-group" id="notificationSeasonGroup" style="display: none;">
+                    <label for="notificationSeason">Season Number</label>
+                    <input type="number" id="notificationSeason" class="form-control" min="1" placeholder="e.g., 3">
+                </div>
+                <div class="form-group" id="notificationEpisodeGroup" style="display: none;">
+                    <label for="notificationEpisode">Episode Number</label>
+                    <input type="number" id="notificationEpisode" class="form-control" min="1" placeholder="e.g., 5">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelNotificationBtn">Cancel</button>
+                    <button type="submit" class="btn">Add Notification</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Display Container (Top Left) -->
+    <div id="notificationContainer" style="position: fixed; top: 20px; left: 20px; z-index: 3000; max-width: 400px; pointer-events: none;"></div>
+
+    <!-- Add/Edit Series Modal -->
+    <div class="overlay" id="seriesModal">
+        <div class="modal">
+            <h2 id="modalTitle">Add New Series</h2>
+            <form id="seriesForm">
+                <div class="form-group">
+                    <label for="seriesTitle">Title</label>
+                    <input type="text" id="seriesTitle" class="form-control auto-save-field" required data-field="title">
+                </div>
+                <div class="form-group">
+                    <label for="seriesImage">Cover URL</label>
+                    <input type="text" id="seriesImage" class="form-control auto-save-field" required data-field="image">
+                </div>
+                <div class="form-group">
+                    <label for="seriesGenre">Genre</label>
+                    <input type="text" id="seriesGenre" class="form-control auto-save-field" placeholder="e.g. Drama, Thriller, Comedy" data-field="genre">
+                </div>
+                <div class="form-group">
+                    <label for="seriesContentType">Content Type</label>
+                    <select id="seriesContentType" class="form-control auto-save-field" required data-field="contentType">
+                        <option value="series">Series</option>
+                        <option value="movie">Movie</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="seriesStatus">Status</label>
+                    <select id="seriesStatus" class="form-control auto-save-field" required data-field="status">
+                        <option value="watching">Currently Watching</option>
+                        <option value="want">Want to Watch</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Streaming Service(s)</label>
+                    <div class="streaming-multi-select" id="streamingMultiSelect">
+                        <div class="streaming-chip" data-service="netflix"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/200px-Netflix_2015_logo.svg.png" onerror="this.style.display='none'">Netflix</div>
+                        <div class="streaming-chip" data-service="disney"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/200px-Disney%2B_logo.svg.png" onerror="this.style.display='none'">Disney+</div>
+                        <div class="streaming-chip" data-service="hbo"><img src="https://upload.wikimedia.org/wikipedia/commons/8/81/HBO_Max_Logo_%28October_2019%29.svg" onerror="this.style.display='none'">HBO Max</div>
+                        <div class="streaming-chip" data-service="amazon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/200px-Amazon_Prime_Video_logo.svg.png" onerror="this.style.display='none'">Amazon</div>
+                        <div class="streaming-chip" data-service="hulu"><img src="https://upload.wikimedia.org/wikipedia/de/thumb/0/0e/Hulu-Logo.svg/500px-Hulu-Logo.svg.png?_=20090719001746" onerror="this.style.display='none'">Hulu</div>
+                        <div class="streaming-chip" data-service="apple"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/AppleTVLogo.svg/2048px-AppleTVLogo.svg.png" onerror="this.style.display='none'">Apple TV+</div>
+                        <div class="streaming-chip" data-service="paramount"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Paramount_Plus.svg/200px-Paramount_Plus.svg.png" onerror="this.style.display='none'">Paramount+</div>
+                        <div class="streaming-chip" data-service="peacock"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/NBC_Peacock_%282022%29.svg/960px-NBC_Peacock_%282022%29.svg.png" onerror="this.style.display='none'">Peacock</div>
+                        <div class="streaming-chip" data-service="crunchyroll"><img src="https://www.google.com/s2/favicons?domain=crunchyroll.com&sz=128" onerror="this.onerror=null; this.src='https://logo.clearbit.com/crunchyroll.com';">Crunchyroll</div>
+                        <div class="streaming-chip" data-service="other">Other</div>
+                    </div>
+                    <input type="hidden" id="seriesStreamingService" data-field="streamingService" value="">
+                </div>
+                <div class="series-episode-fields" id="seriesEpisodeFields">
+                    <div class="form-group" id="currentSeasonGroup">
+                        <label for="seriesSeason">Current Season</label>
+                        <input type="number" id="seriesSeason" class="form-control auto-save-field" min="1" value="1" data-field="season">
+                    </div>
+                    <div class="form-group">
+                        <label for="seriesTotalSeasons">Total Seasons</label>
+                        <input type="number" id="seriesTotalSeasons" class="form-control auto-save-field" min="1" value="1" data-field="totalSeasons">
+                    </div>
+                    <div class="form-group" id="currentEpisodeGroup">
+                        <label for="seriesEpisode">Current Episode</label>
+                        <input type="number" id="seriesEpisode" class="form-control auto-save-field" min="1" value="1" data-field="episode">
+                    </div>
+                    <div class="form-group">
+                        <label for="seriesTotalEpisodes">Total Episodes (per season)</label>
+                        <input type="number" id="seriesTotalEpisodes" class="form-control auto-save-field" min="1" value="10" data-field="totalEpisodes">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="seriesTime">Current Time (minutes)</label>
+                    <input type="number" id="seriesTime" class="form-control auto-save-field" min="0" value="0" data-field="time">
+                </div>
+                <div class="form-group">
+                    <label for="seriesMaxTime">Max Time To Finish (minutes)</label>
+                    <input type="number" id="seriesMaxTime" class="form-control auto-save-field" min="0" value="0" data-field="maxTime">
+                </div>
+                <div class="form-group">
+                    <label for="seriesImdb">IMDB Rating</label>
+                    <input type="text" id="seriesImdb" class="form-control auto-save-field" placeholder="e.g., 8.5" data-field="imdbRating">
+                </div>
+                <div class="form-group">
+                    <label for="seriesLanguage">Language</label>
+                    <input type="text" id="seriesLanguage" class="form-control auto-save-field" placeholder="e.g., English, German" data-field="language">
+                </div>
+                <div class="form-group">
+                    <label for="seriesUserRating">Your Rating (1-5 stars)</label>
+                    <div class="rating-input" id="seriesUserRating">
+                        <span class="star-rating" data-rating="1" data-half-rating="0.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg1" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg1)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <span class="star-rating" data-rating="2" data-half-rating="1.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg2" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg2)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <span class="star-rating" data-rating="3" data-half-rating="2.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg3" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg3)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <span class="star-rating" data-rating="4" data-half-rating="3.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg4" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg4)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <span class="star-rating" data-rating="5" data-half-rating="4.5">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="sg5" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="50%" stop-color="#ffd700"/>
+                                        <stop offset="50%" stop-color="transparent"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon class="star-bg" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#333" stroke="#555" stroke-width="1"/>
+                                <polygon class="star-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#ffd700" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                                <polygon class="star-half-fill" points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#sg5)" stroke="#ffd700" stroke-width="1" style="display:none"/>
+                            </svg>
+                        </span>
+                        <input type="hidden" id="seriesUserRatingValue" value="0" class="auto-save-field" data-field="userRating">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="seriesTags">Tags (comma-separated)</label>
+                    <input type="text" id="seriesTags" class="form-control auto-save-field" placeholder="e.g. favorite, must-watch, rewatch" data-field="tags">
+                </div>
+                <div class="form-group">
+                    <label for="seriesNotes">Notes/Comments</label>
+                    <textarea id="seriesNotes" class="form-control auto-save-field" rows="3" placeholder="Add your thoughts, notes, or comments..." data-field="notes"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="seriesStartedDate">Started Date</label>
+                    <input type="date" id="seriesStartedDate" class="form-control auto-save-field" data-field="startedDate">
+                </div>
+                <div class="form-group">
+                    <label for="seriesCompletedDate">Completed Date</label>
+                    <input type="date" id="seriesCompletedDate" class="form-control auto-save-field" data-field="completedDate">
+                </div>
+                <div class="form-group">
+                    <label for="seriesLastWatchedDate">Last Watched Date</label>
+                    <input type="date" id="seriesLastWatchedDate" class="form-control auto-save-field" data-field="lastWatchedDate">
+                </div>
+                <div class="form-group">
+                    <label>Favourite Actors (up to 3)</label>
+                    <div id="actorsContainer" style="display:flex; flex-direction:column; gap:10px;">
+                        <div class="actor-entry" style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" class="form-control actor-name" placeholder="Actor name" style="flex:1;">
+                            <input type="text" class="form-control actor-img" placeholder="Image URL" style="flex:2;">
+                        </div>
+                        <div class="actor-entry" style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" class="form-control actor-name" placeholder="Actor name" style="flex:1;">
+                            <input type="text" class="form-control actor-img" placeholder="Image URL" style="flex:2;">
+                        </div>
+                        <div class="actor-entry" style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" class="form-control actor-name" placeholder="Actor name" style="flex:1;">
+                            <input type="text" class="form-control actor-img" placeholder="Image URL" style="flex:2;">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="seriesInQueue" class="auto-save-field" data-field="inQueue" style="margin-right: 8px; width: 20px; height: 20px; cursor: pointer;">
+                        Add to Watchlist queue
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn" id="addSeriesBtn">Save Series</button>
+                </div>
+            </form>
+        </div>
+    </div>
+   <center> Made with love by Twilight</center>
+    <div class="welcome-toast" id="welcomeToast"></div>
+    <div class="overlay" id="exportMessageModal">
+        <div class="modal" style="max-width:520px;">
+            <h2 id="exportMessageTitle">Export Complete</h2>
+            <div id="exportMessageBody" style="line-height:1.65;color:#ddd;"></div>
+            <div class="modal-actions">
+                <button type="button" class="btn" id="closeExportMessageBtn">Nice</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
