@@ -8,10 +8,10 @@
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
 <style>
 :root{
-  --bg:#0d0d10;
-  --surface:#17171c;
-  --surface-2:#1f1f26;
-  --surface-3:#282831;
+  --bg:#141414;
+  --surface:#1c1c1e;
+  --surface-2:#242428;
+  --surface-3:#2c2c31;
   --border:rgba(255,255,255,0.08);
   --border-strong:rgba(255,255,255,0.16);
   --text:#f4f4f6;
@@ -88,8 +88,9 @@ img{display:block}
   font-weight:800;letter-spacing:-0.3px;color:var(--text);white-space:nowrap;
 }
 .brand-mark{
-  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  width:auto;min-width:30px;height:30px;padding:0 8px;border-radius:8px;flex-shrink:0;
   background:var(--accent);display:grid;place-items:center;color:#fff;
+  font-weight:900;font-size:0.9rem;letter-spacing:0.5px;
 }
 .brand-name{font-size:1.02rem}
 .brand-tag{
@@ -204,10 +205,46 @@ body.light .coll-shade{background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,
 .age-badge.a16{background:#f5a623;color:#1a1a1a}
 .age-badge.akids{background:#27ae60}
 .ribbon.unreleased{background:#6c5ce7}
-body,.card,.coll,.toolbar,.nav,.modal,.control,.cat{transition:background-color .45s ease,color .45s ease,border-color .45s ease}
-body.theme-anim *{transition:background-color .45s ease,color .45s ease,border-color .45s ease,filter .45s ease !important}
-body.theme-anim{animation:themeBlur .45s ease}
-@keyframes themeBlur{0%{filter:blur(6px)}100%{filter:blur(0)}}
+/* Lightweight theme transition (matches index.html — no per-element blur,
+   which made switching laggy on big grids) */
+body,.card,.coll,.toolbar,.nav,.modal,.control,.cat{transition:background-color .3s ease,color .3s ease,border-color .3s ease}
+/* Detail modal action row + trailer link */
+.modal-actions-row{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin-top:4px}
+.modal-actions-row .modal-add{flex:1;min-width:180px}
+.modal-trailer{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 22px;border-radius:12px;font-weight:700;font-size:.95rem;
+  border:1px solid var(--border-strong);color:var(--text);text-decoration:none;
+  background:var(--surface-2);transition:border-color .2s,background .2s,transform .15s;
+}
+.modal-trailer:hover{border-color:var(--accent);background:var(--surface-3);transform:translateY(-1px)}
+.modal-trailer svg{color:var(--accent);fill:var(--accent)}
+
+/* "Add title" target chooser */
+.tgt-eyebrow{
+  font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:6px;
+}
+.tgt-opt{
+  display:flex;align-items:center;gap:14px;width:100%;padding:14px 16px;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:14px;
+  color:var(--text);cursor:pointer;text-align:left;
+  transition:border-color .18s,background .18s,transform .15s;
+}
+.tgt-opt:hover{transform:translateY(-1px);background:var(--surface-3)}
+.tgt-opt .tgt-ico{
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;color:#fff;
+}
+.tgt-watching .tgt-ico{background:#e50914}
+.tgt-want .tgt-ico{background:#0062ff}
+.tgt-finished .tgt-ico{background:#27ae60}
+.tgt-watching:hover{border-color:#e50914}
+.tgt-want:hover{border-color:#0062ff}
+.tgt-finished:hover{border-color:#27ae60}
+.tgt-opt .tgt-text{display:flex;flex-direction:column;gap:2px}
+.tgt-opt .tgt-text strong{font-size:.98rem}
+.tgt-opt .tgt-text small{color:var(--text-muted);font-size:.8rem}
+
 .cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
 .cat{
@@ -296,11 +333,11 @@ body.theme-anim{animation:themeBlur .45s ease}
 .modal-overlay.open{display:flex}
 .modal{
   background:var(--surface);border:1px solid var(--border);border-radius:18px;
-  width:100%;max-width:680px;overflow:hidden;box-shadow:var(--shadow);
+  width:100%;max-width:780px;overflow:hidden;box-shadow:var(--shadow);
   animation:modalIn .25s cubic-bezier(.2,.8,.2,1);
 }
 @keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
-.modal-hero{position:relative;height:200px;background:var(--surface-3)}
+.modal-hero{position:relative;height:240px;background:var(--surface-3)}
 .modal-hero img{width:100%;height:100%;object-fit:cover}
 .modal-hero-ph{width:100%;height:100%;display:grid;place-items:center;color:var(--text-dim)}
 .modal-hero-grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,var(--surface))}
@@ -309,6 +346,10 @@ body.theme-anim{animation:themeBlur .45s ease}
   background:rgba(0,0,0,.55);border:none;color:#fff;cursor:pointer;display:grid;place-items:center;
 }
 .modal-close:hover{background:rgba(0,0,0,.8)}
+/* Collections open fullscreen with a close button that stays put on scroll */
+.modal-overlay.coll-full{padding:0;align-items:stretch}
+.modal-overlay.coll-full .modal{max-width:none;width:100%;min-height:100vh;border-radius:0;border:0;animation:none}
+.modal-overlay.coll-full .modal-close{position:fixed;top:16px;right:18px}
 .modal-body{padding:0 clamp(20px,4vw,32px) clamp(22px,4vw,30px);margin-top:-60px;position:relative;z-index:2}
 .modal-top{display:flex;gap:18px;align-items:flex-end}
 .modal-poster{width:118px;flex-shrink:0;aspect-ratio:2/3;border-radius:10px;object-fit:cover;border:2px solid var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.5)}
@@ -382,9 +423,7 @@ body.theme-anim{animation:themeBlur .45s ease}
   <nav class="nav" aria-label="Primary">
     <div class="nav-inner">
       <a class="brand" href="index.html" aria-label="Series and Movie Tracker home">
-        <span class="brand-mark" aria-hidden="true">
-          <img src="favicon.png" alt="" width="20" height="20" style="display:block;border-radius:5px">
-        </span>
+        <span class="brand-mark" aria-hidden="true">S+M</span>
         <span class="brand-name">Tracker</span>
         <span class="brand-tag">Marketplace</span>
       </a>
@@ -482,7 +521,7 @@ body.theme-anim{animation:themeBlur .45s ease}
     <p class="tmdb-notice">This product uses the TMDB API but is not endorsed or certified by TMDB. Movie and series metadata, ratings and images are provided by The Movie Database (TMDB). Marketplace metadata only &mdash; your personal library stays private on this device.</p>
     <nav class="foot-links">
       <a href="index.html">Tracker</a>
-      <a href="Application_Summary.html">Application Summary</a>
+      <a href="landing.html">About</a>
       <a href="Legal.html">Legal &amp; Attribution</a>
       <a href="SeriesTracker_Guide.html">Guide</a>
     </nav>
@@ -501,14 +540,24 @@ body.theme-anim{animation:themeBlur .45s ease}
 
 <!-- Add-target picker -->
 <div class="modal-overlay" id="targetOverlay" role="dialog" aria-modal="true" aria-labelledby="targetTitle" hidden>
-  <div class="modal" id="targetModal" style="max-width:380px">
+  <div class="modal" id="targetModal" style="max-width:480px">
     <div class="modal-body" style="margin-top:26px;text-align:center">
-      <div class="modal-title" id="targetTitle" style="font-size:1.12rem">Add to…</div>
-      <p class="modal-desc" style="margin:6px 0 16px">Choose where this title should go in your tracker.</p>
-      <div style="display:grid;gap:10px">
-        <button class="modal-add" id="tgtWatching" type="button">Currently Watching</button>
-        <button class="modal-add" id="tgtWant" type="button">Want to Watch</button>
-        <button class="modal-add" id="tgtFinished" type="button">Finished</button>
+      <div class="tgt-eyebrow">Add to your tracker</div>
+      <div class="modal-title" id="targetTitle" style="font-size:1.3rem">Add to…</div>
+      <p class="modal-desc" style="margin:8px 0 20px">Choose where this title should go in your tracker.</p>
+      <div style="display:grid;gap:12px">
+        <button class="tgt-opt tgt-watching" id="tgtWatching" type="button">
+          <span class="tgt-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></span>
+          <span class="tgt-text"><strong>Currently Watching</strong><small>I'm watching this right now</small></span>
+        </button>
+        <button class="tgt-opt tgt-want" id="tgtWant" type="button">
+          <span class="tgt-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span>
+          <span class="tgt-text"><strong>Want to Watch</strong><small>Save it for later</small></span>
+        </button>
+        <button class="tgt-opt tgt-finished" id="tgtFinished" type="button">
+          <span class="tgt-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="tgt-text"><strong>Finished</strong><small>I've already seen it</small></span>
+        </button>
         <button class="empty-btn" id="tgtCancel" type="button">Cancel</button>
       </div>
     </div>
@@ -537,6 +586,40 @@ var CATALOGUE=[], COLLECTIONS=[];
 var addedIds=new Set();
 try{ addedIds=new Set(JSON.parse(localStorage.getItem('mp_added')||'[]')); }catch(e){}
 var state={category:'All',query:'',sort:'popularity',status:'',provider:'',age:'',mature:'blur',list:false};
+
+// ── Filter persistence: every filter survives a reload ──────────
+function saveFilters(){
+  try{localStorage.setItem('mp_filters',JSON.stringify({
+    category:state.category,sort:state.sort,status:state.status,
+    provider:state.provider,age:state.age,mature:state.mature,list:state.list
+  }));}catch(e){}
+}
+function restoreFilters(){
+  var f=null;
+  try{f=JSON.parse(localStorage.getItem('mp_filters')||'null');}catch(e){}
+  if(!f)return;
+  state.category=f.category||'All';
+  state.sort=f.sort||'popularity';
+  state.status=f.status||'';
+  state.provider=f.provider||'';
+  state.age=f.age!=null?f.age:'';
+  state.mature=f.mature||'blur';
+  state.list=!!f.list;
+  var set=function(id,v){var s=document.getElementById(id);if(s){s.value=v;if(s.value!==v){s.value='';}}};
+  set('sortSelect',state.sort);
+  set('statusSelect',state.status);
+  set('providerSelect',state.provider);
+  var ps=document.getElementById('providerSelect');
+  if(ps&&ps.value!==state.provider)state.provider='';
+  set('ageSelect',String(state.age));
+  set('matureMode',state.mature);
+  if(state.list){
+    document.getElementById('grid').classList.add('list-view');
+    var vl=document.getElementById('viewList'),vg=document.getElementById('viewGrid');
+    if(vl)vl.setAttribute('aria-pressed','true');
+    if(vg)vg.setAttribute('aria-pressed','false');
+  }
+}
 
 // ── Safe DOM helpers (prevent HTML injection from data) ─────────
 function el(tag,attrs,kids){
@@ -591,17 +674,42 @@ function removeFromTracker(title){var l=(title||'').toLowerCase();saveTracker(lo
 function persistAdded(){localStorage.setItem('mp_added',JSON.stringify([].slice.call(addedIds)));}
 
 // ── Derive categories + providers from data (future-friendly) ───
+// Map the many raw TMDB provider strings (e.g. "AMC+ Amazon Channel",
+// "Netflix Standard with Ads") down to a short list of clean, canonical
+// services so the dropdown and filtering are actually usable.
+var PROVIDER_RULES=[
+  ['netflix','Netflix'],['disney','Disney+'],['hbo','HBO Max'],['max','HBO Max'],
+  ['prime video','Prime Video'],['amazon','Prime Video'],['hulu','Hulu'],
+  ['apple','Apple TV+'],['paramount','Paramount+'],['peacock','Peacock'],
+  ['crunchyroll','Crunchyroll']
+];
+var PROVIDER_ORDER=['Netflix','Disney+','HBO Max','Prime Video','Hulu','Apple TV+','Paramount+','Peacock','Crunchyroll'];
+function canonicalProviders(item){
+  var out=[];
+  (item.providers||[]).forEach(function(p){
+    var lp=String(p).toLowerCase();
+    for(var i=0;i<PROVIDER_RULES.length;i++){
+      if(lp.indexOf(PROVIDER_RULES[i][0])>=0){
+        if(out.indexOf(PROVIDER_RULES[i][1])<0)out.push(PROVIDER_RULES[i][1]);
+        break;
+      }
+    }
+  });
+  return out;
+}
+
 function deriveFilters(){
   var cats=new Set(['All']); var provs=new Set();
   CATALOGUE.forEach(function(x){
     (x.categories||[]).forEach(function(c){cats.add(c);});
-    (x.providers||[]).forEach(function(p){provs.add(p);});
+    canonicalProviders(x).forEach(function(p){provs.add(p);});
   });
   // Prefer a sensible lead order, then any extras alphabetically
   var lead=['All','Trending','Popular','Movies','Series','Anime'];
   var ordered=lead.filter(function(c){return cats.has(c);})
     .concat([].slice.call(cats).filter(function(c){return lead.indexOf(c)<0;}).sort());
-  return {categories:ordered,providers:[].slice.call(provs).sort()};
+  var providers=PROVIDER_ORDER.filter(function(p){return provs.has(p);});
+  return {categories:ordered,providers:providers};
 }
 
 // ── Filtering / sorting ─────────────────────────────────────────
@@ -616,7 +724,7 @@ function getFiltered(){
     return x.title.toLowerCase().indexOf(q)>=0 || (x.originalTitle&&x.originalTitle.toLowerCase().indexOf(q)>=0);
   });}
   if(state.status)items=items.filter(function(x){return x.status===state.status;});
-  if(state.provider)items=items.filter(function(x){return (x.providers||[]).indexOf(state.provider)>=0;});
+  if(state.provider)items=items.filter(function(x){return canonicalProviders(x).indexOf(state.provider)>=0;});
   if(state.age){
     items=items.filter(function(x){var a=ageOf(x);
       if(state.age==='kids')return a==null||a<=12;
@@ -738,6 +846,7 @@ function renderCard(item){
 }
 
 function renderGrid(){
+  saveFilters();
   var grid=document.getElementById('grid');
   var items=getFiltered();
   var rc=document.getElementById('resultCount');
@@ -912,6 +1021,9 @@ function renderModalContent(id){
   if(item.status)mg.appendChild(metaCell('Status',item.status==='unreleased'?'Not released yet':(item.status.charAt(0).toUpperCase()+item.status.slice(1))));
   if(ageOf(item)!=null)mg.appendChild(metaCell('Age rating',ageLabel(ageOf(item))));
   if(item.tmdb!=null)mg.appendChild(metaCell('TMDb',item.tmdb));
+  if(item.genres&&item.genres.length)mg.appendChild(metaCell('Genres',item.genres.join(', ')));
+  if(item.originalTitle&&item.originalTitle!==item.title)mg.appendChild(metaCell('Original title',item.originalTitle));
+  if(item.popularity!=null)mg.appendChild(metaCell('Popularity',item.popularity));
   body.appendChild(mg);
 
   if(item.providers&&item.providers.length){
@@ -921,11 +1033,18 @@ function renderModalContent(id){
     body.appendChild(pv);
   }
 
+  var actionsRow=el('div',{class:'modal-actions-row'});
   var addBtn=el('button',{class:'modal-add'+(added?' added':''),type:'button','aria-pressed':String(added),
     onclick:function(){toggleAdd(id);}});
   addBtn.appendChild(addBtnIcon(added));
   addBtn.appendChild(document.createTextNode(added?' Added to library':' Add to library'));
-  body.appendChild(addBtn);
+  actionsRow.appendChild(addBtn);
+  var trailer=el('a',{class:'modal-trailer',target:'_blank',rel:'noopener noreferrer',
+    href:'https://www.youtube.com/results?search_query='+encodeURIComponent(item.title+' '+(item.year||'')+' trailer')});
+  trailer.appendChild(ico('<polygon points="5 3 19 12 5 21 5 3"/>',14));
+  trailer.appendChild(document.createTextNode(' Watch trailer'));
+  actionsRow.appendChild(trailer);
+  body.appendChild(actionsRow);
 
   var credit=el('p',{class:'modal-tmdb-credit'});
   credit.appendChild(document.createTextNode('Data provided by '));
@@ -945,7 +1064,7 @@ function openModal(id){
 }
 function closeModal(){
   var ov=document.getElementById('modalOverlay');
-  ov.classList.remove('open'); ov.hidden=true; document.body.style.overflow='';
+  ov.classList.remove('open','coll-full'); ov.hidden=true; document.body.style.overflow='';
   modalOpenId=null;
   setSearchHidden(false);
   if(lastFocused&&lastFocused.focus)lastFocused.focus();
@@ -986,7 +1105,7 @@ function openCollection(id){
   head.appendChild(listGrid);
   c.appendChild(head);
   var ov=document.getElementById('modalOverlay');
-  ov.hidden=false; ov.classList.add('open'); document.body.style.overflow='hidden';
+  ov.hidden=false; ov.classList.add('open','coll-full'); document.body.style.overflow='hidden';
   document.getElementById('modalClose').focus();
 }
 
@@ -1014,8 +1133,8 @@ document.getElementById('statusSelect').addEventListener('change',function(e){st
 document.getElementById('providerSelect').addEventListener('change',function(e){state.provider=e.target.value;renderGrid();});
 var _ageSel=document.getElementById('ageSelect'); if(_ageSel)_ageSel.addEventListener('change',function(e){state.age=e.target.value;renderGrid();});
 var _matSel=document.getElementById('matureMode'); if(_matSel)_matSel.addEventListener('change',function(e){state.mature=e.target.value;renderGrid();});
-document.getElementById('viewGrid').addEventListener('click',function(){state.list=false;document.getElementById('grid').classList.remove('list-view');this.setAttribute('aria-pressed','true');document.getElementById('viewList').setAttribute('aria-pressed','false');});
-document.getElementById('viewList').addEventListener('click',function(){state.list=true;document.getElementById('grid').classList.add('list-view');this.setAttribute('aria-pressed','true');document.getElementById('viewGrid').setAttribute('aria-pressed','false');});
+document.getElementById('viewGrid').addEventListener('click',function(){state.list=false;document.getElementById('grid').classList.remove('list-view');this.setAttribute('aria-pressed','true');document.getElementById('viewList').setAttribute('aria-pressed','false');saveFilters();});
+document.getElementById('viewList').addEventListener('click',function(){state.list=true;document.getElementById('grid').classList.add('list-view');this.setAttribute('aria-pressed','true');document.getElementById('viewGrid').setAttribute('aria-pressed','false');saveFilters();});
 document.getElementById('modalClose').addEventListener('click',closeModal);
 document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
@@ -1029,8 +1148,6 @@ function applyTheme(light){
 }
 document.getElementById('themeToggle').addEventListener('click',function(){
   var light=!document.body.classList.contains('light');
-  document.body.classList.add('theme-anim');
-  setTimeout(function(){document.body.classList.remove('theme-anim');},480);
   applyTheme(light);
   try{localStorage.setItem('mp_theme',light?'light':'dark');}catch(e){}
 });
@@ -1075,7 +1192,11 @@ function syncAdded(){
     });persistAdded();}catch(e){}
 }
 function boot(){
-  syncAdded();renderHero();renderCats();renderCollections();renderGrid();
+  syncAdded();renderHero();
+  renderCats();          // populates the provider select
+  restoreFilters();      // then restore persisted filters into state + UI
+  renderCats();          // re-render tabs with the restored category active
+  renderCollections();renderGrid();
 }
 function fail(msg){
   var grid=document.getElementById('grid'); grid.setAttribute('aria-busy','false'); grid.innerHTML='';

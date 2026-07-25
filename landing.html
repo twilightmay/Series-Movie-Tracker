@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#141414">
+    <title>Series & Movie Tracker — Track everything you watch</title>
+    <meta name="description" content="A free, private tracker for your series and movies. Progress, watchlist, stats and more — stored on your own device.">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Helvetica Neue', Arial, sans-serif; }
+        body { background-color:#141414; color:#fff; line-height:1.6; }
+        a { color:inherit; }
+
+        .container { max-width:1100px; margin:0 auto; padding:20px 40px 60px; }
+
+        /* Hero */
+        .hero { display:grid; grid-template-columns:1.05fr 0.95fr; gap:40px; align-items:center; padding:56px 0 46px; }
+        .hero-copy { text-align:left; }
+        .hero img.logo { height:180px; filter:drop-shadow(0 8px 30px rgba(229,9,20,0.4)); margin-bottom:8px; }
+        .hero h1 { font-size:clamp(1.7rem, 4.2vw, 3.4rem); font-weight:800; letter-spacing:-1.5px; margin:14px 0 8px; line-height:1.08; white-space:nowrap; display:flex; align-items:baseline; gap:0.28em; }
+        .hero h1 .accent { color:#e50914; }
+        /* Rotating headline word — words stack absolutely on top of each other
+           so the swap never changes the line's width/height (no row-jump). */
+        .rotator { position:relative; display:inline-block; height:1.15em; vertical-align:bottom; overflow:hidden; }
+        .rotator .word {
+            position:absolute; left:0; top:0; white-space:nowrap;
+            display:inline-block; color:#e50914;
+            opacity:0; transform:translateY(0.5em) rotateX(-40deg);
+            transition:opacity .42s ease, transform .42s cubic-bezier(.22,1,.36,1);
+            will-change:opacity, transform;
+        }
+        .rotator .word.in { opacity:1; transform:translateY(0) rotateX(0); }
+        .rotator .word.out { opacity:0; transform:translateY(-0.5em) rotateX(40deg); }
+        .hero .tagline { font-size:1.12rem; color:#b3b3b3; max-width:560px; margin:0 0 28px; }
+        .hero-actions { display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+        .cta {
+            display:inline-block; background:#e50914; color:#fff; font-weight:700; font-size:1.05rem;
+            padding:15px 42px; border-radius:999px; text-decoration:none; border:none; cursor:pointer;
+            box-shadow:0 8px 30px rgba(229,9,20,0.4); transition:transform .18s ease, filter .18s ease;
+        }
+        .cta:hover { transform:translateY(-2px) scale(1.03); filter:brightness(1.1); }
+        .cta-sub { display:block; margin-top:14px; color:#777; font-size:0.85rem; }
+        .mature-toggle {
+            display:flex; align-items:center; gap:8px; margin-top:16px; color:#888;
+            font-size:0.82rem; cursor:pointer; user-select:none;
+        }
+        .mature-toggle input { accent-color:#e50914; width:15px; height:15px; cursor:pointer; }
+
+        /* 3D poster stage */
+        .hero-stage { position:relative; height:420px; perspective:1400px; }
+        .stage-inner {
+            position:absolute; inset:0; transform-style:preserve-3d;
+            transform:rotateY(-16deg) rotateX(8deg);
+            transition:transform .3s cubic-bezier(.22,1,.36,1);
+        }
+        .poster {
+            position:absolute; aspect-ratio:2/3; border-radius:14px;
+            background-color:#222; background-image:linear-gradient(160deg,#2a2a2e,#191919);
+            border:1px solid rgba(255,255,255,0.14);
+            box-shadow:0 20px 46px rgba(0,0,0,0.5);
+            transform-style:preserve-3d; overflow:hidden; will-change:transform;
+            transition:left .5s cubic-bezier(.22,1,.36,1), top .5s cubic-bezier(.22,1,.36,1),
+                       width .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1),
+                       z-index 0s .25s;
+        }
+        .poster .img-layer {
+            position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center;
+            opacity:0; transition:opacity .5s ease;
+        }
+        .poster .img-layer.active { opacity:1; }
+        .poster::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.45)); pointer-events:none; }
+        .poster.pa { left:2%;  top:14%; z-index:2; width:min(190px,32vw); transform:translateZ(30px)  rotate(-7deg); }
+        .poster.pb { left:28%; top:2%;  z-index:5; width:min(206px,34vw); transform:translateZ(120px) rotate(2deg); }
+        .poster.pc { left:56%; top:16%; z-index:3; width:min(190px,32vw); transform:translateZ(60px)  rotate(8deg); }
+        .poster.pd { left:14%; top:48%; z-index:1; width:min(150px,25vw); transform:translateZ(10px) rotate(4deg); }
+        .poster.pe { left:60%; top:52%; z-index:2; width:min(146px,24vw); transform:translateZ(20px) rotate(-5deg); }
+
+        @media (max-width:880px) {
+            .hero { grid-template-columns:1fr; text-align:center; }
+            .hero-copy { text-align:center; }
+            .hero .tagline { margin-left:auto; margin-right:auto; }
+            .hero-actions { justify-content:center; }
+            .hero-stage { display:none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .rotator .word { transition:none; }
+            .stage-inner { transition:none; }
+        }
+
+        /* Feature grid */
+        .section-title {
+            font-size:1.5rem; margin:56px 0 22px; padding-bottom:10px; text-align:center;
+            border-bottom:2px solid rgba(229,9,20,0.3);
+        }
+        .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; }
+        .card {
+            background:linear-gradient(180deg,#1d1d1f,#18181a); border:1px solid rgba(255,255,255,0.07);
+            border-radius:14px; padding:24px 26px; transition:transform .2s, border-color .2s;
+        }
+        .card:hover { transform:translateY(-3px); border-color:rgba(229,9,20,0.4); }
+        .card .ico { width:40px; height:40px; border-radius:10px; background:rgba(229,9,20,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+        .card .ico svg { width:21px; height:21px; stroke:#e50914; }
+        .card h3 { font-size:1.1rem; margin-bottom:8px; }
+        .card p { color:#bfbfbf; font-size:0.92rem; }
+
+        /* Steps */
+        .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; counter-reset:step; }
+        .step { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:22px; }
+        .step .num {
+            width:34px; height:34px; border-radius:50%; background:#e50914; color:#fff; font-weight:800;
+            display:grid; place-items:center; margin-bottom:12px;
+        }
+        .step h3 { font-size:1rem; margin-bottom:6px; }
+        .step p { color:#bfbfbf; font-size:0.9rem; }
+
+        /* Privacy note */
+        .privacy {
+            margin-top:56px; background:rgba(229,9,20,0.07); border:1px solid rgba(229,9,20,0.25);
+            border-radius:14px; padding:22px 26px; text-align:center; color:#ccc; font-size:0.95rem;
+        }
+        .privacy strong { color:#fff; }
+
+        footer { margin-top:60px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08); text-align:center; color:#777; font-size:0.88rem; }
+        footer .links { margin-bottom:10px; display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
+        footer a { color:#aaa; text-decoration:none; }
+        footer a:hover { color:#fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="hero-copy">
+                <img class="logo" src="favicon.png" alt="Series & Movie Tracker logo" onerror="this.style.display='none';">
+                <h1><span>Track everything</span> <span class="rotator" id="rotator"><span class="word in">you watch</span></span></h1>
+                <p class="tagline">Series & Movie Tracker is a free, private tracker for your series and films.
+                   Log your progress episode by episode, plan what to watch next, and see your viewing stats —
+                   all stored on your own device, no account needed.</p>
+                <div class="hero-actions">
+                    <button class="cta" id="openAppBtn">Open the app</button>
+                    <span class="cta-sub" style="margin-top:0;">Free · No sign-up · Works offline</span>
+                </div>
+                <label class="mature-toggle" for="show16Toggle">
+                    <input type="checkbox" id="show16Toggle">
+                    Include some age-16 rated covers in the preview above (18+ is always excluded)
+                </label>
+            </div>
+            <div class="hero-stage" id="heroStage" aria-hidden="true">
+                <div class="stage-inner" id="stageInner">
+                    <div class="poster pa"><img class="img-layer l1" alt=""><img class="img-layer l2" alt=""></div>
+                    <div class="poster pb"><img class="img-layer l1" alt=""><img class="img-layer l2" alt=""></div>
+                    <div class="poster pc"><img class="img-layer l1" alt=""><img class="img-layer l2" alt=""></div>
+                    <div class="poster pd"><img class="img-layer l1" alt=""><img class="img-layer l2" alt=""></div>
+                    <div class="poster pe"><img class="img-layer l1" alt=""><img class="img-layer l2" alt=""></div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">What it does</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+                <h3>Progress tracking</h3>
+                <p>Keep your exact season and episode per series. One click on “Episode Watched” logs it and moves you to the next one — season rollovers included.</p>
+            </div>
+            <div class="card">
+                <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                <h3>Smart adding</h3>
+                <p>Type two letters and the tracker guesses the title, then fills in the cover, genre, seasons, rating and streaming service for you. Or browse the built-in Marketplace catalogue.</p>
+            </div>
+            <div class="card">
+                <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+                <h3>Watchlist & queue</h3>
+                <p>Plan what's next with a drag-to-reorder watchlist, and let “What tonight?” pick something random that fits your mood and the time you have.</p>
+            </div>
+            <div class="card">
+                <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+                <h3>Stats & Year in Review</h3>
+                <p>Watch time, genre breakdown, an activity timeline and a yearly “Wrapped”-style recap of everything you watched.</p>
+            </div>
+            <div class="card">
+                <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                <h3>Profiles</h3>
+                <p>Separate profiles for everyone in your household — each with their own list, watchlist and statistics.</p>
+            </div>
+            <div class="card">
+                <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+                <h3>Your look</h3>
+                <p>Dark, light or fully custom themes with your own colors — plus notifications for new episodes and an installable app experience.</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">How it works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="num">1</div>
+                <h3>Create your profile</h3>
+                <p>Open the app and set a name and picture. No e-mail, no password — it's all yours.</p>
+            </div>
+            <div class="step">
+                <div class="num">2</div>
+                <h3>Add what you watch</h3>
+                <p>Use the + button and let autofill do the work, or add popular titles from the Marketplace in one click.</p>
+            </div>
+            <div class="step">
+                <div class="num">3</div>
+                <h3>Track & enjoy</h3>
+                <p>Log episodes as you watch, keep your watchlist in order, and watch your stats grow.</p>
+            </div>
+        </div>
+
+        <div class="privacy">
+            <strong>Your data stays yours.</strong> Everything is stored locally in your browser — nothing is uploaded
+            anywhere. Use the export feature to make backups or move your list to another device.
+        </div>
+
+        <footer>
+            <div class="links">
+                <a href="SeriesTracker_Guide.html">Guide</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="ChangelogSerien.html">Changelog</a>
+                <a href="Legal.html">Legal</a>
+            </div>
+            Made with love by twillightmay &amp; x4ndrrr
+        </footer>
+    </div>
+
+    <script>
+        (function () {
+            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // Open the app — set the "seen" flag and also pass ?app=1 so index
+            // never bounces back here even if localStorage is unavailable
+            // (fixes Firefox where the redirect made the button look like a reload).
+            function openApp() {
+                try { localStorage.setItem('seriesTrackerLandingSeen', '1'); } catch (e) {}
+                window.location.assign('index.html?app=1');
+            }
+            document.getElementById('openAppBtn').addEventListener('click', openApp);
+
+            // Rotating headline — "Track everything [x]"
+            var phrases = [
+                'you watch', 'you enjoy', 'you love', 'you stream',
+                "that's popular", 'you wanna watch', 'you watched',
+                'you would rewatch', 'with friends', 'this weekend',
+                'season by season', 'worth your time', 'in one place',
+                'you finish', 'you discover', 'you binge', 'you follow',
+                'you\u2019re into', 'on your list', 'you never finish',
+                'this year'
+            ];
+            var rot = document.getElementById('rotator');
+            if (rot) {
+                // Lock the rotator's box to the widest phrase up front so
+                // swapping words never changes the line's width/height —
+                // this is what was causing the row-jump / 2-line wrap.
+                var measurer = document.createElement('span');
+                measurer.style.cssText = 'position:absolute; visibility:hidden; white-space:nowrap; font:inherit; letter-spacing:inherit;';
+                measurer.style.font = window.getComputedStyle(rot).font;
+                document.body.appendChild(measurer);
+                var maxWidth = 0;
+                phrases.forEach(function (ph) {
+                    measurer.textContent = ph;
+                    maxWidth = Math.max(maxWidth, measurer.getBoundingClientRect().width);
+                });
+                rot.style.width = Math.ceil(maxWidth) + 'px';
+                document.body.removeChild(measurer);
+
+                var i = 0;
+                setInterval(function () {
+                    var current = rot.querySelector('.word');
+                    var next = document.createElement('span');
+                    next.className = 'word';
+                    i = (i + 1) % phrases.length;
+                    next.textContent = phrases[i];
+                    rot.appendChild(next);
+                    // force reflow so the enter transition plays
+                    void next.offsetWidth;
+                    next.classList.add('in');
+                    if (current) {
+                        current.classList.remove('in');
+                        current.classList.add('out');
+                        setTimeout(function () { current.remove(); }, 450);
+                    }
+                }, 3000);
+            }
+
+            // Poster stage: pull covers from the project's marketplace catalogue,
+            // exclude anything rated 18, crossfade + rotate positions every 3s
+            (function initPosterStage() {
+                var stageInner = document.getElementById('stageInner');
+                if (!stageInner) return;
+                var posters = Array.prototype.slice.call(stageInner.querySelectorAll('.poster'));
+                var slotClasses = ['pa', 'pb', 'pc', 'pd', 'pe'];
+                // Curated fallback pool (real, verified covers pulled from the
+                // project catalogue) — used if the live fetch fails, so you still
+                // get real variety instead of getting stuck on 2-3 repeats.
+                var fallback = [
+                    'https://image.tmdb.org/t/p/w400/l64ZN5jEDdM3WFoG7CsHlJiXjSU.jpg',
+                    'https://image.tmdb.org/t/p/w400/nf5qaSEvyYSNeFH0YhSs5EsBLX9.jpg',
+                    'https://image.tmdb.org/t/p/w400/4KdmT71AGzDMp5hJbAu9vysKQKT.jpg',
+                    'https://image.tmdb.org/t/p/w400/ul4dQcA68mtSx8J56N5gEcaCCtP.jpg',
+                    'https://image.tmdb.org/t/p/w400/nEuEMJrnLBneE9tJlmzbhCFLu95.jpg',
+                    'https://image.tmdb.org/t/p/w400/d8Ryb8AunYAuycVKDp5HpdWPKgC.jpg',
+                    'https://image.tmdb.org/t/p/w400/cL7iOwqapRRb7eKKlXI4FDaP6rh.jpg',
+                    'https://image.tmdb.org/t/p/w400/e1nWfnnCVqxS2LeTO3dwGyAsG2V.jpg',
+                    'https://image.tmdb.org/t/p/w400/nkayOAUBUu4mMvyNf9iHSUiPjF1.jpg',
+                    'https://image.tmdb.org/t/p/w400/cFO65xb0xiXKqk5BmgHawCXB1i0.jpg',
+                    'https://image.tmdb.org/t/p/w400/wnmNPaLvhnMeOqnWlhNkYCZxtda.jpg',
+                    'https://image.tmdb.org/t/p/w400/2uAFDuOCv6jjbRolZQDnVsbjU8n.jpg',
+                    'https://image.tmdb.org/t/p/w400/1ATXKrIPJyKNwnJ6lcG088Sa6zi.jpg',
+                    'https://image.tmdb.org/t/p/w400/ijMbSFhBd0m8TFuaALtOQp5kLwM.jpg',
+                    'https://image.tmdb.org/t/p/w400/fDI15gTVbtW5Sbv5QenqecRxWKJ.jpg',
+                    'https://image.tmdb.org/t/p/w400/uwTNBqFrEur3EtK8ofWbtGXMQOP.jpg',
+                    'https://image.tmdb.org/t/p/w400/n5XNKXnoXpoXyfiCtXHOf8q8PFM.jpg',
+                    'https://image.tmdb.org/t/p/w400/e0hp2GJZukQ6NzmI6YHslfNbBLO.jpg',
+                    'https://image.tmdb.org/t/p/w400/hA2ple9q4qnwxp3hKVNhroipsir.jpg',
+                    'https://image.tmdb.org/t/p/w400/5UgLISE15oNSDzCcIgLIXvlIWxx.jpg',
+                    'https://image.tmdb.org/t/p/w400/qFmwhVUoUSXjkKRmca5yGDEXBIj.jpg',
+                    'https://image.tmdb.org/t/p/w400/8BtSk9DGIlS24otIB3qCagVCI6W.jpg',
+                    'https://image.tmdb.org/t/p/w400/6Kt9zIsrtqs1x1XyNFxOeEjlkKB.jpg',
+                    'https://image.tmdb.org/t/p/w400/pfte7wdMobMF4CVHuOxyu6oqeeA.jpg',
+                    'https://image.tmdb.org/t/p/w400/uuWIIIjT6hyCLGQTVG0cwLfubb9.jpg',
+                    'https://image.tmdb.org/t/p/w400/oeeoxDaWpr2370MC8OeUh721qRB.jpg',
+                    'https://image.tmdb.org/t/p/w400/ls6zswrOZVhCXQBh96DlbnLBajM.jpg',
+                    'https://image.tmdb.org/t/p/w400/fiVW06jE7z9YnO4trhaMEdclSiC.jpg',
+                    'https://image.tmdb.org/t/p/w400/cbryTyaWdqrKpQCw6K7zm2jrB5v.jpg',
+                    'https://image.tmdb.org/t/p/w400/uc2gtWczT58BiAUJWFz9P5aZmNF.jpg',
+                    'https://image.tmdb.org/t/p/w400/tPbMu1LH4YzyvG2a9X5qYERHmIv.jpg',
+                    'https://image.tmdb.org/t/p/w400/tYf5Sc83chWG2nBlo5xKdpBBwlI.jpg',
+                    'https://image.tmdb.org/t/p/w400/1RICxzeoNCAO5NpcRMIgg1XT6fm.jpg',
+                    'https://image.tmdb.org/t/p/w400/iLUNqgNKuWn667kXCKztSxYbT3k.jpg',
+                    'https://image.tmdb.org/t/p/w400/9OkCLM73MIU2CrKZbqiT8Ln1wY2.jpg',
+                    'https://image.tmdb.org/t/p/w400/3UymnlLfLMKxG8OcFhSnAlnhQfZ.jpg',
+                    'https://image.tmdb.org/t/p/w400/5HPuyO4V3rcoMgPZmgcdKJrdXUI.jpg',
+                    'https://image.tmdb.org/t/p/w400/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg',
+                    'https://image.tmdb.org/t/p/w400/sBVfyRYPmKSARRTodsTbwHqgcRA.jpg',
+                    'https://image.tmdb.org/t/p/w400/yE1c9hj5Hf8a9KplAdRdhADqUro.jpg',
+                    'https://image.tmdb.org/t/p/w400/i0enkzsL5dPeneWnjl1fCWm6L7k.jpg',
+                    'https://image.tmdb.org/t/p/w400/fDEdtS4P0gJsxHDIt8dG8TR5dx1.jpg',
+                    'https://image.tmdb.org/t/p/w400/sOrelBaAhp7DZbPTivDwKEyPslC.jpg',
+                    'https://image.tmdb.org/t/p/w400/yhIsVvcUm7QxzLfT6HW2wLf5ajY.jpg',
+                    'https://image.tmdb.org/t/p/w400/1l7vsAIkqOzrqiPwjO27Cb5QdfJ.jpg',
+                    'https://image.tmdb.org/t/p/w400/basW6wAOwLf39bXJbkuTChHeJU7.jpg',
+                    'https://image.tmdb.org/t/p/w400/g4JtvGlQO7DByTI6frUobqvSL3R.jpg',
+                    'https://image.tmdb.org/t/p/w400/mBcu8d6x6zB1el3MPNl7cZQEQ31.jpg',
+                    'https://image.tmdb.org/t/p/w400/7HgDYRYjym4BwbhKaqTQq771SKb.jpg',
+                    'https://image.tmdb.org/t/p/w400/pz7tsWxe0TTdfJnWPjZAEnrSl5M.jpg',
+                    'https://image.tmdb.org/t/p/w400/i3Ouy0rMUHyKeHZV3PYl106OSwe.jpg',
+                    'https://image.tmdb.org/t/p/w400/zT77Y6iQGmYGBqbhQi0ySD60o9i.jpg',
+                    'https://image.tmdb.org/t/p/w400/dzBtMocZuJbjLOXvrl4zGYigDzh.jpg',
+                    'https://image.tmdb.org/t/p/w400/u8LUC3O1hiEDKP2SFZK68iYqMzl.jpg',
+                    'https://image.tmdb.org/t/p/w400/xdZ8k5s8DTwWyPBMIcflrYLgcAK.jpg',
+                    'https://image.tmdb.org/t/p/w400/gwtzCwU2wdLLf8oejQu2TINiWfQ.jpg',
+                    'https://image.tmdb.org/t/p/w400/1sQA7lfcF9yUyoLYC0e6Zo3jmxE.jpg',
+                    'https://image.tmdb.org/t/p/w400/3PFsEuAiyLkWsP4GG6dIV37Q6gu.jpg',
+                    'https://image.tmdb.org/t/p/w400/63kGofUkt1Mx0SIL4XI4Z5AoSgt.jpg',
+                    'https://image.tmdb.org/t/p/w400/wwwKL2Pq3JZdI52wIYqjAdUF8fx.jpg',
+                    'https://image.tmdb.org/t/p/w400/9HcEqn3D4J6b2Z0jK54id9nA0fr.jpg',
+                    'https://image.tmdb.org/t/p/w400/erzbMlcNHOdx24AXOcn2ZKA7R1q.jpg',
+                    'https://image.tmdb.org/t/p/w400/fGGaokx4k00S0J603VG53Qlr9jz.jpg',
+                    'https://image.tmdb.org/t/p/w400/cRY25Q32kDNPFDkFkxAs6bgCq3L.jpg',
+                    'https://image.tmdb.org/t/p/w400/eOBsUuK4qoW4S8Qm5hNZpno9mVi.jpg',
+                    'https://image.tmdb.org/t/p/w400/24rWFf7CeBVwEEmqLYuQexID8I7.jpg',
+                    'https://image.tmdb.org/t/p/w400/peRHZYhvuA6MLTJkpf5nIjgsWx5.jpg',
+                    'https://image.tmdb.org/t/p/w400/1q308iixueCU4pFtSYugNOevtNx.jpg',
+                    'https://image.tmdb.org/t/p/w400/kPz9M2hbZVRue9bbZAHKB9RrXox.jpg',
+                    'https://image.tmdb.org/t/p/w400/iPDkaSdKk2jRLTM65UOEoKtsIZ8.jpg',
+                    'https://image.tmdb.org/t/p/w400/tphkjmQq8WebuVwNXelmjLUXuPJ.jpg',
+                    'https://image.tmdb.org/t/p/w400/zm0KAbOjlt9eR5y7vDiL2dEOwMl.jpg',
+                    'https://image.tmdb.org/t/p/w400/15rMz5MRXFp7CP4VxhjYw4y0FUn.jpg',
+                    'https://image.tmdb.org/t/p/w400/8j58iEBw9pOXFD2L0nt0ZXeHviB.jpg',
+                    'https://image.tmdb.org/t/p/w400/70kTz0OmjjZe7zHvIDrq2iKW7PJ.jpg',
+                    'https://image.tmdb.org/t/p/w400/8Gmh8BwjjcVmdQg2JAXTSAvuDLz.jpg',
+                    'https://image.tmdb.org/t/p/w400/fBXDSBDw5Zug6E2xTB265LzYVKz.jpg',
+                    'https://image.tmdb.org/t/p/w400/oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg',
+                    'https://image.tmdb.org/t/p/w400/9ZtGupUFaHhws7mOcwhNTtRpRHC.jpg',
+                    'https://image.tmdb.org/t/p/w400/kjcuS7xaRyqRjVaVcH4t0qHshuX.jpg'
+                ];
+
+                function shuffle(arr) {
+                    for (var i = arr.length - 1; i > 0; i--) {
+                        var j = Math.floor(Math.random() * (i + 1));
+                        var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+                    }
+                    return arr;
+                }
+
+                // Real <img> tags handle broken covers reactively (onerror below)
+                // instead of an expensive upfront preload-and-verify pass — that
+                // pass was slow/rate-limited and quietly threw away good covers,
+                // which is why not every cover from the catalogue was showing up.
+                function setCover(posterEl, url) {
+                    var l1 = posterEl.querySelector('.l1');
+                    var l2 = posterEl.querySelector('.l2');
+                    var activeLayer = l1.classList.contains('active') ? l1 : l2;
+                    var nextLayer = activeLayer === l1 ? l2 : l1;
+                    nextLayer.onerror = function () {
+                        // this cover is dead — permanently blacklist it and
+                        // replace it with a fresh draw, without disturbing anything else
+                        badUrls[url] = true;
+                        pool = pool.filter(function (u) { return u !== url; });
+                        queue = queue.filter(function (u) { return u !== url; });
+                        var replacement = drawNext(1)[0];
+                        if (replacement) setCover(posterEl, replacement);
+                    };
+                    nextLayer.src = url;
+                    // force reflow so opacity transition plays
+                    void nextLayer.offsetWidth;
+                    nextLayer.classList.add('active');
+                    activeLayer.classList.remove('active');
+                }
+
+                var pool = [];      // full live cover pool, refreshed automatically
+                var queue = [];     // shuffled draw-order; refilled once exhausted
+                var onScreen = [];  // cover currently shown on each poster (parallel to `posters`)
+                var badUrls = {};   // covers that failed to load — never retried
+                var show16 = false; // age-16 toggle state (18+ is ALWAYS excluded, no toggle for that)
+
+                // Draw the next `n` covers with two guarantees:
+                //  1) nothing currently on screen is drawn again
+                //  2) nothing repeats until every other cover in the pool has been shown
+                function drawNext(n) {
+                    var picked = [];
+                    var guard = 0;
+                    while (picked.length < n && guard < 2000) {
+                        guard++;
+                        if (!queue.length) {
+                            if (!pool.length) break;
+                            // full lap complete — reshuffle a fresh pass of the whole pool
+                            queue = shuffle(pool.slice());
+                        }
+                        var candidate = queue.shift();
+                        if (candidate === undefined) break;
+                        if (badUrls[candidate]) continue;
+                        if (onScreen.indexOf(candidate) !== -1) continue;   // already showing elsewhere
+                        if (picked.indexOf(candidate) !== -1) continue;    // already picked this batch
+                        picked.push(candidate);
+                    }
+                    // pool smaller than posters (rare edge case) — allow reuse rather than stall
+                    while (picked.length < n && pool.length) {
+                        picked.push(pool[picked.length % pool.length]);
+                    }
+                    return picked;
+                }
+
+                function extractCovers(data) {
+                    var items = (data && data.catalogue) || [];
+                    return items
+                        .filter(function (item) {
+                            if (!item.cover) return false;
+                            if (item.age === 18 || item.age >= 18) return false; // always excluded, no toggle
+                            if (item.age === 16 && !show16) return false;        // toggle-controlled
+                            return true;
+                        })
+                        .map(function (item) { return item.cover; });
+                }
+
+                function fetchCovers() {
+                    return fetch('marketplace-data.json?t=' + Date.now(), { cache: 'no-store' })
+                        .then(function (r) {
+                            if (!r.ok) throw new Error('bad response');
+                            return r.json();
+                        })
+                        .then(function (data) {
+                            var covers = extractCovers(data);
+                            // de-dupe — keep the FULL filtered list, no arbitrary cap,
+                            // so every eligible cover in the catalogue is reachable
+                            covers = covers.filter(function (url, i) { return covers.indexOf(url) === i; });
+                            return covers;
+                        });
+                }
+
+                var rotationStarted = false;
+
+                function applyPool(fresh) {
+                    if (!fresh.length) return;
+                    pool = fresh.filter(function (u) { return !badUrls[u]; });
+                    queue = shuffle(pool.slice());
+                }
+
+                function start(initialPool) {
+                    applyPool(initialPool.length ? initialPool : fallback);
+
+                    // seed each poster with its own starting cover — guaranteed unique
+                    var seed = drawNext(posters.length);
+                    posters.forEach(function (p, i) {
+                        setCover(p, seed[i]);
+                        onScreen[i] = seed[i];
+                    });
+
+                    if (rotationStarted) return; // don't double up timers on re-start (e.g. toggle change)
+                    rotationStarted = true;
+
+                    // Rotation is purely decorative background motion (not essential
+                    // content movement), so it always runs — it doesn't get disabled
+                    // by prefers-reduced-motion the way the headline text swap does.
+                    var slotOrder = [0, 1, 2, 3, 4]; // which slotClass each poster currently wears
+                    var pendingSwap = null; // guards against any overlapping cover-swap firing twice
+
+                    setInterval(function () {
+                        if (!pool.length) return;
+                        // 1) swap positions: rotate the slot assignment
+                        slotOrder.push(slotOrder.shift());
+                        posters.forEach(function (p, i) {
+                            slotClasses.forEach(function (c) { p.classList.remove(c); });
+                            p.classList.add(slotClasses[slotOrder[i]]);
+                        });
+                        // 2) only AFTER the poster has fully settled into its new
+                        // spot (position transition is .5s) do we crossfade in a new,
+                        // guaranteed-unique cover — exactly one clean change per cycle.
+                        if (pendingSwap) clearTimeout(pendingSwap);
+                        pendingSwap = setTimeout(function () {
+                            pendingSwap = null;
+                            var next = drawNext(posters.length);
+                            posters.forEach(function (p, i) {
+                                setCover(p, next[i]);
+                                onScreen[i] = next[i];
+                            });
+                        }, 700);
+                    }, 3000);
+
+                    // Automatically re-check marketplace-data.json in the background
+                    // and swap in the fresh cover pool the moment it changes —
+                    // no manual page refresh needed.
+                    setInterval(function () {
+                        fetchCovers().then(applyPool).catch(function () { /* keep existing pool */ });
+                    }, 8000);
+                }
+
+                var toggle = document.getElementById('show16Toggle');
+                if (toggle) {
+                    toggle.addEventListener('change', function () {
+                        show16 = toggle.checked;
+                        fetchCovers()
+                            .then(function (fresh) { start(fresh); })
+                            .catch(function () { start(shuffle(fallback.slice())); });
+                    });
+                }
+
+                fetchCovers()
+                    .then(function (goodCovers) { start(goodCovers); })
+                    .catch(function () { start(shuffle(fallback.slice())); });
+            })();
+
+            // Subtle 3D tilt on the poster stage following the pointer
+            var stage = document.getElementById('stageInner');
+            var hero = document.getElementById('heroStage');
+            if (stage && hero && !reduce && window.matchMedia('(hover: hover)').matches) {
+                hero.addEventListener('mousemove', function (e) {
+                    var r = hero.getBoundingClientRect();
+                    var px = (e.clientX - r.left) / r.width - 0.5;
+                    var py = (e.clientY - r.top) / r.height - 0.5;
+                    stage.style.transform = 'rotateY(' + (-16 + px * 20) + 'deg) rotateX(' + (8 - py * 14) + 'deg)';
+                });
+                hero.addEventListener('mouseleave', function () {
+                    stage.style.transform = 'rotateY(-16deg) rotateX(8deg)';
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

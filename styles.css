@@ -191,8 +191,6 @@
         .sticky-top-bar.scrolled {
             background-color: var(--primary-color, #141414);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
-            padding-top: 6px;
-            padding-bottom: 2px;
         }
 
         body.light-theme .sticky-top-bar.scrolled {
@@ -201,41 +199,20 @@
         }
 
         .sticky-top-bar header {
-            padding: 20px 0;
-            margin-bottom: 24px;
-            transition: padding 0.25s ease, margin-bottom 0.25s ease;
+            padding: 12px 0;
+            margin-bottom: 18px;
         }
 
         .sticky-top-bar header img {
-            height: 150px;
-            transition: height 0.25s ease;
-        }
-
-        .sticky-top-bar.scrolled header {
-            padding: 8px 0;
-            margin-bottom: 10px;
-        }
-
-        .sticky-top-bar.scrolled header img {
-            height: 56px;
+            height: 92px;
         }
 
         .sticky-top-bar .filter-controls {
             margin-bottom: 24px;
-            transition: margin-bottom 0.25s ease;
         }
 
         .sticky-top-bar .search-filter-bar {
             margin-bottom: 18px;
-            transition: margin-bottom 0.25s ease;
-        }
-
-        .sticky-top-bar.scrolled .filter-controls {
-            margin-bottom: 10px;
-        }
-
-        .sticky-top-bar.scrolled .search-filter-bar {
-            margin-bottom: 10px;
         }
 
         /* Collapse toggle — only usable while at top (inline) */
@@ -942,7 +919,7 @@
             margin: 24px 0 6px 0;
             border-radius: 12px;
             padding: 20px 20px 14px;
-            background: var(--primary-color, #141414);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 100%);
             border: 1px solid rgba(255,255,255,0.07);
             position: relative;
             overflow: hidden;
@@ -1451,10 +1428,24 @@
         }
 
         .drag-handle {
-            color: #666;
-            font-size: 1.5rem;
+            color: #888;
+            font-size: 1.3rem;
             cursor: grab;
             user-select: none;
+            touch-action: none;
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            margin: -8px 0 -8px -8px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            transition: background-color .15s ease, color .15s ease;
+        }
+
+        .drag-handle:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #fff;
         }
 
         .drag-handle:active {
@@ -1462,7 +1453,13 @@
         }
 
         .priority-item.dragging {
-            opacity: 0.5;
+            opacity: 0.95;
+            transform: scale(1.02);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+            border-color: color-mix(in srgb, var(--secondary-color, #e50914) 60%, transparent);
+            cursor: grabbing;
+            z-index: 10;
+            position: relative;
         }
 
         .empty-state {
@@ -3805,6 +3802,19 @@
             color: transparent;
         }
 
+        /* Inline icons inside gradient-clipped text inherit `color:
+           transparent` via currentColor and vanish — give them a solid
+           colour again (matches the gradient start) on every theme */
+        body.gradient-text h1 svg,
+        body.gradient-text h2 svg,
+        body.gradient-text .series-title svg,
+        body.gradient-text .stat-card-value svg,
+        body.gradient-text .sidebar-section-title svg,
+        body.gradient-text .app-title svg,
+        body.gradient-text .page-title svg {
+            color: var(--grad-start, #e50914);
+        }
+
         /* ── Watchlist header & rank ──────────────────────────────── */
         .watchlist-head {
             display: flex; align-items: center; justify-content: space-between;
@@ -3820,3 +3830,603 @@
         body.light-theme .queue-rank { background: rgba(0,0,0,0.06); color: #555; }
         .priority-item { transition: background-color .15s, transform .15s; }
         .priority-item:hover { transform: translateX(2px); }
+
+        /* ── Home page floating add button (FAB) ──────────────────── */
+        .home-add-fab {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: var(--secondary-color, #e50914);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            z-index: 900;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        }
+        .home-add-fab svg { width: 26px; height: 26px; }
+        .home-add-fab:hover {
+            transform: scale(1.08);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+        }
+        .home-add-fab:active { transform: scale(0.95); }
+        @media (max-width: 600px) {
+            .home-add-fab { bottom: 18px; right: 18px; width: 54px; height: 54px; }
+        }
+
+        /* ── Title autocomplete suggestions ───────────────────────── */
+        .title-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 4px;
+            background: #1f1f1f;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 50;
+            max-height: 320px;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+        body.light-theme .title-suggestions {
+            background: #fff;
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+        }
+        .title-suggestion {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+        .title-suggestion:hover,
+        .title-suggestion.active {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        body.light-theme .title-suggestion:hover,
+        body.light-theme .title-suggestion.active {
+            background: rgba(0, 0, 0, 0.06);
+        }
+        .title-suggestion img {
+            width: 34px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .title-suggestion-info { min-width: 0; }
+        .title-suggestion-title {
+            font-weight: 600;
+            font-size: 0.92rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .title-suggestion-meta {
+            font-size: 0.78rem;
+            color: #999;
+            margin-top: 2px;
+        }
+        .title-suggestion-fill {
+            margin-left: auto;
+            flex-shrink: 0;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--secondary-color, #e50914);
+            border: 1px solid var(--secondary-color, #e50914);
+            border-radius: 20px;
+            padding: 3px 9px;
+            white-space: nowrap;
+        }
+
+
+        /* ── Tonight picker result card ───────────────────────────── */
+        .tonight-pick-card {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 6px 0 14px;
+            animation: tonightPop .25s ease;
+        }
+        body.light-theme .tonight-pick-card {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        @keyframes tonightPop {
+            from { transform: scale(0.94); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .tonight-pick-card img {
+            width: 72px;
+            height: 104px;
+            object-fit: cover;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        .tonight-pick-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        .tonight-pick-meta {
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        /* ── Year in Review ───────────────────────────────────────── */
+        .yr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 10px;
+            margin: 14px 0;
+        }
+        .yr-tile {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+        body.light-theme .yr-tile {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .yr-tile-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--secondary-color, #e50914);
+        }
+        .yr-tile-label {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .yr-block { margin: 16px 0; }
+        .yr-block h3 { font-size: 0.95rem; margin-bottom: 10px; }
+        .yr-months {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 95px;
+        }
+        .yr-month {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            min-width: 0;
+        }
+        .yr-month-bar {
+            width: 100%;
+            max-width: 26px;
+            border-radius: 4px 4px 0 0;
+            background: var(--secondary-color, #e50914);
+            transition: height .3s ease;
+        }
+        .yr-month-label {
+            font-size: 0.62rem;
+            color: #999;
+        }
+        .yr-row {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        body.light-theme .yr-row { background: rgba(0, 0, 0, 0.04); }
+        .yr-row-fill {
+            position: absolute;
+            inset: 0 auto 0 0;
+            background: color-mix(in srgb, var(--secondary-color, #e50914) 30%, transparent);
+            border-radius: 6px;
+        }
+        .yr-row-name, .yr-row-count { position: relative; z-index: 1; }
+        .yr-row-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+        }
+        .yr-row-count {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #ccc;
+            margin-left: 10px;
+        }
+        body.light-theme .yr-row-count { color: #555; }
+
+        /* ═══════════════════════════════════════════════════════════
+           Visual refresh — depth, hierarchy and breathing room
+           (overrides for the flat same-grey-everywhere look)
+           ═══════════════════════════════════════════════════════════ */
+
+        /* Header: smaller logo, tighter rhythm */
+        header {
+            padding: 12px 0;
+            margin-bottom: 18px;
+        }
+        header img {
+            height: 92px !important;
+            filter: drop-shadow(0 4px 14px rgba(229, 9, 20, 0.25));
+        }
+        header h1 {
+            letter-spacing: 0.01em;
+        }
+
+        /* Sections: cards with borders, gradients and depth */
+        .statistics-dashboard,
+        .priority-section {
+            background: linear-gradient(180deg, #1c1c1e 0%, #171719 100%);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+        body.light-theme .statistics-dashboard,
+        body.light-theme .priority-section {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Section headings get a small accent underline */
+        .statistics-dashboard h2,
+        .priority-section h2 {
+            position: relative;
+            padding-bottom: 2px;
+        }
+        .statistics-dashboard #statsHeader h2::after,
+        .priority-section .watchlist-head h2::after {
+            content: '';
+            display: block;
+            width: 34px;
+            height: 3px;
+            border-radius: 3px;
+            margin-top: 6px;
+            background: var(--secondary-color, #e50914);
+        }
+
+        /* Stat cards: tiles with hover lift */
+        .stat-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            padding: 18px 14px;
+            transition: transform .18s ease, border-color .18s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--secondary-color, #e50914) 45%, transparent);
+        }
+        .stat-card-label {
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        body.light-theme .stat-card {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.045) 0%, rgba(0, 0, 0, 0.02) 100%);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        /* Series cards: depth, rounded, status colour on the left edge */
+        .series-item {
+            background: linear-gradient(180deg, #1d1d1f 0%, #18181a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-left: 4px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+        .series-item:hover {
+            background: linear-gradient(180deg, #202023 0%, #1a1a1d 100%);
+            transform: translateY(-2px) scale(1.004);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
+        }
+        .series-item.status-watching-item { border-left-color: var(--watching-color, #e50914); }
+        .series-item.status-want-item { border-left-color: var(--want-color, #0062ff); }
+        .series-item.status-completed-item { border-left-color: var(--completed-color, #27ae60); }
+        body.light-theme .series-item {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            border-left-width: 4px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+        }
+        body.light-theme .series-item.status-watching-item { border-left-color: var(--watching-color, #e50914); }
+        body.light-theme .series-item.status-want-item { border-left-color: var(--want-color, #0062ff); }
+        body.light-theme .series-item.status-completed-item { border-left-color: var(--completed-color, #27ae60); }
+
+        .series-thumbnail {
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        /* The row of small stats reads as chips instead of loose text */
+        .series-stats {
+            gap: 10px;
+        }
+        .series-stats .stat-item {
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 8px 12px;
+        }
+        body.light-theme .series-stats .stat-item {
+            background: rgba(0, 0, 0, 0.035);
+            border-color: rgba(0, 0, 0, 0.07);
+        }
+        .series-stats .stat-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 2px;
+        }
+        .series-stats .stat-value {
+            font-size: 1rem;
+        }
+
+        /* Pills: badges, filters, search */
+        .status-badge {
+            border-radius: 999px;
+            padding: 4px 14px;
+        }
+        .filter-btn {
+            border-radius: 999px;
+        }
+        .filter-btn.active {
+            box-shadow: 0 4px 14px color-mix(in srgb, var(--secondary-color, #e50914) 45%, transparent);
+        }
+        .search-input {
+            border-radius: 999px;
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+        .search-input:focus {
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--secondary-color, #e50914) 25%, transparent);
+        }
+        .filter-menu-btn {
+            border-radius: 999px;
+        }
+
+        /* Progress bars: subtle gradient */
+        .progress-bar {
+            height: 7px;
+            border-radius: 999px;
+        }
+        .progress-bar-fill {
+            border-radius: 999px;
+            background: linear-gradient(90deg,
+                color-mix(in srgb, var(--secondary-color, #e50914) 70%, #000) 0%,
+                var(--secondary-color, #e50914) 100%);
+        }
+
+        /* Watchlist rows */
+        .priority-item {
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.045);
+        }
+        body.light-theme .priority-item {
+            background-color: rgba(0, 0, 0, 0.035);
+            border-color: rgba(0, 0, 0, 0.07);
+        }
+
+        /* A touch more room between the big page blocks */
+        .statistics-dashboard { margin-bottom: 34px; }
+        .series-list { margin-bottom: 40px; }
+        .series-item { margin-bottom: 18px; }
+
+        /* ── Colored status filter buttons (sidebar toggle) ───────── */
+        body.colored-filters .filter-btn[data-filter="watching"] {
+            border-color: color-mix(in srgb, var(--watching-color, #e50914) 65%, transparent);
+            color: var(--watching-color, #e50914);
+            background-color: color-mix(in srgb, var(--watching-color, #e50914) 14%, transparent);
+        }
+        body.colored-filters .filter-btn[data-filter="want"] {
+            border-color: color-mix(in srgb, var(--want-color, #0062ff) 65%, transparent);
+            color: var(--want-color, #0062ff);
+            background-color: color-mix(in srgb, var(--want-color, #0062ff) 14%, transparent);
+        }
+        body.colored-filters .filter-btn[data-filter="completed"] {
+            border-color: color-mix(in srgb, var(--completed-color, #27ae60) 65%, transparent);
+            color: var(--completed-color, #27ae60);
+            background-color: color-mix(in srgb, var(--completed-color, #27ae60) 14%, transparent);
+        }
+        /* !important so these beat the custom-theme `.filter-btn.active`
+           override that otherwise forces the accent (red) on the selected
+           status button under the Custom theme */
+        body.colored-filters .filter-btn.active[data-filter="watching"] {
+            background-color: var(--watching-color, #e50914) !important;
+            border-color: var(--watching-color, #e50914) !important;
+            color: #fff;
+            box-shadow: 0 4px 14px color-mix(in srgb, var(--watching-color, #e50914) 45%, transparent);
+        }
+        body.colored-filters .filter-btn.active[data-filter="want"] {
+            background-color: var(--want-color, #0062ff) !important;
+            border-color: var(--want-color, #0062ff) !important;
+            color: #fff;
+            box-shadow: 0 4px 14px color-mix(in srgb, var(--want-color, #0062ff) 45%, transparent);
+        }
+        body.colored-filters .filter-btn.active[data-filter="completed"] {
+            background-color: var(--completed-color, #27ae60) !important;
+            border-color: var(--completed-color, #27ae60) !important;
+            color: #fff;
+            box-shadow: 0 4px 14px color-mix(in srgb, var(--completed-color, #27ae60) 45%, transparent);
+        }
+
+        /* ── Enhanced color picker (swatches + hex input) ─────────── */
+        .cp-extras {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0 12px 4px;
+            flex-wrap: wrap;
+        }
+        .cp-swatches {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .cp-swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            cursor: pointer;
+            padding: 0;
+            transition: transform .12s ease;
+        }
+        .cp-swatch:hover { transform: scale(1.25); }
+        body.light-theme .cp-swatch { border-color: rgba(0, 0, 0, 0.2); }
+        .cp-hex {
+            width: 86px;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: inherit;
+            font-size: 0.78rem;
+            font-family: monospace;
+        }
+        .cp-hex:focus {
+            outline: none;
+            border-color: var(--secondary-color, #e50914);
+        }
+        body.light-theme .cp-hex {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+
+        /* ── Popup/modal redesign to match the new card style ─────── */
+        .overlay .modal,
+        .overlay .ct-card {
+            background: linear-gradient(180deg, #1e1e20 0%, #171719 100%);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 16px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+        }
+        body.light-theme .overlay .modal,
+        body.light-theme .overlay .ct-card {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+        }
+        .modal-actions .btn,
+        .modal .btn {
+            border-radius: 999px;
+        }
+
+        /* ── First-run onboarding tour ────────────────────────────── */
+        .tour-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.62);
+            z-index: 3000;
+        }
+        .tour-target {
+            position: relative;
+            z-index: 3001 !important;
+            box-shadow: 0 0 0 4px var(--secondary-color, #e50914), 0 10px 40px rgba(0, 0, 0, 0.6) !important;
+            border-radius: 12px;
+        }
+        .tour-tooltip {
+            position: fixed;
+            z-index: 3002;
+            width: min(360px, calc(100vw - 24px));
+            background: linear-gradient(180deg, #1e1e20 0%, #171719 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+            animation: tonightPop .25s ease;
+        }
+        body.light-theme .tour-tooltip {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.12);
+        }
+        .tour-tooltip h3 {
+            margin: 0 0 8px;
+            font-size: 1.05rem;
+        }
+        .tour-tooltip p {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin: 0 0 14px;
+        }
+        body.light-theme .tour-tooltip p { color: #555; }
+        .tour-dots {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .tour-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        body.light-theme .tour-dot { background: rgba(0, 0, 0, 0.15); }
+        .tour-dot.active { background: var(--secondary-color, #e50914); }
+        .tour-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .tour-actions .btn:first-child { margin-right: auto; }
+
+        /* ── Auto-export interval select readability ──────────────── */
+        #settingAutoSaveInterval,
+        #settingAutoSaveInterval option {
+            color: #ffffff;
+            background-color: #2a2a2a;
+        }
+        body.light-theme #settingAutoSaveInterval,
+        body.light-theme #settingAutoSaveInterval option {
+            color: #111111;
+            background-color: #ffffff;
+        }
+
+        /* ── Hide unwanted scrollbars (kept scrollable) ───────────── */
+        /* Sidebar grows when gradient/custom theme controls expand — the
+           scrollbar flicker in/out is distracting; hide it but keep scroll */
+        .sidebar {
+            scrollbar-width: none;         /* Firefox */
+            -ms-overflow-style: none;      /* old Edge */
+        }
+        .sidebar::-webkit-scrollbar { width: 0; height: 0; }
+
+        /* Year in Review modal + watch timeline area */
+        #yearReviewModal .modal,
+        #yearReviewBody,
+        .watch-timeline,
+        .watch-timeline-details {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        #yearReviewModal .modal::-webkit-scrollbar,
+        #yearReviewBody::-webkit-scrollbar,
+        .watch-timeline::-webkit-scrollbar,
+        .watch-timeline-details::-webkit-scrollbar { width: 0; height: 0; }

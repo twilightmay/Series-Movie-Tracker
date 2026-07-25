@@ -305,6 +305,113 @@
         </div>
         
           <div class="changelog-content">
+            <!-- Version 1.16 -->
+<div class="version-card">
+    <div class="version-header">
+        <span class="version-number">Version 1.16</span>
+        <span class="version-date">July 22 2026</span>
+    </div>
+
+    <div style="background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.35);border-radius:12px;padding:16px 18px;margin-bottom:20px;">
+        <strong style="color:#e50914;">📣 New developer on the team:</strong>
+        <strong>x4ndrrr</strong> has joined the Dev team. He'll actively update, improve and debug
+        the page to keep it usable and continuously improving &mdash; to the point where everyone
+        has what they need.
+    </div>
+
+    <h3 class="section-title">Landing Page</h3>
+    <ul class="feature-list">
+        <li><strong>Rotating headline:</strong> The hero now reads &ldquo;Track everything &hellip;&rdquo; with the last part cycling through a dozen phrases (you watch, you love, that's popular&hellip;) with a smooth animated flip.</li>
+        <li><strong>3D poster stage:</strong> A layered, tilt-reactive fan of real posters was added to the hero, inspired by the concept design &mdash; self-contained, with no external libraries.</li>
+        <li><strong>Bigger, local logo:</strong> The logo is larger and now loads from the bundled asset instead of an external image host.</li>
+        <li><strong>Firefox fix:</strong> The &ldquo;Open the app&rdquo; button now reliably opens the tracker in Firefox instead of appearing to reload the landing page.</li>
+    </ul>
+
+    <h3 class="section-title">Tracker (index)</h3>
+    <ul class="feature-list">
+        <li><strong>Action menu reverted:</strong> The top-right hover bar was replaced again by the click-to-expand action menu (Episode Watched / Edit / More / Delete) on each card.</li>
+        <li><strong>Category &ldquo;All&rdquo; fixed:</strong> Choosing Filter by Category &rarr; All now actually returns to showing everything instead of staying on the previous category.</li>
+        <li><strong>Colored Filters moved:</strong> The toggle now lives in the Themes section, and under the Custom theme the selected status button shows your chosen colour instead of always red.</li>
+        <li><strong>Readable interval:</strong> The Auto-Export interval dropdown is no longer white-on-white.</li>
+        <li><strong>Cleaner scrolling:</strong> Distracting scrollbars in the sidebar, the Year in Review and the timeline are hidden while staying scrollable; the top bar and logo keep a steady size.</li>
+    </ul>
+
+    <h3 class="section-title">Marketplace</h3>
+    <ul class="feature-list">
+        <li><strong>Logo fixed:</strong> The top-bar mark showed as a plain red square &mdash; it now displays a clean &ldquo;S+M&rdquo; wordmark in the red box.</li>
+        <li><strong>Real provider filter:</strong> The Provider dropdown now offers clean services (Netflix, Disney+, HBO Max, Prime Video, Hulu, Apple TV+, Paramount+, Peacock, Crunchyroll) and filters reliably by them.</li>
+        <li><strong>Fullscreen collections:</strong> Opening a collection now fills the screen, with a close button that stays put while you scroll.</li>
+    </ul>
+
+    <h3 class="section-title">Under the Hood</h3>
+    <ul class="feature-list">
+        <li><strong>Update prompt:</strong> When a new version ships, the app no longer swaps itself out silently mid-session &mdash; it shows an &ldquo;A new version is available &mdash; Reload&rdquo; prompt.</li>
+        <li><strong>Code cleanup:</strong> Removed duplicate function declarations that could silently shadow one another.</li>
+        <li><strong>Docs refreshed:</strong> The README was rewritten to match the real project, the unused <em>database</em> folder was removed, and the Guide's catalogue count is now fetched live so it's always exact.</li>
+    </ul>
+</div>
+
+            <!-- Version 1.15 -->
+<div class="version-card">
+    <div class="version-header">
+        <span class="version-number">Version 1.15</span>
+        <span class="version-date">July 19 2026</span>
+    </div>
+
+    <h3 class="section-title">Adding Content</h3>
+    <ul class="feature-list">
+        <li><strong>Quick-add button:</strong> A floating red <strong>+</strong> button on the main page opens the add dialog directly &mdash; no more digging through the menu.</li>
+        <li><strong>Smart auto-fill:</strong> Type two letters of a title and the app guesses what you mean (e.g. &ldquo;squi&rdquo; &rarr; <em>Squid Game</em>) and fills in the cover, genre, content type, seasons, episodes, runtime, rating, age, description and streaming services automatically.</li>
+        <li><strong>TVMaze fallback:</strong> Titles that aren't in the local catalogue are looked up live on TVMaze, so brand-new and obscure series auto-fill too &mdash; including their season and episode counts.</li>
+        <li><strong>Real genres:</strong> The catalogue was enriched with genuine genres from Wikidata (movies) and TVMaze (series), so auto-filled genres are finally correct &mdash; no more &ldquo;Star Wars&rdquo; as a genre.</li>
+        <li><strong>Locked content type:</strong> When adding a Movie only &ldquo;Movie&rdquo; is selectable (and the same for Series), so the type can no longer be picked wrong by accident.</li>
+    </ul>
+
+    <h3 class="section-title">Tracking &amp; Watchlist</h3>
+    <ul class="feature-list">
+        <li><strong>Hover action bar:</strong> Hovering a card pops up an action bar (Episode Watched / Edit / More / Delete) that stays visible until you click it or hover another card. The separate &ldquo;+1&rdquo; circle button was removed in its favour.</li>
+        <li><strong>Styled season dialog:</strong> Finishing a season now shows a proper in-app dialog (&ldquo;Next season&rdquo; / &ldquo;Extend season&rdquo;) instead of a browser popup; the watch-timer prompts got the same treatment.</li>
+        <li><strong>Easier watchlist reordering:</strong> The broken up/down arrows are gone &mdash; drag rows anywhere with the mouse or with the ☰ handle on touch, with live preview, edge auto-scroll and a clear lifted style while dragging.</li>
+        <li><strong>&ldquo;What tonight?&rdquo; picker:</strong> A button on the Watchlist that picks something random from your list, optionally filtered by genre and how much time you have.</li>
+        <li><strong>Year in Review:</strong> A &ldquo;Wrapped&rdquo;-style yearly recap under the Watch Timeline: episodes and movies watched, watch time, busiest months, top genres, most-watched titles and your longest daily streak.</li>
+    </ul>
+
+    <h3 class="section-title">New Pages &amp; App</h3>
+    <ul class="feature-list">
+        <li><strong>Landing page:</strong> The old Application Summary became a proper landing page (<em>landing.html</em>) that explains the app. First-time visitors are redirected there automatically; the &ldquo;Open the app&rdquo; button remembers you've been there. Its menu links were removed everywhere.</li>
+        <li><strong>Interactive onboarding:</strong> A first-run guided tour points out profiles, adding content, the Marketplace, search and statistics &mdash; skippable, and it only ever shows once.</li>
+        <li><strong>Installable app (PWA):</strong> With a web manifest and offline caching, the tracker can be installed on your home screen or desktop and keeps working offline.</li>
+        <li><strong>Rewritten Guide:</strong> The Guide was rebuilt from scratch &mdash; every feature explained with what-it-does summaries and step-by-step instructions.</li>
+    </ul>
+
+    <h3 class="section-title">Marketplace</h3>
+    <ul class="feature-list">
+        <li><strong>Filters that stick:</strong> Category, sort, provider, status, age and view choices are saved and restored on your next visit.</li>
+        <li><strong>Bigger detail popup:</strong> The title popup grew, shows more data (genres, popularity, original title) and has a <strong>Watch trailer</strong> button linking to YouTube.</li>
+        <li><strong>Nicer &ldquo;Add title&rdquo; popup:</strong> The add-to chooser was redesigned with clear colour-coded options and descriptions.</li>
+        <li><strong>Matching look:</strong> The Marketplace now uses the same background and surface colours as the tracker, theme switching is instant (the laggy blur effect was dropped), and the S&amp;M logo sits in the red box next to &ldquo;Tracker&rdquo;.</li>
+    </ul>
+
+    <h3 class="section-title">Design &amp; Theming</h3>
+    <ul class="feature-list">
+        <li><strong>Visual refresh:</strong> Cards and sections got depth (gradients, borders, shadows, hover lift), status-coloured card edges, chip-style stats, pill-shaped search/filters/badges, a smaller logo and tighter header.</li>
+        <li><strong>Steady top bar:</strong> The sticky search bar keeps exactly the same size while scrolling instead of shrinking.</li>
+        <li><strong>Colored Filters toggle:</strong> An optional setting that tints the status filter buttons in their theme colours.</li>
+        <li><strong>Better color picker:</strong> Custom-theme colours now offer preset swatches and a hex field alongside the colour wheel.</li>
+        <li><strong>Whole-card zoom:</strong> The custom view size now scales the entire card, so smaller sizes genuinely fit more titles on screen.</li>
+        <li><strong>Popup redesign:</strong> All dialogs (cookie notice, import/export, add dialogs) follow the new rounded style with pill buttons.</li>
+    </ul>
+
+    <h3 class="section-title">Fixes</h3>
+    <ul class="feature-list">
+        <li><strong>Streaming icons repaired:</strong> Broken logo URLs were replaced with a reliable icon service, so service icons load again in the edit menu and on cards; the Disney+ and HBO Max watch links were fixed too.</li>
+        <li><strong>Gradient text icons:</strong> Icons no longer disappear when gradient text is enabled under the Light or Dark theme.</li>
+        <li><strong>Timeline background:</strong> The Watch Timeline panel now matches the other panels instead of using a darker odd-one-out background.</li>
+        <li><strong>Sidebar polish:</strong> The gradient-text toggle now looks like the other menu items, the intro video is off by default, and the Auto-Export interval only appears while Auto-Export is switched on.</li>
+        <li><strong>Credits:</strong> Footer updated to &ldquo;made with love by twillightmay &amp; x4ndrrr&rdquo;.</li>
+    </ul>
+</div>
+
             <!-- Version 1.14 -->
 <div class="version-card">
     <div class="version-header">

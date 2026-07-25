@@ -1,22 +1,23 @@
-        // Streaming service icons mapping
+        // Streaming service icons mapping — favicon service is far more
+        // reliable than deep-linked Wikimedia thumbs (which rot over time)
         const streamingIcons = {
-            'netflix': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/200px-Netflix_2015_logo.svg.png',
-            'disney': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/200px-Disney%2B_logo.svg.png',
-            'hbo': 'https://upload.wikimedia.org/wikipedia/commons/8/81/HBO_Max_Logo_%28October_2019%29.svg',
-            'amazon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/200px-Amazon_Prime_Video_logo.svg.png',
-            'hulu': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Hulu_logo_%282018%29.svg/2560px-Hulu_logo_%282018%29.svg.png',
-            'apple': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/AppleTVLogo.svg/2048px-AppleTVLogo.svg.png',
-            'paramount': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Paramount_Plus.svg/200px-Paramount_Plus.svg.png',
-            'peacock': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/NBC_Peacock_%282022%29.svg/960px-NBC_Peacock_%282022%29.svg.png',
+            'netflix': 'https://www.google.com/s2/favicons?domain=netflix.com&sz=128',
+            'disney': 'https://www.google.com/s2/favicons?domain=disneyplus.com&sz=128',
+            'hbo': 'https://www.google.com/s2/favicons?domain=max.com&sz=128',
+            'amazon': 'https://www.google.com/s2/favicons?domain=primevideo.com&sz=128',
+            'hulu': 'https://www.google.com/s2/favicons?domain=hulu.com&sz=128',
+            'apple': 'https://www.google.com/s2/favicons?domain=tv.apple.com&sz=128',
+            'paramount': 'https://www.google.com/s2/favicons?domain=paramountplus.com&sz=128',
+            'peacock': 'https://www.google.com/s2/favicons?domain=peacocktv.com&sz=128',
             'crunchyroll': 'https://www.google.com/s2/favicons?domain=crunchyroll.com&sz=128',
-            'other': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Symbol_Resin_Code_7_OTHER.svg/1698px-Symbol_Resin_Code_7_OTHER.svg.png'
+            'other': 'data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23999%22 stroke-width=%222%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%2210%22/%3E%3Cline x1=%222%22 y1=%2212%22 x2=%2222%22 y2=%2212%22/%3E%3Cpath d=%22M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z%22/%3E%3C/svg%3E'
         };
 
         // Streaming service search/watch URLs
         const streamingSearchUrls = {
             'netflix': (t) => `https://www.netflix.com/search?q=${encodeURIComponent(t)}`,
-            'disney': (t) => `https://www.disneyplus.com/search/${encodeURIComponent(t)}`,
-            'hbo': (t) => `https://www.max.com/search?q=${encodeURIComponent(t)}`,
+            'disney': (t) => `https://www.disneyplus.com/home`,
+            'hbo': (t) => `https://play.hbomax.com/search?q=${encodeURIComponent(t)}`,
             'amazon': (t) => `https://www.amazon.com/s?k=${encodeURIComponent(t)}&i=instant-video`,
             'hulu': (t) => `https://www.hulu.com/search?q=${encodeURIComponent(t)}`,
             'apple': (t) => `https://tv.apple.com/search?term=${encodeURIComponent(t)}`,
@@ -59,8 +60,9 @@
         let users = [];
         let settings = {
             autoExport: false,
-            showIntro: true,
+            showIntro: false,
             showNotifications: true,
+            coloredFilters: false,
             autoSaveInterval: '1min' // Options: '1min', '10min', '1h', '10h', '1week', 'off'
         };
         let autoSaveIntervalId = null;
@@ -1518,16 +1520,18 @@
                     const loadedSettings = JSON.parse(stored);
                     settings = {
                         autoExport: loadedSettings.autoExport !== undefined ? loadedSettings.autoExport : false,
-                        showIntro: loadedSettings.showIntro !== undefined ? loadedSettings.showIntro : true,
+                        showIntro: loadedSettings.showIntro !== undefined ? loadedSettings.showIntro : false,
                         showNotifications: loadedSettings.showNotifications !== undefined ? loadedSettings.showNotifications : true,
+                        coloredFilters: loadedSettings.coloredFilters !== undefined ? loadedSettings.coloredFilters : false,
                         autoSaveInterval: loadedSettings.autoSaveInterval || '1min'
                     };
                 } catch (e) {
                     console.error('Error loading app settings:', e);
                     settings = {
                         autoExport: false,
-                        showIntro: true,
+                        showIntro: false,
                         showNotifications: true,
+                        coloredFilters: false,
                         autoSaveInterval: '1min'
                     };
                 }
@@ -1542,6 +1546,13 @@
             if (showIntroCheckbox) showIntroCheckbox.checked = settings.showIntro;
             if (showNotificationsCheckbox) showNotificationsCheckbox.checked = settings.showNotifications;
             if (autoSaveIntervalSelect) autoSaveIntervalSelect.value = settings.autoSaveInterval;
+            const coloredFiltersCheckbox = document.getElementById('settingColoredFilters');
+            if (coloredFiltersCheckbox) coloredFiltersCheckbox.checked = settings.coloredFilters;
+            document.body.classList.toggle('colored-filters', !!settings.coloredFilters);
+            if (autoSaveIntervalSelect && (settings.autoSaveInterval === 'off' || !settings.autoSaveInterval)) {
+                autoSaveIntervalSelect.value = '1min';
+            }
+            updateAutoExportIntervalVisibility();
             
             // Setup auto-save interval
             setupAutoSaveInterval();
@@ -1566,6 +1577,66 @@
                 default:
                     return null; // Off
             }
+        }
+
+        // Upgrade the bare native color inputs with preset swatches and a
+        // hex field; both drive the hidden native picker so all existing
+        // handlers keep working unchanged.
+        function enhanceColorPickers() {
+            const PRESETS = ['#e50914', '#f5c518', '#0062ff', '#27ae60', '#9b59b6',
+                '#ff6b81', '#00bcd4', '#ff9800', '#141414', '#1e1e2e', '#0d1b2a', '#ffffff'];
+            document.querySelectorAll('.color-picker-wrapper').forEach(wrap => {
+                if (wrap.dataset.enhanced) return;
+                const input = wrap.querySelector('input[type="color"]');
+                if (!input) return;
+                wrap.dataset.enhanced = '1';
+
+                const extras = document.createElement('div');
+                extras.className = 'cp-extras';
+
+                const hex = document.createElement('input');
+                hex.type = 'text';
+                hex.className = 'cp-hex';
+                hex.placeholder = '#RRGGBB';
+                hex.maxLength = 7;
+                hex.value = (input.value || '').toUpperCase();
+
+                const applyColor = (v) => {
+                    input.value = v.toLowerCase();
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                    hex.value = v.toUpperCase();
+                };
+
+                const swatches = document.createElement('div');
+                swatches.className = 'cp-swatches';
+                PRESETS.forEach(c => {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'cp-swatch';
+                    b.style.background = c;
+                    b.title = c;
+                    b.addEventListener('click', () => applyColor(c));
+                    swatches.appendChild(b);
+                });
+
+                hex.addEventListener('change', () => {
+                    let v = hex.value.trim();
+                    if (v && !v.startsWith('#')) v = '#' + v;
+                    if (/^#[0-9a-fA-F]{6}$/.test(v)) applyColor(v);
+                    else hex.value = (input.value || '').toUpperCase();
+                });
+                input.addEventListener('input', () => { hex.value = input.value.toUpperCase(); });
+
+                extras.appendChild(swatches);
+                extras.appendChild(hex);
+                wrap.insertAdjacentElement('afterend', extras);
+            });
+        }
+
+        function updateAutoExportIntervalVisibility() {
+            const wrap = document.getElementById('autoExportIntervalWrap');
+            if (wrap) wrap.style.display = settings.autoExport ? 'block' : 'none';
         }
 
         function setupAutoSaveInterval() {
@@ -1851,6 +1922,17 @@
                 episode: isSeries ? (s.episode || 1) : null
             });
 
+            const finalize = () => {
+                saveData();
+                renderSeries();
+                renderStatistics();
+                showTrackingToast(isSeries
+                    ? (s.status === 'completed'
+                        ? `${s.title} — Completed!`
+                        : `${s.title} — S${series[idx].season} E${series[idx].episode} up next`)
+                    : `${s.title} — Logged as watched`);
+            };
+
             // Advance episode for series
             if (isSeries && s.status === 'watching') {
                 const totalEp = s.totalEpisodes || 10;
@@ -1862,14 +1944,22 @@
                     // Next episode in same season
                     s.episode = currentEp + 1;
                 } else if (currentSe < totalSe) {
-                    const goNextSeason = confirm(`You reached the listed total episodes for Season ${currentSe}.\n\nChoose OK to go to next season, or Cancel to set total episodes for this season to ${currentEp + 1}.`);
-                    if (goNextSeason) {
-                        s.season  = currentSe + 1;
-                        s.episode = 1;
-                    } else {
-                        s.totalEpisodes = currentEp + 1;
-                        s.episode = currentEp + 1;
-                    }
+                    appConfirm({
+                        title: 'Season finished!',
+                        message: `You reached the listed total episodes for Season ${currentSe} of "${s.title}".\n\nMove on to Season ${currentSe + 1}, or extend this season to ${currentEp + 1} episodes?`,
+                        okText: 'Next season',
+                        cancelText: 'Extend season'
+                    }).then(goNextSeason => {
+                        if (goNextSeason) {
+                            s.season  = currentSe + 1;
+                            s.episode = 1;
+                        } else {
+                            s.totalEpisodes = currentEp + 1;
+                            s.episode = currentEp + 1;
+                        }
+                        finalize();
+                    });
+                    return;
                 } else {
                     // Was the final episode — mark completed
                     s.status = 'completed';
@@ -1877,16 +1967,194 @@
                 }
             }
 
-            saveData();
-            renderSeries();
-            renderStatistics();
+            finalize();
+        }
 
-            // Visual feedback toast
-            showTrackingToast(isSeries
-                ? (s.status === 'completed'
-                    ? `${s.title} — Completed!`
-                    : `${s.title} — S${series[idx].season} E${series[idx].episode} up next`)
-                : `${s.title} — Logged as watched`);
+        // ── First-run interactive onboarding tour ───────────────────
+        const TOUR_STEPS = [
+            {
+                title: 'Welcome to Series & Movie Tracker!',
+                text: 'Track what you watch, plan what\'s next and see your stats — all stored on your own device. This quick tour shows you around in under a minute.'
+            },
+            {
+                target: '#hamburgerMenu',
+                title: 'Profiles & settings',
+                text: 'Everything personal lives behind this menu: create profiles for each person in your household, switch themes, tweak settings and export your list.'
+            },
+            {
+                target: '#homeAddFab',
+                title: 'Add movies & series',
+                text: 'Tap the + to add something. Start typing a title — after two letters the app guesses what you mean and fills in the cover, genre, seasons and more for you.'
+            },
+            {
+                target: '.sidebar-marketplace-btn',
+                title: 'The Marketplace',
+                text: 'Prefer browsing? The Marketplace has a big catalogue of popular titles — add anything to your list with one click.',
+                onEnter: () => {
+                    openSidebar();
+                    const sb = document.getElementById('sidebar');
+                    if (sb) sb.style.zIndex = '3001';
+                },
+                onExit: () => {
+                    const sb = document.getElementById('sidebar');
+                    if (sb) sb.style.zIndex = '';
+                    closeSidebar();
+                }
+            },
+            {
+                target: '#searchInput',
+                title: 'Search & filters',
+                text: 'Search across everything you track, filter by status (Watching, Want to Watch, Completed) and sort or resize the list via Filters & Sort.'
+            },
+            {
+                target: '#statisticsDashboard',
+                title: 'Your stats',
+                text: 'Watch time, genre breakdown, a timeline of your activity and a Year in Review — hover any card and use "Episode Watched" to log progress and feed these numbers.'
+            }
+        ];
+        let tourStepIndex = 0;
+
+        function startOnboardingTour() {
+            tourStepIndex = 0;
+            showTourStep(0);
+        }
+
+        function endOnboardingTour() {
+            const step = TOUR_STEPS[tourStepIndex];
+            if (step && step.onExit) step.onExit();
+            document.querySelectorAll('.tour-target').forEach(el => el.classList.remove('tour-target'));
+            const tip = document.getElementById('tourTooltip');
+            const backdrop = document.getElementById('tourBackdrop');
+            if (tip) tip.remove();
+            if (backdrop) backdrop.remove();
+            localStorage.setItem('seriesTrackerOnboardingDone', '1');
+        }
+
+        function showTourStep(index) {
+            const prev = TOUR_STEPS[tourStepIndex];
+            if (prev && prev.onExit && index !== tourStepIndex) prev.onExit();
+            tourStepIndex = index;
+            const step = TOUR_STEPS[index];
+            if (!step) { endOnboardingTour(); return; }
+            if (step.onEnter) step.onEnter();
+
+            let backdrop = document.getElementById('tourBackdrop');
+            if (!backdrop) {
+                backdrop = document.createElement('div');
+                backdrop.id = 'tourBackdrop';
+                backdrop.className = 'tour-backdrop';
+                document.body.appendChild(backdrop);
+            }
+
+            document.querySelectorAll('.tour-target').forEach(el => el.classList.remove('tour-target'));
+            let targetEl = null;
+            if (step.target) {
+                targetEl = document.querySelector(step.target);
+                if (targetEl) {
+                    targetEl.classList.add('tour-target');
+                    targetEl.scrollIntoView({ block: 'center', behavior: 'instant' });
+                }
+            }
+
+            let tip = document.getElementById('tourTooltip');
+            if (!tip) {
+                tip = document.createElement('div');
+                tip.id = 'tourTooltip';
+                tip.className = 'tour-tooltip';
+                document.body.appendChild(tip);
+            }
+            tip.innerHTML = '';
+            const h = document.createElement('h3');
+            h.textContent = step.title;
+            const p = document.createElement('p');
+            p.textContent = step.text;
+            const dots = document.createElement('div');
+            dots.className = 'tour-dots';
+            TOUR_STEPS.forEach((_, i) => {
+                const d = document.createElement('span');
+                d.className = 'tour-dot' + (i === index ? ' active' : '');
+                dots.appendChild(d);
+            });
+            const actions = document.createElement('div');
+            actions.className = 'tour-actions';
+            const skip = document.createElement('button');
+            skip.className = 'btn btn-small btn-secondary';
+            skip.textContent = 'Skip tour';
+            skip.onclick = endOnboardingTour;
+            actions.appendChild(skip);
+            if (index > 0) {
+                const back = document.createElement('button');
+                back.className = 'btn btn-small btn-secondary';
+                back.textContent = 'Back';
+                back.onclick = () => showTourStep(index - 1);
+                actions.appendChild(back);
+            }
+            const next = document.createElement('button');
+            next.className = 'btn btn-small';
+            next.textContent = index === TOUR_STEPS.length - 1 ? 'Finish' : 'Next';
+            next.onclick = () => index === TOUR_STEPS.length - 1 ? endOnboardingTour() : showTourStep(index + 1);
+            actions.appendChild(next);
+            tip.appendChild(h);
+            tip.appendChild(p);
+            tip.appendChild(dots);
+            tip.appendChild(actions);
+
+            // Position the tooltip near its target (or centered without one)
+            tip.style.top = tip.style.left = tip.style.transform = '';
+            if (targetEl) {
+                const r = targetEl.getBoundingClientRect();
+                const tipW = Math.min(360, window.innerWidth - 24);
+                tip.style.maxWidth = tipW + 'px';
+                const below = r.bottom + 12;
+                const fitsBelow = below + 220 < window.innerHeight;
+                tip.style.top = (fitsBelow ? below : Math.max(12, r.top - 12 - 220)) + 'px';
+                tip.style.left = Math.max(12, Math.min(r.left, window.innerWidth - tipW - 12)) + 'px';
+            } else {
+                tip.style.top = '50%';
+                tip.style.left = '50%';
+                tip.style.transform = 'translate(-50%, -50%)';
+            }
+        }
+
+        function maybeStartOnboarding() {
+            if (localStorage.getItem('seriesTrackerOnboardingDone')) return;
+            // Wait until intro/cookie popups are out of the way
+            setTimeout(() => {
+                const anyOverlayOpen = Array.from(document.querySelectorAll('.overlay'))
+                    .some(o => o.style.display === 'flex');
+                if (anyOverlayOpen) { setTimeout(maybeStartOnboarding, 2500); return; }
+                startOnboardingTour();
+            }, 1200);
+        }
+
+        // Styled replacement for window.confirm/alert, matching the app design
+        function appConfirm(opts) {
+            return new Promise(resolve => {
+                const overlay = document.getElementById('appConfirmModal');
+                if (!overlay) { resolve(window.confirm(opts.message)); return; }
+                const title = document.getElementById('appConfirmTitle');
+                const message = document.getElementById('appConfirmMessage');
+                const okBtn = document.getElementById('appConfirmOkBtn');
+                const cancelBtn = document.getElementById('appConfirmCancelBtn');
+                title.textContent = opts.title || 'Are you sure?';
+                message.textContent = opts.message || '';
+                okBtn.textContent = opts.okText || 'OK';
+                cancelBtn.textContent = opts.cancelText || 'Cancel';
+                cancelBtn.style.display = opts.hideCancel ? 'none' : '';
+                const done = (val) => {
+                    overlay.style.display = 'none';
+                    okBtn.onclick = cancelBtn.onclick = overlay.onclick = null;
+                    resolve(val);
+                };
+                okBtn.onclick = () => done(true);
+                cancelBtn.onclick = () => done(false);
+                overlay.onclick = (e) => { if (e.target === overlay) done(false); };
+                overlay.style.display = 'flex';
+            });
+        }
+
+        function appAlert(title, message) {
+            return appConfirm({ title, message, okText: 'Got it', hideCancel: true });
         }
 
         function showTrackingToast(msg) {
@@ -1936,10 +2204,23 @@
             if (!s) return;
             const maxTime = parseInt(s.maxTime || 0);
             if (maxTime <= 0) {
-                alert('Please set "Max Time To Finish" first.');
+                appAlert('Set a time first', 'Please set "Max Time To Finish" for this title before starting the watch timer.');
                 return;
             }
-            if (!confirm(`Ready to dive into "${s.title}"? We'll move it to Currently Watching and start the clock.`)) return;
+            appConfirm({
+                title: 'Start watching now?',
+                message: `Ready to dive into "${s.title}"? We'll move it to Currently Watching and start the clock.`,
+                okText: 'Start watching'
+            }).then(ok => {
+                if (!ok) return;
+                startWatchTimerConfirmed(serieId);
+            });
+        }
+
+        function startWatchTimerConfirmed(serieId) {
+            const s = series.find(item => item.id === serieId);
+            if (!s) return;
+            const maxTime = parseInt(s.maxTime || 0);
             s.status = 'watching';
             if (!s.startedDate) s.startedDate = getLocalDateString();
             saveData();
@@ -2074,13 +2355,14 @@
                 const item = document.createElement('div');
                 item.className = `series-item ${currentViewSize === 'custom' ? '' : currentViewSize} ${serie.status === 'completed' ? 'status-completed-item' : serie.status === 'watching' ? 'status-watching-item' : serie.status === 'want' ? 'status-want-item' : ''}`;
                 
-                // Apply custom sizes if custom view size is selected
+                // Custom view size zooms the entire card, so the zoom level
+                // also changes how many items fit on screen at once
                 let thumbnailStyle = '';
                 let titleStyle = '';
                 if (currentViewSize === 'custom') {
-                    const customSize = getCustomSize(customSizeValue);
-                    thumbnailStyle = `style="width: ${customSize.width}px; height: ${customSize.height}px;"`;
-                    titleStyle = `style="font-size: ${customSize.title}rem;"`;
+                    const v = Math.max(0, Math.min(100, customSizeValue));
+                    const zoom = v <= 50 ? 0.5 + (v / 50) * 0.5 : 1 + ((v - 50) / 50) * 0.7;
+                    item.style.zoom = String(Math.round(zoom * 100) / 100);
                 }
                 
                 // Calculate progress percentage
@@ -2660,21 +2942,74 @@
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;align-items:center;">
-                        <button class="btn btn-small btn-secondary" onclick="moveQueueItem(${serie.id}, -1)" title="Move up" style="padding:6px 10px;">↑</button>
-                        <button class="btn btn-small btn-secondary" onclick="moveQueueItem(${serie.id}, 1)" title="Move down" style="padding:6px 10px;">↓</button>
                         <button class="btn btn-small" onclick="editSeries(${serie.id})">Edit</button>
                         <button class="btn btn-small btn-secondary" onclick="removeFromQueue(${serie.id})" title="Remove from queue" style="padding:6px 10px;">✕</button>
                     </div>
                 `;
                 priorityList.appendChild(item);
 
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragend', handleDragEnd);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragenter', handleDragEnter);
-                item.addEventListener('dragleave', handleDragLeave);
+                attachQueuePointerDrag(item);
             });
+        }
+
+        // Pointer-based drag reorder for the watchlist: grab anywhere on the
+        // row (or its handle), works with both mouse and touch, reorders live.
+        function attachQueuePointerDrag(item) {
+            item.draggable = false;
+            const start = (e) => {
+                // Ignore drags that begin on buttons/links inside the row
+                if (e.target.closest('button, a, input')) return;
+                // On touch, only the handle starts a drag so the page can still scroll
+                if (e.pointerType === 'touch' && !e.target.closest('.drag-handle')) return;
+                e.preventDefault();
+                const startY = e.clientY;
+                let started = false;
+
+                const onMove = (ev) => {
+                    if (!started && Math.abs(ev.clientY - startY) < 5) return;
+                    if (!started) {
+                        started = true;
+                        item.classList.add('dragging');
+                        document.body.style.userSelect = 'none';
+                    }
+                    // Nudge the page when dragging near the viewport edges
+                    if (ev.clientY < 90) window.scrollBy(0, -12);
+                    else if (ev.clientY > window.innerHeight - 90) window.scrollBy(0, 12);
+
+                    const siblings = [...priorityList.querySelectorAll('.priority-item:not(.dragging)')];
+                    let placed = false;
+                    for (const sib of siblings) {
+                        const r = sib.getBoundingClientRect();
+                        if (ev.clientY < r.top + r.height / 2) {
+                            priorityList.insertBefore(item, sib);
+                            placed = true;
+                            break;
+                        }
+                    }
+                    if (!placed) priorityList.appendChild(item);
+                };
+
+                const onUp = () => {
+                    document.removeEventListener('pointermove', onMove);
+                    document.removeEventListener('pointerup', onUp);
+                    document.removeEventListener('pointercancel', onUp);
+                    document.body.style.userSelect = '';
+                    if (!started) return;
+                    item.classList.remove('dragging');
+                    // Persist the new DOM order
+                    [...priorityList.querySelectorAll('.priority-item')].forEach((el, i) => {
+                        const s = series.find(x => x.id === parseInt(el.dataset.id));
+                        if (s) s.queueOrder = i;
+                    });
+                    saveData();
+                    renderPriorityList();
+                };
+
+                document.addEventListener('pointermove', onMove);
+                document.addEventListener('pointerup', onUp);
+                document.addEventListener('pointercancel', onUp);
+            };
+            item.addEventListener('pointerdown', start);
         }
 
         window.removeFromQueue = function(id) {
@@ -2685,83 +3020,6 @@
             saveData();
             renderPriorityList();
         };
-        window.moveQueueItem = function(id, delta) {
-            const queueSeries = series.filter(serie => serie.inQueue).sort((a, b) => a.queueOrder - b.queueOrder);
-            const idx = queueSeries.findIndex(item => item.id === id);
-            if (idx === -1) return;
-            const targetIdx = idx + delta;
-            if (targetIdx < 0 || targetIdx >= queueSeries.length) return;
-            const moved = queueSeries[idx];
-            queueSeries.splice(idx, 1);
-            queueSeries.splice(targetIdx, 0, moved);
-            queueSeries.forEach((item, order) => {
-                const original = series.find(s => s.id === item.id);
-                if (original) original.queueOrder = order;
-            });
-            saveData();
-            renderPriorityList();
-        };
-
-        function handleDragStart(e) {
-            draggedElement = this;
-            draggedIndex = parseInt(this.dataset.index);
-            this.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function handleDragEnd(e) {
-            this.classList.remove('dragging');
-            document.querySelectorAll('.priority-item').forEach(item => {
-                item.style.borderTop = '';
-            });
-        }
-
-        function handleDragOver(e) {
-            if (e.preventDefault) {
-                e.preventDefault();
-            }
-            e.dataTransfer.dropEffect = 'move';
-            return false;
-        }
-
-        function handleDragEnter(e) {
-            if (this !== draggedElement) {
-                this.style.borderTop = '2px solid #e50914';
-            }
-        }
-
-        function handleDragLeave(e) {
-            this.style.borderTop = '';
-        }
-
-        function handleDrop(e) {
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-
-            if (draggedElement !== this) {
-                const targetIndex = parseInt(this.dataset.index);
-                
-                const queueSeries = series
-                    .filter(serie => serie.inQueue)
-                    .sort((a, b) => a.queueOrder - b.queueOrder);
-                
-                const movedSerie = queueSeries[draggedIndex];
-                queueSeries.splice(draggedIndex, 1);
-                queueSeries.splice(targetIndex, 0, movedSerie);
-                
-                queueSeries.forEach((serie, index) => {
-                    const originalSerie = series.find(s => s.id === serie.id);
-                    originalSerie.queueOrder = index;
-                });
-                
-                saveData();
-                renderPriorityList();
-            }
-
-            return false;
-        }
-
         function updateCurrentUserDisplay() {
             const currentUser = users.find(u => u.id === currentUserId);
             if (currentUser) {
@@ -2788,14 +3046,6 @@
                     statsElement.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
                 }
             }
-        }
-
-        function showWelcomeToast(name) {
-            const toast = document.getElementById('welcomeToast');
-            if (!toast) return;
-            toast.textContent = 'Welcome, ' + name + '!';
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2200);
         }
 
         function showWelcomeToast(name) {
@@ -3157,6 +3407,284 @@
                 openOverlay('contentTypeDialog');
             });
 
+            // Home page floating add button
+            const homeAddFab = document.getElementById('homeAddFab');
+            if (homeAddFab) {
+                homeAddFab.addEventListener('click', () => {
+                    openOverlay('contentTypeDialog');
+                });
+            }
+
+            // ── "What to watch tonight?" random picker ──────────────
+            const tonightPickerBtn = document.getElementById('tonightPickerBtn');
+            const tonightModal = document.getElementById('tonightPickerModal');
+            if (tonightPickerBtn && tonightModal) {
+                const tonightSourceSel = document.getElementById('tonightSource');
+                const tonightGenreSel = document.getElementById('tonightGenre');
+                const tonightTimeSel = document.getElementById('tonightMaxTime');
+                const tonightResult = document.getElementById('tonightResult');
+                let tonightLastPick = null;
+
+                function tonightCandidates() {
+                    return series.filter(s => tonightSourceSel.value === 'want'
+                        ? s.status === 'want'
+                        : s.status !== 'completed');
+                }
+
+                function tonightSessionMinutes(s) {
+                    // minutes for one sitting: the whole movie, or one episode
+                    if ((s.contentType || 'series') === 'movie') return s.runtime || s.maxTime || 0;
+                    return s.runtime || 0;
+                }
+
+                function populateTonightGenres() {
+                    const genres = new Set();
+                    tonightCandidates().forEach(s =>
+                        (s.genre || '').split(',').map(g => g.trim()).filter(Boolean).forEach(g => genres.add(g)));
+                    const current = tonightGenreSel.value;
+                    tonightGenreSel.innerHTML = '<option value="">Any genre</option>';
+                    [...genres].sort().forEach(g => {
+                        const opt = document.createElement('option');
+                        opt.textContent = g;
+                        tonightGenreSel.appendChild(opt);
+                    });
+                    tonightGenreSel.value = current;
+                    if (tonightGenreSel.selectedIndex === -1) tonightGenreSel.selectedIndex = 0;
+                }
+
+                function spinTonight() {
+                    const genre = tonightGenreSel.value.toLowerCase();
+                    const maxT = parseInt(tonightTimeSel.value) || 0;
+                    let pool = tonightCandidates().filter(s => {
+                        if (genre && !(s.genre || '').toLowerCase().includes(genre)) return false;
+                        if (maxT) {
+                            const m = tonightSessionMinutes(s);
+                            if (!m || m > maxT) return false;
+                        }
+                        return true;
+                    });
+                    if (pool.length > 1 && tonightLastPick != null) {
+                        pool = pool.filter(s => s.id !== tonightLastPick);
+                    }
+                    tonightResult.style.display = 'block';
+                    tonightResult.innerHTML = '';
+                    if (!pool.length) {
+                        const p = document.createElement('p');
+                        p.style.cssText = 'color:#999;text-align:center;padding:14px 0;';
+                        p.textContent = 'Nothing matches those filters — loosen them up or add more titles.';
+                        tonightResult.appendChild(p);
+                        return;
+                    }
+                    const pick = pool[Math.floor(Math.random() * pool.length)];
+                    tonightLastPick = pick.id;
+                    const isMovie = (pick.contentType || 'series') === 'movie';
+                    const card = document.createElement('div');
+                    card.className = 'tonight-pick-card';
+                    const img = document.createElement('img');
+                    img.src = pick.image || '';
+                    img.onerror = function() { this.onerror = null; this.src = 'https://via.placeholder.com/150/333/fff?text=No+Image'; };
+                    const info = document.createElement('div');
+                    info.className = 'tonight-pick-info';
+                    const t = document.createElement('div');
+                    t.className = 'tonight-pick-title';
+                    t.textContent = pick.title;
+                    const meta = document.createElement('div');
+                    meta.className = 'tonight-pick-meta';
+                    const mins = tonightSessionMinutes(pick);
+                    meta.textContent = [
+                        isMovie ? 'Movie' : `Series · S${pick.season || 1} E${pick.episode || 1} up next`,
+                        pick.genre || null,
+                        mins ? `${mins} min${isMovie ? '' : ' / ep'}` : null
+                    ].filter(Boolean).join(' · ');
+                    info.appendChild(t);
+                    info.appendChild(meta);
+                    if (pick.status !== 'watching') {
+                        const startBtn = document.createElement('button');
+                        startBtn.className = 'btn btn-small';
+                        startBtn.style.marginTop = '10px';
+                        startBtn.textContent = 'Start watching';
+                        startBtn.addEventListener('click', () => {
+                            pick.status = 'watching';
+                            if (!pick.startedDate) pick.startedDate = getLocalDateString();
+                            saveData();
+                            renderSeries();
+                            renderStatistics();
+                            closeOverlay('tonightPickerModal');
+                            showTrackingToast(`${pick.title} — enjoy tonight!`);
+                        });
+                        info.appendChild(startBtn);
+                    }
+                    card.appendChild(img);
+                    card.appendChild(info);
+                    tonightResult.appendChild(card);
+                }
+
+                tonightPickerBtn.addEventListener('click', () => {
+                    populateTonightGenres();
+                    tonightResult.style.display = 'none';
+                    tonightLastPick = null;
+                    openOverlay('tonightPickerModal');
+                });
+                document.getElementById('tonightSpinBtn').addEventListener('click', spinTonight);
+                document.getElementById('tonightCloseBtn').addEventListener('click', () => closeOverlay('tonightPickerModal'));
+                tonightSourceSel.addEventListener('change', populateTonightGenres);
+                tonightModal.addEventListener('click', e => {
+                    if (e.target === tonightModal) closeOverlay('tonightPickerModal');
+                });
+            }
+
+            // ── Year in Review ──────────────────────────────────────
+            const yearReviewBtn = document.getElementById('yearReviewBtn');
+            const yearReviewModal = document.getElementById('yearReviewModal');
+            if (yearReviewBtn && yearReviewModal) {
+                const yearSel = document.getElementById('yearReviewYear');
+                const yearBody = document.getElementById('yearReviewBody');
+                const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                function yearReviewEntries(year) {
+                    const entries = [];
+                    series.forEach(s => {
+                        (Array.isArray(s.watchHistory) ? s.watchHistory : []).forEach(e => {
+                            if (e.date && e.date.startsWith(year)) entries.push({ entry: e, serie: s });
+                        });
+                    });
+                    return entries;
+                }
+
+                function entryMinutes(x) {
+                    const s = x.serie;
+                    if ((x.entry.contentType || s.contentType || 'series') === 'movie') {
+                        return s.runtime || s.maxTime || 0;
+                    }
+                    return s.runtime || 0;
+                }
+
+                function el(tag, cls, text) {
+                    const n = document.createElement(tag);
+                    if (cls) n.className = cls;
+                    if (text != null) n.textContent = text;
+                    return n;
+                }
+
+                function statTile(value, label) {
+                    const tile = el('div', 'yr-tile');
+                    tile.appendChild(el('div', 'yr-tile-value', value));
+                    tile.appendChild(el('div', 'yr-tile-label', label));
+                    return tile;
+                }
+
+                function topList(title, counts, max) {
+                    const wrap = el('div', 'yr-block');
+                    wrap.appendChild(el('h3', null, title));
+                    counts.slice(0, 5).forEach(([name, count]) => {
+                        const row = el('div', 'yr-row');
+                        const fill = el('div', 'yr-row-fill');
+                        fill.style.width = Math.max(6, Math.round(count / max * 100)) + '%';
+                        row.appendChild(fill);
+                        row.appendChild(el('span', 'yr-row-name', name));
+                        row.appendChild(el('span', 'yr-row-count', String(count)));
+                        wrap.appendChild(row);
+                    });
+                    return wrap;
+                }
+
+                function renderYearReview() {
+                    const year = yearSel.value;
+                    yearBody.innerHTML = '';
+                    const entries = yearReviewEntries(year);
+                    if (!entries.length) {
+                        const p = el('p', null, `No watch activity logged in ${year} yet. Use the +1 button on a card to start logging.`);
+                        p.style.cssText = 'color:#999;text-align:center;padding:20px 0;';
+                        yearBody.appendChild(p);
+                        return;
+                    }
+
+                    const episodes = entries.filter(x => (x.entry.contentType || 'series') === 'series').length;
+                    const movies = entries.filter(x => (x.entry.contentType || 'series') === 'movie').length;
+                    const minutes = entries.reduce((sum, x) => sum + entryMinutes(x), 0);
+                    const completedCount = series.filter(s => s.completedDate && String(s.completedDate).startsWith(year)).length;
+
+                    // Longest daily streak
+                    const days = [...new Set(entries.map(x => x.entry.date))].sort();
+                    let streak = 1, best = 1;
+                    for (let i = 1; i < days.length; i++) {
+                        const prev = new Date(days[i - 1] + 'T00:00:00');
+                        const cur = new Date(days[i] + 'T00:00:00');
+                        if ((cur - prev) === 86400000) { streak++; best = Math.max(best, streak); }
+                        else streak = 1;
+                    }
+
+                    const tiles = el('div', 'yr-grid');
+                    tiles.appendChild(statTile(String(episodes), 'Episodes'));
+                    tiles.appendChild(statTile(String(movies), 'Movies'));
+                    tiles.appendChild(statTile(minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes}m`, 'Watch Time'));
+                    tiles.appendChild(statTile(String(completedCount), 'Completed'));
+                    tiles.appendChild(statTile(`${best} day${best === 1 ? '' : 's'}`, 'Longest Streak'));
+                    yearBody.appendChild(tiles);
+
+                    // Per-month bar chart
+                    const monthCounts = Array(12).fill(0);
+                    entries.forEach(x => { monthCounts[parseInt(x.entry.date.slice(5, 7), 10) - 1]++; });
+                    const maxMonth = Math.max(...monthCounts, 1);
+                    const chartBlock = el('div', 'yr-block');
+                    chartBlock.appendChild(el('h3', null, 'Activity per Month'));
+                    const chart = el('div', 'yr-months');
+                    monthCounts.forEach((count, i) => {
+                        const col = el('div', 'yr-month');
+                        const bar = el('div', 'yr-month-bar');
+                        bar.style.height = Math.max(3, Math.round(count / maxMonth * 70)) + 'px';
+                        bar.title = `${MONTH_NAMES[i]}: ${count}`;
+                        col.appendChild(bar);
+                        col.appendChild(el('div', 'yr-month-label', MONTH_NAMES[i]));
+                        chart.appendChild(col);
+                    });
+                    chartBlock.appendChild(chart);
+                    yearBody.appendChild(chartBlock);
+
+                    // Top genres
+                    const genreCounts = {};
+                    entries.forEach(x => (x.serie.genre || '').split(',').map(g => g.trim()).filter(Boolean)
+                        .forEach(g => { genreCounts[g] = (genreCounts[g] || 0) + 1; }));
+                    const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
+                    if (sortedGenres.length) {
+                        yearBody.appendChild(topList('Top Genres', sortedGenres, sortedGenres[0][1]));
+                    }
+
+                    // Most watched titles
+                    const titleCounts = {};
+                    entries.forEach(x => { titleCounts[x.serie.title] = (titleCounts[x.serie.title] || 0) + 1; });
+                    const sortedTitles = Object.entries(titleCounts).sort((a, b) => b[1] - a[1]);
+                    yearBody.appendChild(topList('Most Watched', sortedTitles, sortedTitles[0][1]));
+                }
+
+                yearReviewBtn.addEventListener('click', () => {
+                    const years = new Set();
+                    series.forEach(s => {
+                        (Array.isArray(s.watchHistory) ? s.watchHistory : []).forEach(e => {
+                            if (e.date) years.add(e.date.slice(0, 4));
+                        });
+                        if (s.completedDate) years.add(String(s.completedDate).slice(0, 4));
+                    });
+                    const currentYear = String(new Date().getFullYear());
+                    years.add(currentYear);
+                    yearSel.innerHTML = '';
+                    [...years].sort().reverse().forEach(y => {
+                        const opt = document.createElement('option');
+                        opt.value = y;
+                        opt.textContent = y;
+                        yearSel.appendChild(opt);
+                    });
+                    yearSel.value = currentYear;
+                    renderYearReview();
+                    openOverlay('yearReviewModal');
+                });
+                yearSel.addEventListener('change', renderYearReview);
+                document.getElementById('yearReviewCloseBtn').addEventListener('click', () => closeOverlay('yearReviewModal'));
+                yearReviewModal.addEventListener('click', e => {
+                    if (e.target === yearReviewModal) closeOverlay('yearReviewModal');
+                });
+            }
+
             // Notification calendar button
             const openNotificationCalendarBtn = document.getElementById('openNotificationCalendarBtn');
             const notificationCalendarModal = document.getElementById('notificationCalendarModal');
@@ -3378,18 +3906,9 @@
                 if (warn) warn.style.display = users.length >= 5 ? 'block' : 'none';
             }
 
-            // Patch openUserSelectModal to also render avatars
-            const _origOpenUserSelectModal = openUserSelectModal;
-            function openUserSelectModal() {
-                _origOpenUserSelectModal();
-                umSelectedUserId = currentUserId; window.umSelectedUserId = currentUserId;
-                renderUserAvatars();
-                const strip = document.getElementById('umEditStrip');
-                if (strip) strip.style.display = 'flex';
-                document.getElementById('createUserForm').style.display = 'none';
-                document.getElementById('editUserForm').style.display = 'none';
-                document.getElementById('umMainActions').style.display = 'flex';
-            }
+            // (Removed a dead openUserSelectModal wrapper here: as a same-scope
+            //  function declaration it was always overridden by the fuller
+            //  definition below, which already renders avatars.)
 
             // confirmUserSelectBtn: handled by original listener (now uses window.umSelectedUserId)
 
@@ -3852,7 +4371,7 @@
                     modalTitle.textContent = selectedType === 'movie' ? 'Add New Movie' : 'Add New Series';
                     seriesForm.reset();
                     seriesForm.removeAttribute('data-editing');
-                    document.getElementById('seriesContentType').value = selectedType;
+                    lockContentTypeSelect(selectedType);
                     document.getElementById('seriesStatus').value = 'watching';
                     document.getElementById('seriesUserRatingValue').value = 0;
                     document.getElementById('seriesMaxTime').value = 0;
@@ -3867,9 +4386,259 @@
                     seriesModal.style.display = 'flex';
                     const modalBody = seriesModal.querySelector('.modal');
                     if (modalBody) modalBody.scrollTop = 0;
+                    hideTitleSuggestions();
                 });
             });
-            
+
+            // ── Title autocomplete: guess & auto-fill from marketplace catalogue ──
+            let mpCatalogue = null;
+            let mpCataloguePromise = null;
+            let titleSuggestionItems = [];
+            let activeTitleSuggestion = -1;
+            const titleAutoInput = document.getElementById('seriesTitle');
+            const titleSuggestionsBox = document.getElementById('titleSuggestions');
+
+            function loadMpCatalogue() {
+                if (mpCataloguePromise) return mpCataloguePromise;
+                mpCataloguePromise = fetch('marketplace-data.json', { cache: 'no-cache' })
+                    .then(r => r.ok ? r.json() : null)
+                    .then(d => { mpCatalogue = (d && Array.isArray(d.catalogue)) ? d.catalogue : []; return mpCatalogue; })
+                    .catch(() => { mpCatalogue = []; return mpCatalogue; });
+                return mpCataloguePromise;
+            }
+
+            function searchMpCatalogue(query) {
+                if (!mpCatalogue) return [];
+                const q = query.toLowerCase().trim();
+                if (q.length < 2) return [];
+                const starts = [];
+                const contains = [];
+                for (const item of mpCatalogue) {
+                    const t = (item.title || '').toLowerCase();
+                    if (t.startsWith(q)) starts.push(item);
+                    else if (t.includes(q)) contains.push(item);
+                }
+                const byPopularity = (a, b) => (b.popularity || 0) - (a.popularity || 0);
+                starts.sort(byPopularity);
+                contains.sort(byPopularity);
+                return starts.concat(contains).slice(0, 6);
+            }
+
+            function matchProviderChips(providers) {
+                const rules = [
+                    ['netflix', 'netflix'], ['disney', 'disney'], ['hbo', 'hbo'],
+                    ['amazon', 'amazon'], ['prime video', 'amazon'], ['hulu', 'hulu'],
+                    ['apple tv', 'apple'], ['paramount', 'paramount'],
+                    ['peacock', 'peacock'], ['crunchyroll', 'crunchyroll']
+                ];
+                const services = [];
+                (providers || []).forEach(p => {
+                    const lp = String(p).toLowerCase();
+                    for (const [needle, service] of rules) {
+                        if (lp.includes(needle) && !services.includes(service)) {
+                            services.push(service);
+                            break;
+                        }
+                    }
+                });
+                return services.slice(0, MAX_PROVIDERS);
+            }
+
+            // Live TVMaze lookup used when the local catalogue has no match
+            const tvmazeCache = {};
+            let tvmazeSearchTimer = null;
+
+            function stripHtml(html) {
+                const tmp = document.createElement('div');
+                tmp.innerHTML = html || '';
+                return tmp.textContent || '';
+            }
+
+            function searchTvmaze(query) {
+                const q = query.toLowerCase().trim();
+                if (tvmazeCache[q]) return Promise.resolve(tvmazeCache[q]);
+                return fetch('https://api.tvmaze.com/search/shows?q=' + encodeURIComponent(q))
+                    .then(r => r.ok ? r.json() : [])
+                    .then(list => {
+                        const items = (list || []).slice(0, 6).map(entry => {
+                            const s = entry.show || {};
+                            return {
+                                tvmazeId: s.id,
+                                title: s.name || '',
+                                type: 'series',
+                                year: s.premiered ? parseInt(s.premiered.slice(0, 4)) : null,
+                                cover: (s.image && (s.image.original || s.image.medium)) || '',
+                                genres: (s.genres || []).slice(0, 4),
+                                runtime: s.averageRuntime || s.runtime || 0,
+                                tmdb: (s.rating && s.rating.average) || null,
+                                description: stripHtml(s.summary).trim(),
+                                providers: [],
+                                categories: []
+                            };
+                        }).filter(x => x.title);
+                        tvmazeCache[q] = items;
+                        return items;
+                    })
+                    .catch(() => []);
+            }
+
+            function fillTvmazeEpisodeCounts(item) {
+                if (!item.tvmazeId) return;
+                const expectTitle = item.title || '';
+                fetch('https://api.tvmaze.com/shows/' + item.tvmazeId + '/episodes')
+                    .then(r => r.ok ? r.json() : [])
+                    .then(eps => {
+                        if (!Array.isArray(eps) || !eps.length) return;
+                        // Bail out if the user switched to another title meanwhile
+                        if (titleAutoInput.value !== expectTitle) return;
+                        const regular = eps.filter(e => e.type !== 'insignificant_special');
+                        const seasons = Math.max(...regular.map(e => e.season || 1));
+                        const perSeason = Math.round(regular.length / seasons) || regular.length;
+                        document.getElementById('seriesTotalSeasons').value = seasons;
+                        document.getElementById('seriesTotalEpisodes').value = perSeason;
+                    })
+                    .catch(() => {});
+            }
+
+            function applyCatalogueItem(item) {
+                const type = item.type === 'movie' ? 'movie' : 'series';
+                if (!seriesForm.getAttribute('data-editing')) {
+                    modalTitle.textContent = type === 'movie' ? 'Add New Movie' : 'Add New Series';
+                }
+                titleAutoInput.value = item.title || '';
+                document.getElementById('seriesImage').value = item.cover || '';
+                // Prefer real genres (enriched from Wikidata/TVMaze); fall back to
+                // catalogue categories minus collection labels that aren't genres
+                let genres = Array.isArray(item.genres) ? item.genres : [];
+                if (!genres.length) {
+                    const skipCats = ['series', 'movies', 'popular', 'trending', 'new releases', 'star wars', 'mortal kombat'];
+                    genres = (item.categories || []).filter(c => !skipCats.includes(String(c).toLowerCase()));
+                }
+                document.getElementById('seriesGenre').value = genres.join(', ');
+                lockContentTypeSelect(type);
+                if (type === 'series') {
+                    const seasonCount = item.seasons || 1;
+                    const fullEpisodes = item.episodes || 0;
+                    const perSeason = seasonCount > 0 ? (Math.round(fullEpisodes / seasonCount) || fullEpisodes) : fullEpisodes;
+                    document.getElementById('seriesTotalSeasons').value = seasonCount;
+                    if (perSeason > 0) document.getElementById('seriesTotalEpisodes').value = perSeason;
+                }
+                document.getElementById('seriesRuntime').value = item.runtime || 0;
+                if (type === 'movie' && item.runtime) {
+                    document.getElementById('seriesMaxTime').value = item.runtime;
+                }
+                const rating = item.imdb != null ? item.imdb : item.tmdb;
+                document.getElementById('seriesImdb').value = rating != null ? String(rating) : '';
+                if (item.age != null && !isNaN(item.age)) {
+                    const a = Number(item.age);
+                    document.getElementById('seriesAge').value = a >= 18 ? '18' : a >= 16 ? '16' : a >= 12 ? '12' : a >= 6 ? '6' : '0';
+                }
+                if (item.description) document.getElementById('seriesNotes').value = item.description;
+                const services = matchProviderChips(item.providers);
+                document.querySelectorAll('#streamingMultiSelect .streaming-chip').forEach(c => {
+                    c.classList.toggle('selected', services.includes(c.getAttribute('data-service')));
+                });
+                document.getElementById('seriesStreamingService').value = services.join(',');
+                toggleEpisodeFields(type);
+                handleStatusChange(document.getElementById('seriesStatus').value);
+                hideTitleSuggestions();
+                fillTvmazeEpisodeCounts(item);
+            }
+
+            function hideTitleSuggestions() {
+                if (!titleSuggestionsBox) return;
+                titleSuggestionsBox.style.display = 'none';
+                titleSuggestionsBox.innerHTML = '';
+                titleSuggestionItems = [];
+                activeTitleSuggestion = -1;
+            }
+
+            function setActiveTitleSuggestion(i) {
+                const els = titleSuggestionsBox.querySelectorAll('.title-suggestion');
+                if (!els.length) return;
+                activeTitleSuggestion = ((i % els.length) + els.length) % els.length;
+                els.forEach((el, idx) => el.classList.toggle('active', idx === activeTitleSuggestion));
+                els[activeTitleSuggestion].scrollIntoView({ block: 'nearest' });
+            }
+
+            function renderTitleSuggestions(items) {
+                if (!items.length) { hideTitleSuggestions(); return; }
+                titleSuggestionItems = items;
+                activeTitleSuggestion = -1;
+                titleSuggestionsBox.innerHTML = '';
+                items.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'title-suggestion';
+                    const img = document.createElement('img');
+                    img.loading = 'lazy';
+                    img.src = item.cover || '';
+                    img.onerror = function() { this.style.visibility = 'hidden'; };
+                    const info = document.createElement('div');
+                    info.className = 'title-suggestion-info';
+                    const t = document.createElement('div');
+                    t.className = 'title-suggestion-title';
+                    t.textContent = item.title || '';
+                    const m = document.createElement('div');
+                    m.className = 'title-suggestion-meta';
+                    m.textContent = [item.year, item.type === 'movie' ? 'Movie' : item.type === 'anime' ? 'Anime' : 'Series', item.tvmazeId ? 'TVMaze' : null].filter(Boolean).join(' · ');
+                    info.appendChild(t);
+                    info.appendChild(m);
+                    const fill = document.createElement('span');
+                    fill.className = 'title-suggestion-fill';
+                    fill.textContent = 'Auto-fill';
+                    row.appendChild(img);
+                    row.appendChild(info);
+                    row.appendChild(fill);
+                    row.addEventListener('mousedown', e => {
+                        e.preventDefault();
+                        applyCatalogueItem(item);
+                    });
+                    titleSuggestionsBox.appendChild(row);
+                });
+                titleSuggestionsBox.style.display = 'block';
+            }
+
+            if (titleAutoInput && titleSuggestionsBox) {
+                titleAutoInput.addEventListener('focus', () => { loadMpCatalogue(); });
+                titleAutoInput.addEventListener('input', () => {
+                    // Only suggest while adding new content, not while editing existing
+                    if (seriesForm.getAttribute('data-editing')) { hideTitleSuggestions(); return; }
+                    if (tvmazeSearchTimer) { clearTimeout(tvmazeSearchTimer); tvmazeSearchTimer = null; }
+                    if (titleAutoInput.value.trim().length < 2) { hideTitleSuggestions(); return; }
+                    loadMpCatalogue().then(() => {
+                        if (document.activeElement !== titleAutoInput) return;
+                        const query = titleAutoInput.value;
+                        const local = searchMpCatalogue(query);
+                        renderTitleSuggestions(local);
+                        if (local.length) return;
+                        // Nothing in the local catalogue — ask TVMaze after a short pause
+                        tvmazeSearchTimer = setTimeout(() => {
+                            searchTvmaze(query).then(items => {
+                                if (document.activeElement !== titleAutoInput) return;
+                                if (titleAutoInput.value !== query) return;
+                                renderTitleSuggestions(items);
+                            });
+                        }, 350);
+                    });
+                });
+                titleAutoInput.addEventListener('keydown', e => {
+                    if (titleSuggestionsBox.style.display === 'none' || !titleSuggestionItems.length) return;
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setActiveTitleSuggestion(activeTitleSuggestion + 1);
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        setActiveTitleSuggestion(activeTitleSuggestion - 1);
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        applyCatalogueItem(titleSuggestionItems[activeTitleSuggestion >= 0 ? activeTitleSuggestion : 0]);
+                    } else if (e.key === 'Escape') {
+                        hideTitleSuggestions();
+                    }
+                });
+                titleAutoInput.addEventListener('blur', () => { setTimeout(hideTitleSuggestions, 150); });
+            }
+
             // Auto-save functionality for all fields
             let autoSaveTimeouts = {};
             let currentEditingSeriesId = null;
@@ -4286,14 +5055,14 @@
                     e.currentTarget.classList.add('active');
                     e.currentTarget.querySelector('.filter-option-check').style.display = 'inline';
                     currentCategory = e.currentTarget.getAttribute('data-category');
-                    
-                    if (currentCategory !== 'all') {
-                        currentFilter = currentCategory;
-                        filterBtns.forEach(btn => {
-                            btn.classList.toggle('active', btn.getAttribute('data-filter') === currentFilter);
-                        });
-                    }
-                    
+
+                    // Keep the top status-filter buttons in sync — including
+                    // when "All" is chosen (previously it stayed on the old one)
+                    currentFilter = currentCategory;
+                    filterBtns.forEach(btn => {
+                        btn.classList.toggle('active', btn.getAttribute('data-filter') === currentFilter);
+                    });
+
                     saveSettings();
                     renderSeries();
                     renderStatistics();
@@ -4513,12 +5282,26 @@
                     updateCurrentUserDisplay();
                 }
 
+        // Restrict the content-type select to one type while adding via the
+        // type dialog (pass null to unlock, e.g. when editing existing items)
+        function lockContentTypeSelect(type) {
+            const sel = document.getElementById('seriesContentType');
+            if (!sel) return;
+            Array.from(sel.options).forEach(o => {
+                const off = !!type && o.value !== type;
+                o.disabled = off;
+                o.hidden = off;
+            });
+            if (type) sel.value = type;
+        }
+
         function editSeries(id) {
             const serie = series.find(s => s.id === id);
             if (!serie) return;
-            
+
             const contentType = serie.contentType || 'series';
-            
+            lockContentTypeSelect(null);
+
             document.getElementById('seriesTitle').value = serie.title || '';
             document.getElementById('seriesImage').value = serie.image || '';
             document.getElementById('seriesGenre').value = serie.genre || '';
@@ -4763,6 +5546,13 @@
             if (autoExportCheckbox) {
                 autoExportCheckbox.addEventListener('change', function() {
                     settings.autoExport = this.checked;
+                    // Interval control is only visible/editable while enabled
+                    if (this.checked && (!settings.autoSaveInterval || settings.autoSaveInterval === 'off')) {
+                        settings.autoSaveInterval = '1min';
+                        const sel = document.getElementById('settingAutoSaveInterval');
+                        if (sel) sel.value = '1min';
+                    }
+                    updateAutoExportIntervalVisibility();
                     saveAppSettings();
                     setupAutoSaveInterval(); // Restart interval when checkbox changes (stops if unchecked)
                 });
@@ -4781,6 +5571,17 @@
                     saveAppSettings();
                 });
             }
+
+            const coloredFiltersCheckbox = document.getElementById('settingColoredFilters');
+            if (coloredFiltersCheckbox) {
+                coloredFiltersCheckbox.addEventListener('change', function() {
+                    settings.coloredFilters = this.checked;
+                    document.body.classList.toggle('colored-filters', this.checked);
+                    saveAppSettings();
+                });
+            }
+
+            enhanceColorPickers();
             
             // Auto-save interval selector
             const autoSaveIntervalSelect = document.getElementById('settingAutoSaveInterval');
@@ -4853,6 +5654,7 @@
                 checkCookieWarning();
                 checkVideoIntro();
                 checkNotifications(); // Check for notifications due today
+                maybeStartOnboarding(); // First-run interactive tour
             }, 500);
             
             // Setup image loading optimization

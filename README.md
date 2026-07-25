@@ -1,9 +1,7 @@
-# [PRESS ON ME TO USE ](https://series-movie-tracker.vercel.app/)
-
 # 🎬 Series & Movie Tracker
 
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-1.6.0-blue)
+![Version](https://img.shields.io/badge/version-1.16-blue)
 ![Made with](https://img.shields.io/badge/made%20with-HTML%20%7C%20CSS%20%7C%20JavaScript-orange)
 ![Creative Commons](https://img.shields.io/badge/license-CC_BY_4.0-red)
 
@@ -17,37 +15,34 @@ No accounts. No servers. No tracking. Everything is stored **locally in your bro
 
 Perfect for binge-watchers, movie lovers, and anyone who wants full control over their watch history.
 
+It runs entirely as a set of static files — open the hosted page in your browser (no install, no build step). It can also be installed as a PWA for an app-like, offline experience.
+
 ---
 
 ## ✨ Features
 
-* 📺 Track **Series & Movies** separately
-* 👤 Up to **5 User Profiles**
-* ⏱️ Episode, season & progress tracking
-* ⭐ Personal rating system + IMDb rating field
-* 🏷️ Tags & personal notes
-* 📊 Viewing statistics & completion rates
-* 📥 Export & Import your data (Backup safe)
-* 🎨 Dark-themed modern UI
-* 🗂️ Watchlist & completed lists
+* 📺 Track **series & movies** separately, with status: Watching / Want to Watch / Completed
+* 👤 Up to **5 local user profiles**, each with its own library and stats
+* ⏱️ Season & episode progress with a one-tap **"Episode Watched"** that advances you (season rollovers included)
+* 🔎 **Smart add** — type a couple of letters and the title, cover, genre, seasons, rating and streaming service are filled in for you (local catalogue + live TVMaze fallback)
+* 🛒 **Marketplace** — browse a curated catalogue and add titles (or whole collections) in one click
+* 📋 **Watchlist** with drag-to-reorder, plus a **"What tonight?"** random picker (filter by genre / time)
+* 📊 **Statistics**, genre breakdown, an activity timeline and a yearly **Year in Review** recap
+* ⭐ Personal rating system + IMDb/TMDb rating field, 🏷️ tags & personal notes
+* 🔔 Notification calendar for upcoming seasons/episodes
+* 🎨 Dark, light & fully **custom themes** (with a color picker), optional gradient text, adjustable view sizes
+* 📥 **Export & Import** your data, with optional auto-export
+* 📱 Installable **PWA** with offline support
 
 ---
 
 ## 📡 Supported Streaming Services
 
-[![Netflix](https://img.shields.io/badge/Netflix-E50914?logo=netflix&logoColor=white)](#)
-[![Prime Video](https://custom-icon-badges.demolab.com/badge/Prime%20Video-00A8E1?logo=prime-video&logoColor=white)](#)
-![Disney+](https://img.shields.io/badge/Disney+-supported-113CCF?logo=disneyplus)
-[![Apple TV](https://img.shields.io/badge/Apple%20TV-000000?logo=Apple%20TV&logoColor=white)](#)
-[![Max](https://img.shields.io/badge/Max-000ce0?logo=hbo&logoColor=fff)](#)
-[![Crunchyroll](https://img.shields.io/badge/Crunchyroll-F47521?logo=crunchyroll&logoColor=white)](#)
-![Paramount+](https://img.shields.io/badge/Paramount+-supported-0064FF?logo=paramountplus)
-![Sky](https://img.shields.io/badge/Sky-supported-0072C9)
-![Custom](https://img.shields.io/badge/Custom-supported-lightgrey)
+Netflix · Disney+ · HBO Max · Prime Video · Hulu · Apple TV+ · Paramount+ · Peacock · Crunchyroll · Custom
 
 ---
 
-## 🌍 Tested Browser 
+## 🌍 Tested Browsers
 
 [![Google Chrome](https://img.shields.io/badge/Google%20Chrome-4285F4?logo=GoogleChrome&logoColor=white)](#)
 [![Firefox](https://img.shields.io/badge/Firefox-FF7139?logo=firefoxbrowser&logoColor=white)](#)
@@ -62,30 +57,23 @@ Perfect for binge-watchers, movie lovers, and anyone who wants full control over
 
 ## 🚀 Getting Started
 
-1. Open S&M Tracker in your browser
+1. Open Series & Movie Tracker in your browser
 2. Create your **user profile**
-3. Click **Add Content**
-4. Choose **Series** or **Movie**
-5. Fill in details and start tracking 🎉
+3. Click the **+** button (or **Add Content** in the menu)
+4. Choose **Series** or **Movie**, or add from the **Marketplace**
+5. Start tracking 🎉
 
 ---
 
 ## 📦 Data Storage
 
-* All data is stored using **LocalStorage**
-* No internet connection required
-* Full offline support
+* All data is stored using **LocalStorage** (per profile)
+* No internet connection required for the app itself (the Marketplace catalogue and cover images load from the network)
+* Full offline support via the service worker
 
 ### 🔐 Backup Recommendation
 
-Use the **Export List** feature regularly to avoid data loss.
-
-Recommended folder structure:
-
-```
-Series & Movie Tracker/
-└── logs/
-```
+Use the **Export List** feature regularly to avoid data loss — clearing your browser's site data will erase your library.
 
 ---
 
@@ -95,6 +83,7 @@ Series & Movie Tracker/
 * CSS3
 * Vanilla JavaScript
 * LocalStorage API
+* Service Worker + Web App Manifest (PWA)
 
 ---
 
@@ -102,15 +91,25 @@ Series & Movie Tracker/
 
 ```
 📁 Series-Movie-Tracker
- ├── Serien.html
- ├── ChangelogSerien.html
+ ├── index.html              # The tracker app
+ ├── landing.html            # Marketing / entry landing page
+ ├── marketplace.html        # Curated catalogue browser
+ ├── marketplace-data.json   # Catalogue data
+ ├── app.js                  # App logic
+ ├── styles.css              # App styles
+ ├── manifest.json           # PWA manifest
+ ├── sw.js                   # Service worker (offline + update prompt)
+ ├── favicon.png / icon-192.png
  ├── SeriesTracker_Guide.html
- └── assets/
+ ├── ChangelogSerien.html
+ └── Legal.html
 ```
 
 ---
 
 ## ❤️ Final Notes
+
+Made with love by **twillightmay & x4ndrrr**.
 
 If you enjoy this project:
 

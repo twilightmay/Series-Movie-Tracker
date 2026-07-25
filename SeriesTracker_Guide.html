@@ -7,9 +7,9 @@
     <title>Series & Movie Tracker - Guide</title>
     <style>
         :root {
-            --bg: #0f0f0f;
-            --surface: #1a1a1a;
-            --surface-2: #222;
+            --bg: #141414;
+            --surface: #1c1c1e;
+            --surface-2: #242428;
             --border: rgba(255,255,255,0.08);
             --accent: #e50914;
             --text: #f2f2f2;
@@ -30,7 +30,7 @@
             position: sticky; top: 0; z-index: 50;
             display: flex; align-items: center; justify-content: space-between; gap: 16px;
             padding: 14px clamp(16px, 4vw, 48px);
-            background: rgba(15,15,15,0.82);
+            background: rgba(20,20,20,0.82);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
         }
@@ -44,7 +44,7 @@
         .back-button {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 10px 24px; background: var(--accent); color: #fff;
-            border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 1rem;
+            border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 1rem;
             min-height: 42px; box-sizing: border-box;
             transition: background-color 0.2s, transform 0.15s, filter 0.15s; white-space: nowrap;
         }
@@ -119,6 +119,7 @@
         .callout .ico { font-size: 1.4rem; line-height: 1; }
         .callout p { margin: 0; color: #ededed; }
         .guide-footer { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 0 16px 60px; }
+        .guide-footer a { color: #aaa; }
         @media (max-width: 860px) {
             .layout { grid-template-columns: 1fr; }
             .toc { position: static; flex-direction: row; flex-wrap: wrap; top: auto; }
@@ -137,43 +138,39 @@
     </div>
 
     <section class="hero">
-        <span class="eyebrow">Everything you need to know</span>
+        <span class="eyebrow">Everything explained, step by step</span>
         <h1>Master your watchlist.</h1>
-        <p>A complete walkthrough of the Series &amp; Movie Tracker &mdash; from adding your first title to themes, notifications, statistics and backups. All your data stays private, right in your browser.</p>
+        <p>The tracker runs right here in your browser &mdash; nothing to download. This guide covers every feature: what it does, and exactly how to use it.</p>
     </section>
 
     <div class="layout">
         <nav class="toc">
             <div class="toc-title">On this page</div>
             <a href="#overview">Overview</a>
-            <a href="#features">Key Features</a>
             <a href="#start">Getting Started</a>
+            <a href="#adding">Adding Content</a>
+            <a href="#tracking">Tracking Progress</a>
+            <a href="#watchlist">Watchlist &amp; Planning</a>
+            <a href="#search">Search &amp; View</a>
+            <a href="#stats">Statistics</a>
+            <a href="#customize">Themes</a>
             <a href="#notifications">Notifications</a>
-            <a href="#customize">Customization</a>
             <a href="#backup">Backup &amp; Data</a>
-            <a href="#help">Need Help?</a>
+            <a href="#install">Install as App</a>
         </nav>
 
         <main class="content">
             <section class="card" id="overview">
                 <h2><span class="num">i</span> What is Series &amp; Movie Tracker?</h2>
                 <p class="lead">Your personal entertainment library &mdash; organized exactly the way you want it.</p>
-                <p>The <span class="highlight">Series &amp; Movie Tracker</span> helps you organize, track and manage every series and movie you watch in one place. Whether you're binge-watching the latest release or catching up on classics, you stay in full control of your viewing experience.</p>
-                <p>With multiple profiles, detailed statistics, progress tracking, ratings and more, it transforms how you manage your collection &mdash; and everything is stored locally in your browser, so your data stays completely private.</p>
-            </section>
-
-            <section class="card" id="features">
-                <h2><span class="num">&#9733;</span> Key Features</h2>
+                <p>Track every series and movie you watch: your exact progress per episode, what you want to watch next, your ratings and your viewing statistics. Everything is stored <span class="highlight">locally in your browser</span> — no account, no sign-up, completely private.</p>
                 <div class="feature-grid">
-                    <div class="feature"><div class="ico">&#128250;</div><h4>Multi-Content Support</h4><p>Track both TV series and movies with fields tailored to each type.</p></div>
-                    <div class="feature"><div class="ico">&#128100;</div><h4>Up to 5 Profiles</h4><p>Separate libraries for the whole family or different moods.</p></div>
-                    <div class="feature"><div class="ico">&#128202;</div><h4>Detailed Statistics</h4><p>Total time watched, completion rates, genre breakdowns and a watch timeline.</p></div>
-                    <div class="feature"><div class="ico">&#11088;</div><h4>Rating System</h4><p>Rate titles with a 5-star system and compare against IMDB.</p></div>
-                    <div class="feature"><div class="ico">&#127991;&#65039;</div><h4>Tags &amp; Notes</h4><p>Custom tags and personal notes on any item for fast filtering.</p></div>
-                    <div class="feature"><div class="ico">&#128276;</div><h4>Notification Calendar</h4><p>Reminders for upcoming seasons and episodes.</p></div>
-                    <div class="feature"><div class="ico">&#127912;</div><h4>Custom Themes</h4><p>Dark, light, or build your own color scheme.</p></div>
-                    <div class="feature"><div class="ico">&#128203;</div><h4>Watchlist Queue</h4><p>A prioritized queue with drag-and-drop reordering.</p></div>
-                    <div class="feature"><div class="ico">&#128229;</div><h4>Export &amp; Import</h4><p>Back up or move your data with a single click.</p></div>
+                    <div class="feature"><div class="ico">&#128250;</div><h4>Series &amp; Movies</h4><p>Both types, with fields tailored to each.</p></div>
+                    <div class="feature"><div class="ico">&#10024;</div><h4>Smart Auto-fill</h4><p>Type two letters and the app fills in the rest.</p></div>
+                    <div class="feature"><div class="ico">&#128100;</div><h4>Profiles</h4><p>Separate libraries for the whole household.</p></div>
+                    <div class="feature"><div class="ico">&#128202;</div><h4>Statistics</h4><p>Watch time, genres, timeline and a yearly recap.</p></div>
+                    <div class="feature"><div class="ico">&#128203;</div><h4>Watchlist</h4><p>A drag-to-reorder queue plus a random picker.</p></div>
+                    <div class="feature"><div class="ico">&#127912;</div><h4>Themes</h4><p>Dark, light or your own custom colors.</p></div>
                 </div>
             </section>
 
@@ -181,73 +178,152 @@
                 <h2><span class="num">1</span> Getting Started</h2>
                 <div class="steps">
                     <div class="step">
+                        <h3>Open the app</h3>
+                        <p>Visit the tracker's web address. On your very first visit you'll see a short welcome page &mdash; press <span class="highlight">Open the app</span>. A quick interactive tour then points out the most important buttons; follow it or skip it, it only appears once.</p>
+                    </div>
+                    <div class="step">
                         <h3>Create your profile</h3>
-                        <p>Open the menu (&#9776;) in the top-right, expand <span class="highlight">Profile</span> and click <span class="highlight">Change User</span>. Create a profile with a name and a picture.</p>
+                        <p>Open the menu (&#9776;) in the top-right, expand <span class="highlight">Profile</span> and click <span class="highlight">Change User</span>. Create a profile with a name and an optional picture URL. Each profile has its own list, watchlist and statistics.</p>
                     </div>
                     <div class="step">
                         <h3>Add your first title</h3>
-                        <p>Expand the <span class="highlight">Content</span> section and click <span class="highlight">+ Add Content</span>. Choose Series or Movie, then fill in:</p>
-                        <ul>
-                            <li>Title and cover image URL</li>
-                            <li>Genre and content type</li>
-                            <li>Status &mdash; Watching, Want to Watch, or Completed</li>
-                            <li>Progress (seasons, episodes, time)</li>
-                            <li>Streaming service (for series)</li>
-                        </ul>
+                        <p>Press the round red <span class="highlight">+</span> button in the bottom-right corner and let auto-fill do the work &mdash; see the next section.</p>
                     </div>
-                    <div class="step">
-                        <h3>Organize your collection</h3>
-                        <p>Use the filter buttons at the top to switch between <span class="highlight">Currently Watching</span>, <span class="highlight">Want to Watch</span> and <span class="highlight">Completed</span>. The search bar and <span class="highlight">Filters &amp; Sort</span> menu help you find anything fast.</p>
-                    </div>
-                </div>
-                <div class="callout">
-                    <span class="ico">&#128161;</span>
-                    <p>The top bar stays integrated at the very top of the page and turns into a floating bar the moment you scroll. While at the top, use <span class="highlight">Hide search &amp; filters</span> to collapse it for a cleaner view.</p>
                 </div>
             </section>
 
-            <section class="card" id="notifications">
-                <h2><span class="num">2</span> Notifications &amp; Calendar</h2>
-                <p>Never miss a new release. Open the <span class="highlight">Notification Calendar</span> from <span class="highlight">Settings &rarr; Notification Calendar</span> in the menu.</p>
+            <section class="card" id="adding">
+                <h2><span class="num">2</span> Adding Content</h2>
+                <h3>Manually, with smart auto-fill</h3>
+                <div class="steps">
+                    <div class="step">
+                        <h3>Press +</h3>
+                        <p>Use the floating <span class="highlight">+</span> button on the main page (or <span class="highlight">+ Add Content</span> in the menu) and choose <span class="highlight">Series</span> or <span class="highlight">Movie</span>.</p>
+                    </div>
+                    <div class="step">
+                        <h3>Type two letters</h3>
+                        <p>Start typing the title &mdash; suggestions with cover art appear. Typing <em>squi</em> finds <em>Squid Game</em>. Click a suggestion or press Enter for the top match.</p>
+                    </div>
+                    <div class="step">
+                        <h3>Everything fills itself</h3>
+                        <p>Cover, genre, seasons &amp; episodes, runtime, rating, age rating, description and streaming services are filled in automatically. Pick a status, adjust anything you like, and press <span class="highlight">Save</span>.</p>
+                    </div>
+                </div>
+                <div class="callout"><span class="ico">&#128161;</span>
+                    <p>Not in the suggestions? For series the app automatically asks the online TVMaze database as a fallback, so brand-new and obscure shows auto-fill too.</p>
+                </div>
+                <h3>From the Marketplace</h3>
                 <ul>
-                    <li>Click <span class="highlight">+ Add Notification</span> to schedule a reminder for a new season or episode of any title in your list.</li>
-                    <li>Every entry can be changed later &mdash; press <span class="highlight">Edit</span> next to it to update the date, type, season or episode.</li>
-                    <li>Entries dated before today are hidden automatically, so the list only ever shows what's still upcoming.</li>
-                    <li>When a reminder's date arrives, the matching title moves to <span class="highlight">Want to Watch</span> and is updated to the newest season/episode for you.</li>
+                    <li>Open the menu &rarr; <span class="highlight">Marketplace</span> to browse a catalogue of <span id="catalogueCount">1000+</span> popular titles.</li>
+                    <li>Filter by category, provider, status or age rating &mdash; your filters are remembered for your next visit.</li>
+                    <li>Click any title for full details: description, seasons, ratings, where to stream, and a <span class="highlight">Watch trailer</span> link.</li>
+                    <li>Press <span class="highlight">Add to library</span> and choose: Currently Watching, Want to Watch or Finished.</li>
+                    <li>Whole franchises can be added at once from the <span class="highlight">Collections</span> row.</li>
                 </ul>
             </section>
 
-            <section class="card" id="customize">
-                <h2><span class="num">3</span> Customization</h2>
-                <p>Make the tracker feel like yours from the side menu:</p>
+            <section class="card" id="tracking">
+                <h2><span class="num">3</span> Tracking Progress</h2>
+                <p class="lead">Log what you watch &mdash; the tracker keeps your exact place and builds your history.</p>
+                <h3>Log an episode</h3>
                 <ul>
-                    <li><span class="highlight">Themes</span> &mdash; switch between Dark, Light, or a fully Custom theme with your own background and accent colors.</li>
-                    <li><span class="highlight">View Size</span> &mdash; Small, Normal, Large, or a custom size from the Filters &amp; Sort menu.</li>
-                    <li><span class="highlight">Collapsible Sections</span> &mdash; every section in the menu has a tappable header button; tap it to expand or collapse its options.</li>
-                    <li><span class="highlight">Reload</span> &mdash; click the logo at the top any time to reload the page; your saved data stays intact.</li>
+                    <li>Hover over a card you're watching &mdash; an <span class="highlight">action bar</span> pops up and stays until you click it or hover another card.</li>
+                    <li>Press <span class="highlight">Episode Watched</span>: today's watch is logged and you advance to the next episode.</li>
+                    <li>End of a season? The app asks whether to jump to the next one. End of the series? It's marked <span class="highlight">Completed</span> automatically.</li>
+                </ul>
+                <h3>Edit anything</h3>
+                <p>Press <span class="highlight">Edit</span> in the action bar to change progress, rating (5 stars, half stars supported), notes, tags, dates, favourite actors or streaming services. Changes save automatically while editing. <span class="highlight">More</span> opens the full detail panel.</p>
+                <h3>Watch timer</h3>
+                <p>Press and hold a card for about a second to start a <span class="highlight">watch timer</span>. Set <span class="highlight">Max Time To Finish</span> in the title's edit form first &mdash; when the timer ends, your progress is logged automatically.</p>
+            </section>
+
+            <section class="card" id="watchlist">
+                <h2><span class="num">4</span> Watchlist &amp; Planning</h2>
+                <h3>Your queue</h3>
+                <ul>
+                    <li>Add titles to the queue via <span class="highlight">Add to Queue</span> in their edit form, or straight from the Marketplace.</li>
+                    <li>The <span class="highlight">Watchlist</span> section at the bottom of the main page shows your queue in priority order.</li>
+                    <li><span class="highlight">Drag</span> any row up or down to reorder &mdash; on a phone, use the &#9776; handle. Numbers show the order.</li>
+                </ul>
+                <h3>&ldquo;What tonight?&rdquo;</h3>
+                <ul>
+                    <li>Press <span class="highlight">What tonight?</span> at the top of the Watchlist section.</li>
+                    <li>Optionally filter by genre and how much time you have (&ldquo;a quick one&rdquo; up to &ldquo;an epic&rdquo;).</li>
+                    <li>Press <span class="highlight">Surprise me</span> &mdash; the app picks for you. Not feeling it? Spin again, or press <span class="highlight">Start watching</span> to commit.</li>
+                </ul>
+            </section>
+
+            <section class="card" id="search">
+                <h2><span class="num">5</span> Search, Filters &amp; View Sizes</h2>
+                <ul>
+                    <li><span class="highlight">Search bar</span> &mdash; searches titles and genres across your library as you type.</li>
+                    <li><span class="highlight">Status buttons</span> &mdash; All, Currently Watching, Want to Watch, Completed. Want them colour-coded? Enable <span class="highlight">Colored Filters</span> in menu &rarr; Settings.</li>
+                    <li><span class="highlight">Filters &amp; Sort</span> &mdash; sort by title or time spent, and filter by content type (series or movies).</li>
+                    <li><span class="highlight">View Size</span> &mdash; Small, Normal, Large or Custom. The Custom slider zooms the entire card, so small sizes fit far more titles on screen.</li>
+                    <li><span class="highlight">Bulk operations</span> &mdash; tick the checkboxes on multiple cards to move or delete them all at once.</li>
+                </ul>
+            </section>
+
+            <section class="card" id="stats">
+                <h2><span class="num">6</span> Statistics &amp; Year in Review</h2>
+                <ul>
+                    <li><span class="highlight">Stat cards</span> &mdash; totals for your items, statuses, watch time and completion rate.</li>
+                    <li><span class="highlight">Genre breakdown</span> &mdash; which genres dominate your library.</li>
+                    <li><span class="highlight">Watch Timeline</span> &mdash; a graph of your logged sessions (lifetime, year or month). Hover a point to inspect it, click to pin.</li>
+                    <li><span class="highlight">Year in Review</span> &mdash; the button under the timeline opens a &ldquo;Wrapped&rdquo;-style recap of any year: episodes and movies watched, total watch time, busiest months, top genres, most-watched titles and your longest daily streak.</li>
+                </ul>
+                <div class="callout"><span class="ico">&#128200;</span>
+                    <p>Statistics grow from logging &mdash; press <span class="highlight">Episode Watched</span> as you go and your stats become more interesting every week.</p>
+                </div>
+            </section>
+
+            <section class="card" id="customize">
+                <h2><span class="num">7</span> Themes &amp; Personalisation</h2>
+                <ul>
+                    <li><span class="highlight">Themes</span> &mdash; menu &rarr; Themes: Dark, Light, or Custom.</li>
+                    <li><span class="highlight">Custom colors</span> &mdash; set the background, accent and the three status-badge colors. Use the preset swatches, type a hex code, or open the full color wheel.</li>
+                    <li><span class="highlight">Gradient text</span> &mdash; give all headings a color gradient with your own start and end colors.</li>
+                    <li><span class="highlight">Colored Filters</span> &mdash; in menu &rarr; Themes; tints the status filter buttons in their theme colors.</li>
+                </ul>
+            </section>
+
+            <section class="card" id="notifications">
+                <h2><span class="num">8</span> Notifications &amp; Calendar</h2>
+                <ul>
+                    <li>Open menu &rarr; <span class="highlight">Notification Calendar</span> and press <span class="highlight">+ Add Notification</span> to schedule a reminder for a new season or episode of any tracked title.</li>
+                    <li>Edit or remove reminders in the same calendar; past entries hide automatically.</li>
+                    <li>When a reminder's date arrives, the title moves to <span class="highlight">Want to Watch</span> and updates to the newest season/episode.</li>
+                    <li>Not interested in popups? Toggle <span class="highlight">Notifications</span> off in Settings.</li>
                 </ul>
             </section>
 
             <section class="card" id="backup">
-                <h2><span class="num">4</span> Backup &amp; Data</h2>
-                <h3>Export regularly</h3>
-                <p>Everything is stored locally in your browser, so clearing cookies or site data will erase your tracker. Use <span class="highlight">Export List</span> in the menu to create backups you can keep safe.</p>
+                <h2><span class="num">9</span> Backup &amp; Data</h2>
+                <h3>Export &amp; import</h3>
+                <p><span class="highlight">Export List</span> in the menu downloads your library as a file. On another device or browser, use <span class="highlight">Import List</span> and choose whether to import the list only, or also the profile name and picture.</p>
                 <h3>Auto-Export</h3>
-                <p>Enable <span class="highlight">Auto Export</span> in Settings and pick an interval, so your data is backed up automatically while you use the site.</p>
-                <h3>Import anywhere</h3>
-                <p>Use <span class="highlight">Import List</span> to restore a backup or move your collection to another device or browser.</p>
-                <div class="callout">
-                    <span class="ico">&#9888;&#65039;</span>
-                    <p>Auto-export only runs while the site is open. For long-term safety, export a manual backup now and then and store the file somewhere reliable.</p>
+                <p>Switch <span class="highlight">Auto Export</span> on in Settings &mdash; an interval picker appears (only while enabled) and your data is backed up automatically while the site is open.</p>
+                <div class="callout"><span class="ico">&#9888;&#65039;</span>
+                    <p>Your data lives in this browser. Clearing cookies/site data erases it &mdash; keep a recent export somewhere safe.</p>
                 </div>
             </section>
 
-            <section class="card" id="help">
-                <h2><span class="num">?</span> Need Help?</h2>
-                <p>Check the <span class="highlight">Changelog</span> in the menu for the latest features and fixes. New options and improvements are documented there with each version.</p>
+            <section class="card" id="install">
+                <h2><span class="num">10</span> Install as an App</h2>
+                <p>The tracker is a Progressive Web App: install it once and it opens full-screen from your home screen or dock, and keeps working offline.</p>
+                <ul>
+                    <li><span class="highlight">iPhone/iPad</span> (Safari): Share &rarr; <em>Add to Home Screen</em>.</li>
+                    <li><span class="highlight">Android</span> (Chrome): menu (&#8942;) &rarr; <em>Add to Home screen</em> / <em>Install app</em>.</li>
+                    <li><span class="highlight">Desktop</span> (Chrome/Edge): the install icon in the address bar &rarr; <em>Install</em>.</li>
+                </ul>
             </section>
 
-            <div class="guide-footer">Series &amp; Movie Tracker &mdash; your data, your device, your control.</div>
+            <div class="guide-footer">
+                <a href="landing.html">About</a> &middot; <a href="marketplace.html">Marketplace</a> &middot;
+                <a href="ChangelogSerien.html">Changelog</a> &middot; <a href="Legal.html">Legal</a><br><br>
+                Series &amp; Movie Tracker &mdash; your data, your device, your control.<br>
+                Made with love by twillightmay &amp; x4ndrrr
+            </div>
         </main>
     </div>
 <style id="smGradientCss">
@@ -268,6 +344,18 @@ body.gradient-text .page-title, body.gradient-text .modal-title {
     document.body.style.setProperty('--grad-end', g.end||'#f5c518');
   }
 }catch(e){}})();
+
+// Keep the catalogue count exact and current (auto-updates with the data file)
+(function(){
+  fetch('marketplace-data.json',{cache:'no-store'})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){
+      if(!d||!Array.isArray(d.catalogue))return;
+      var el=document.getElementById('catalogueCount');
+      if(el)el.textContent=d.catalogue.length.toLocaleString();
+    })
+    .catch(function(){});
+})();
 </script>
 </body>
 </html>

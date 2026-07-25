@@ -1,9 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // First-time visitors land on the landing page; the "Open the app"
+        // button there navigates here with ?app=1 (and sets a flag) so the
+        // app opens directly. The ?app=1 guard makes this work even when
+        // localStorage is unavailable (fixes the Firefox redirect loop).
+        try {
+            var cameFromLanding = location.search.indexOf('app=1') !== -1;
+            if (cameFromLanding) {
+                try { localStorage.setItem('seriesTrackerLandingSeen', '1'); } catch (e) {}
+            } else if (!localStorage.getItem('seriesTrackerLandingSeen')) {
+                window.location.replace('landing.html');
+            }
+        } catch (e) {}
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#141414">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <title>Series & Movie Tracker</title>
     <link rel="stylesheet" href="styles.css">
 
@@ -105,10 +122,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="gradient-text-controls" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);">
-                    <label class="toggle-row" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:10px;">
-                        <span style="display:flex;align-items:center;gap:6px;"><svg style="width:15px;height:15px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg> Gradient text</span>
-                        <input type="checkbox" id="gradientTextToggle">
+                <div class="gradient-text-controls" style="margin-top:12px;">
+                    <label class="sidebar-menu-item" style="justify-content: space-between;">
+                        <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg> Gradient text</span>
+                        <input type="checkbox" id="gradientTextToggle" style="cursor: pointer; flex-shrink:0; width:18px; height:18px; accent-color: var(--secondary-color, #e50914);">
                     </label>
                     <div class="gradient-color-controls" id="gradientColorControls" style="display:none;margin-top:10px;">
                         <div class="color-picker-wrapper">
@@ -131,6 +148,10 @@
                         </div>
                     </div>
                 </div>
+                <label class="sidebar-menu-item" style="justify-content: space-between; margin-top: 12px;">
+                    <span><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="19" cy="13" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="10" cy="18.5" r="2.5"/></svg> Colored Filters</span>
+                    <input type="checkbox" id="settingColoredFilters" style="cursor: pointer; flex-shrink:0; width:18px; height:18px; accent-color: var(--secondary-color, #e50914);">
+                </label>
             </div>
             <!-- SETTINGS -->
             <div class="sidebar-section">
@@ -148,11 +169,10 @@
                     <input type="checkbox" id="settingShowNotifications" style="cursor: pointer; flex-shrink:0; width:18px; height:18px; accent-color: var(--secondary-color, #e50914);">
                 </label>
                 <button class="sidebar-menu-item" id="openNotificationCalendarBtn" style="border:none; background:rgba(255,255,255,0.05); color:inherit; width:100%;"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Notification Calendar</button>
-                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                <div id="autoExportIntervalWrap" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
                     <div style="font-size: 0.82rem; color: #aaa; margin-bottom: 6px; font-weight: 600;" class="auto-save-label">Auto Export Interval</div>
                     <div style="font-size: 0.75rem; color: #666; margin-bottom: 8px; font-style: italic;" class="auto-save-info">Only works when on site</div>
-                    <select id="settingAutoSaveInterval" class="sidebar-menu-item" style="padding: 0 12px; height: 44px; background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; color: inherit; cursor: pointer; margin-top: 0; font-size: 0.9rem; appearance: auto;">
-                        <option value="off">Off</option>
+                    <select id="settingAutoSaveInterval" class="sidebar-menu-item" style="padding: 0 12px; height: 44px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; cursor: pointer; margin-top: 0; font-size: 0.9rem; appearance: auto;">
                         <option value="1min">Every 1 minute</option>
                         <option value="10min">Every 10 minutes</option>
                         <option value="1h">Every 1 hour</option>
@@ -173,7 +193,6 @@
                 <div class="sidebar-section-title"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Help</div>
                 <a href="SeriesTracker_Guide.html" class="sidebar-menu-item"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Guide &amp; Tutorials</a>
                 <a href="ChangelogSerien.html" class="sidebar-menu-item"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Changelog</a>
-                <a href="Application_Summary.html" class="sidebar-menu-item"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Application Summary</a>
                 <a href="Legal.html" class="sidebar-menu-item"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 7l9-4 9 4M5 7v6a7 7 0 0 0 14 0V7M2 13h6M16 13h6"/></svg> Legal &amp; Attribution</a>
             </div>
             <!-- ATTRIBUTION (required by TMDB terms of use) -->
@@ -190,7 +209,7 @@
     <div class="container">
         <div class="sticky-top-bar" id="stickyTopBar">
         <header>
-            <img src="https://i.imgur.com/zopUQf6.png" style="height: 150px; cursor: pointer;" alt="Logo" title="Reload page" loading="eager" decoding="async" onerror="this.style.display='none';" onclick="location.reload();">
+            <img src="favicon.png" style="cursor: pointer;" alt="Logo" title="Reload page" loading="eager" decoding="async" onerror="this.style.display='none';" onclick="location.reload();">
             <h1>Series & Movie Tracker</h1>
             <div class="header-controls">
                 <div class="hamburger-menu" id="hamburgerMenu" role="button" tabindex="0" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
@@ -202,7 +221,12 @@
                 </div>
             </div>
         </header>
-        
+
+        <!-- Floating Add Button (home page quick add) -->
+        <button class="home-add-fab" id="homeAddFab" aria-label="Add movie or series" title="Add Movie / Series">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+
         <div class="search-filter-bar">
             <div class="search-bar">
                 <span class="search-icon"><svg style="width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
@@ -338,6 +362,21 @@
                     </div>
                     <div class="watch-timeline-details" id="watchTimelineDetails">Hover a point to inspect — click to pin.</div>
                 </div>
+                <button class="btn btn-small" id="yearReviewBtn" style="margin-top: 14px;"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Year in Review</button>
+            </div>
+        </div>
+
+        <!-- Year in Review modal -->
+        <div class="overlay" id="yearReviewModal">
+            <div class="modal" style="max-width: 560px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom: 6px;">
+                    <h2 style="margin:0;">Your Year in Review</h2>
+                    <select id="yearReviewYear" class="form-control" style="width:auto; padding:6px 10px;"></select>
+                </div>
+                <div id="yearReviewBody"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="yearReviewCloseBtn">Close</button>
+                </div>
             </div>
         </div>
 
@@ -362,7 +401,10 @@
         <div class="priority-section">
             <div class="watchlist-head">
                 <h2>Watchlist <span class="watchlist-count" id="watchlistCount"></span></h2>
-                <button class="btn btn-small btn-secondary" id="clearWatchlistBtn" style="display:none;">Clear all</button>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button class="btn btn-small" id="tonightPickerBtn"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.4" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.4" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.4" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.4" fill="currentColor"/></svg>What tonight?</button>
+                    <button class="btn btn-small btn-secondary" id="clearWatchlistBtn" style="display:none;">Clear all</button>
+                </div>
             </div>
             <div id="priorityList"></div>
         </div>
@@ -450,6 +492,53 @@
                 <div style="text-align: center; margin-top: 10px;">
                     <button type="button" class="btn btn-secondary" onclick="closeImportOptionsModal()">Cancel</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- "What to watch tonight?" random picker -->
+    <div class="overlay" id="tonightPickerModal">
+        <div class="modal" style="max-width: 460px;">
+            <h2 style="display:flex;align-items:center;gap:8px;"><svg style="width:22px;height:22px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.4" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.4" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.4" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.4" fill="currentColor"/></svg>What to watch tonight?</h2>
+            <div class="form-group">
+                <label for="tonightSource">Pick from</label>
+                <select id="tonightSource" class="form-control">
+                    <option value="want">Want to Watch</option>
+                    <option value="unfinished">Anything unfinished</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tonightGenre">Genre</label>
+                <select id="tonightGenre" class="form-control">
+                    <option value="">Any genre</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tonightMaxTime">Time for…</label>
+                <select id="tonightMaxTime" class="form-control">
+                    <option value="">Anything</option>
+                    <option value="30">A quick one (≤ 30 min)</option>
+                    <option value="60">About an hour (≤ 60 min)</option>
+                    <option value="120">A movie night (≤ 2 h)</option>
+                    <option value="180">An epic (≤ 3 h)</option>
+                </select>
+            </div>
+            <div id="tonightResult" style="display:none;"></div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="tonightCloseBtn">Close</button>
+                <button type="button" class="btn" id="tonightSpinBtn">Surprise me</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic styled confirm/alert dialog -->
+    <div class="overlay" id="appConfirmModal" style="z-index: 2002;">
+        <div class="modal" style="max-width: 430px;">
+            <h2 id="appConfirmTitle" style="margin-bottom: 12px;"></h2>
+            <p id="appConfirmMessage" style="color: #bbb; line-height: 1.6; white-space: pre-line; margin-bottom: 6px;"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="appConfirmCancelBtn">Cancel</button>
+                <button type="button" class="btn" id="appConfirmOkBtn">OK</button>
             </div>
         </div>
     </div>
@@ -606,9 +695,10 @@
         <div class="modal">
             <h2 id="modalTitle">Add New Series</h2>
             <form id="seriesForm">
-                <div class="form-group">
+                <div class="form-group" style="position: relative;">
                     <label for="seriesTitle">Title</label>
-                    <input type="text" id="seriesTitle" class="form-control auto-save-field" required data-field="title">
+                    <input type="text" id="seriesTitle" class="form-control auto-save-field" required data-field="title" autocomplete="off">
+                    <div class="title-suggestions" id="titleSuggestions" style="display:none;"></div>
                 </div>
                 <div class="form-group">
                     <label for="seriesImage">Cover URL</label>
@@ -636,14 +726,14 @@
                 <div class="form-group">
                     <label>Streaming Service(s)</label>
                     <div class="streaming-multi-select" id="streamingMultiSelect">
-                        <div class="streaming-chip" data-service="netflix"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/200px-Netflix_2015_logo.svg.png" onerror="this.style.display='none'">Netflix</div>
-                        <div class="streaming-chip" data-service="disney"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/200px-Disney%2B_logo.svg.png" onerror="this.style.display='none'">Disney+</div>
-                        <div class="streaming-chip" data-service="hbo"><img src="https://upload.wikimedia.org/wikipedia/commons/8/81/HBO_Max_Logo_%28October_2019%29.svg" onerror="this.style.display='none'">HBO Max</div>
-                        <div class="streaming-chip" data-service="amazon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/200px-Amazon_Prime_Video_logo.svg.png" onerror="this.style.display='none'">Amazon</div>
-                        <div class="streaming-chip" data-service="hulu"><img src="https://upload.wikimedia.org/wikipedia/de/thumb/0/0e/Hulu-Logo.svg/500px-Hulu-Logo.svg.png?_=20090719001746" onerror="this.style.display='none'">Hulu</div>
-                        <div class="streaming-chip" data-service="apple"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/AppleTVLogo.svg/2048px-AppleTVLogo.svg.png" onerror="this.style.display='none'">Apple TV+</div>
-                        <div class="streaming-chip" data-service="paramount"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Paramount_Plus.svg/200px-Paramount_Plus.svg.png" onerror="this.style.display='none'">Paramount+</div>
-                        <div class="streaming-chip" data-service="peacock"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/NBC_Peacock_%282022%29.svg/960px-NBC_Peacock_%282022%29.svg.png" onerror="this.style.display='none'">Peacock</div>
+                        <div class="streaming-chip" data-service="netflix"><img src="https://www.google.com/s2/favicons?domain=netflix.com&sz=128" onerror="this.style.display='none'">Netflix</div>
+                        <div class="streaming-chip" data-service="disney"><img src="https://www.google.com/s2/favicons?domain=disneyplus.com&sz=128" onerror="this.style.display='none'">Disney+</div>
+                        <div class="streaming-chip" data-service="hbo"><img src="https://www.google.com/s2/favicons?domain=max.com&sz=128" onerror="this.style.display='none'">HBO Max</div>
+                        <div class="streaming-chip" data-service="amazon"><img src="https://www.google.com/s2/favicons?domain=primevideo.com&sz=128" onerror="this.style.display='none'">Amazon</div>
+                        <div class="streaming-chip" data-service="hulu"><img src="https://www.google.com/s2/favicons?domain=hulu.com&sz=128" onerror="this.style.display='none'">Hulu</div>
+                        <div class="streaming-chip" data-service="apple"><img src="https://www.google.com/s2/favicons?domain=tv.apple.com&sz=128" onerror="this.style.display='none'">Apple TV+</div>
+                        <div class="streaming-chip" data-service="paramount"><img src="https://www.google.com/s2/favicons?domain=paramountplus.com&sz=128" onerror="this.style.display='none'">Paramount+</div>
+                        <div class="streaming-chip" data-service="peacock"><img src="https://www.google.com/s2/favicons?domain=peacocktv.com&sz=128" onerror="this.style.display='none'">Peacock</div>
                         <div class="streaming-chip" data-service="crunchyroll"><img src="https://www.google.com/s2/favicons?domain=crunchyroll.com&sz=128" onerror="this.onerror=null; this.src='https://logo.clearbit.com/crunchyroll.com';">Crunchyroll</div>
                         <div class="streaming-chip" data-service="other">Other</div>
                     </div>
@@ -819,7 +909,7 @@
             </form>
         </div>
     </div>
-   <center> Made with love by Twilight</center>
+   <center> Made with love by twillightmay &amp; x4ndrrr</center>
     <div class="welcome-toast" id="welcomeToast"></div>
     <div class="overlay" id="exportMessageModal">
         <div class="modal" style="max-width:520px;">
@@ -832,6 +922,48 @@
     </div>
 
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    function promptUpdate(worker) {
+                        if (!worker) return;
+                        const bar = document.createElement('div');
+                        bar.setAttribute('role', 'status');
+                        bar.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99999;display:flex;align-items:center;gap:14px;background:#1f1f22;color:#fff;border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:12px 16px;box-shadow:0 12px 34px rgba(0,0,0,0.5);font:600 0.9rem system-ui,sans-serif;max-width:92vw;';
+                        const msg = document.createElement('span');
+                        msg.textContent = 'A new version is available.';
+                        const btn = document.createElement('button');
+                        btn.textContent = 'Reload';
+                        btn.style.cssText = 'background:var(--secondary-color,#e50914);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-weight:700;cursor:pointer;';
+                        btn.onclick = () => worker.postMessage({ type: 'SKIP_WAITING' });
+                        bar.appendChild(msg); bar.appendChild(btn);
+                        document.body.appendChild(bar);
+                    }
+                    // A worker already waiting (update downloaded before this load)
+                    if (reg.waiting && navigator.serviceWorker.controller) promptUpdate(reg.waiting);
+                    // A new worker starts installing while the page is open
+                    reg.addEventListener('updatefound', () => {
+                        const installing = reg.installing;
+                        if (!installing) return;
+                        installing.addEventListener('statechange', () => {
+                            if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                                promptUpdate(reg.waiting || installing);
+                            }
+                        });
+                    });
+                }).catch(() => {});
+
+                // When the new worker takes control, reload once to get fresh assets
+                let reloaded = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (reloaded) return;
+                    reloaded = true;
+                    window.location.reload();
+                });
+            });
+        }
+    </script>
 </body>
 
 </html>

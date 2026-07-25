@@ -103,7 +103,7 @@
         <div class="stats">
             <div class="stat"><div class="num">100%</div><div class="lbl">Runs in browser</div></div>
             <div class="stat"><div class="num">0</div><div class="lbl">Accounts needed</div></div>
-            <div class="stat"><div class="num" id="mpTitleCount">43+</div><div class="lbl">Marketplace titles</div></div>
+            <div class="stat"><div class="num">43+</div><div class="lbl">Marketplace titles</div></div>
             <div class="stat"><div class="num">3</div><div class="lbl">Content types</div></div>
             <div class="stat"><div class="num">2</div><div class="lbl">Colour themes</div></div>
         </div>
@@ -286,17 +286,6 @@ body.gradient-text .page-title, body.gradient-text .modal-title {
     document.body.style.setProperty('--grad-end', g.end||'#f5c518');
   }
 }catch(e){}})();
-(function(){
-  fetch('marketplace-data.json',{cache:'no-store'})
-    .then(function(r){return r.ok?r.json():null;})
-    .then(function(d){
-      if(!d)return;
-      var n=(d.catalogue&&d.catalogue.length)||0;
-      var el=document.getElementById('mpTitleCount');
-      if(el&&n)el.textContent=String(n);
-    })
-    .catch(function(){});
-})();
 </script>
 </body>
 </html>
